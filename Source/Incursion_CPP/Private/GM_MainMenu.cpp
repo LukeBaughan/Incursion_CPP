@@ -33,12 +33,16 @@ void AGM_MainMenu::BeginPlay()
 
 void AGM_MainMenu::SetUpMenus()
 {
-	// If the widget clas is valid, create a new widget of that class and add it to the viewport
+	// If the widget class is valid
 	if (WidgetMainMenuClass != nullptr)
 	{
 		WidgetMainMenu = CreateWidget<UW_MainMenu>(PlayerController, WidgetMainMenuClass);
+		// If the created widget is valid, initialise it and add it to the viewport
 		if (WidgetMainMenu)
+		{
+			WidgetMainMenu->Initialise();
 			WidgetMainMenu->AddToViewport();
+		}
 	}
 
 	PlayerController->bShowMouseCursor = true;
