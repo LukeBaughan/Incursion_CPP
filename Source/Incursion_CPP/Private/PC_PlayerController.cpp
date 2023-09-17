@@ -3,3 +3,6 @@
 
 #include "PC_PlayerController.h"
 
+APC_PlayerController::APC_PlayerController()
+{
+}

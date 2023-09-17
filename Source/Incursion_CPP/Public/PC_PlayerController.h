@@ -13,5 +13,8 @@ UCLASS()
 class INCURSION_CPP_API APC_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	APC_PlayerController();
 	
 };

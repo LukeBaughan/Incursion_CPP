@@ -17,6 +17,7 @@ public:
 	AA_GridSystem();
 	~AA_GridSystem();
 
+	// move all asigns to constructor in cpp (h: int GridRows cpp: GridRows = 4;
 	UPROPERTY(EditAnywhere, Category = "Grid Size")
 	int GridRows = 4;
 	UPROPERTY(EditAnywhere, Category = "Grid Size")
