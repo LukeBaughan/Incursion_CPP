@@ -17,6 +17,22 @@ class INCURSION_CPP_API UBFL_Incursion : public UBlueprintFunctionLibrary
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "UI Design")
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	static void SetUpButtonColours(TArray<UButton*> Buttons);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	static void OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen);
+};
+
+UENUM(BlueprintType)
+enum MenuType
+{
+	Main UMETA(DisplayName = "Main"),
+	Options UMETA(DisplayName = "Options"),
+	Statistics UMETA(DisplayName = "Stats"),
+	Controls UMETA(DisplayName = "Controls"),
+	Credits UMETA(DisplayName = "Credits"),
+	WeaponSelect UMETA(DisplayName = "WeaponSelect"),
+	Win UMETA(DisplayName = "Win"),
+	Lose UMETA(DisplayName = "Lose")
 };

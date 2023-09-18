@@ -3,15 +3,22 @@
 
 #include "GM_MainMenu.h"
 #include "Blueprint/UserWidget.h"
-#include "W_MainMenu.h"
 #include "Kismet/GameplayStatics.h"
 
 AGM_MainMenu::AGM_MainMenu()
 {
-	// Gets a blueprint main menu widget class reference
-	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClassFinder(TEXT("/Game/Luke/UI/W_MainMenuBP"));
-	if (WidgetClassFinder.Succeeded())
-		WidgetMainMenuClass = (WidgetClassFinder.Class);
+	// Gets a blueprint of each menu widget to set each class reference
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetMainMenuClassFinder(TEXT("/Game/Luke/UI/W_MainMenuBP"));
+	if (WidgetMainMenuClassFinder.Succeeded())
+		WidgetMainMenuClass = WidgetMainMenuClassFinder.Class;
+	
+	WidgetMainMenu = nullptr;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetCreditsClassFinder(TEXT("/Game/Luke/UI/W_CreditsBP"));
+	if (WidgetCreditsClassFinder.Succeeded())
+		WidgetCreditsClass = WidgetCreditsClassFinder.Class;
+
+	WidgetCredits = nullptr;
 }
 
 void AGM_MainMenu::BeginPlay()
@@ -33,6 +40,7 @@ void AGM_MainMenu::BeginPlay()
 
 void AGM_MainMenu::SetUpMenus()
 {
+	// Main Menu
 	// If the widget class is valid
 	if (WidgetMainMenuClass != nullptr)
 	{
@@ -42,8 +50,57 @@ void AGM_MainMenu::SetUpMenus()
 		{
 			WidgetMainMenu->Initialise();
 			WidgetMainMenu->AddToViewport();
+
+			// Bind Event to when the quit button is pressed in the main menu
+			WidgetMainMenu->OnRequestQuitGame.AddDynamic(this, &AGM_MainMenu::QuitGame);
+			// Bind Event to when any button which opens a menu is pressed in the main menu
+			WidgetMainMenu->OnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 	}
 
 	PlayerController->bShowMouseCursor = true;
+
+	// Credits Menu
+	if (WidgetCreditsClass != nullptr)
+	{
+		WidgetCredits = CreateWidget<UW_Credits>(PlayerController, WidgetCreditsClass);
+		if (WidgetCredits)
+		{
+			WidgetCredits->Initialize();
+			WidgetCredits->AddToViewport();
+		}
+	}
+}
+
+// Closes the current menu and opens the selected menu
+void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
+{
+	UUserWidget* MenuToOpenRef = nullptr;
+
+	switch (MenuToOpen)
+	{
+	case Main:
+		MenuToOpenRef = WidgetMainMenu;
+		break;
+	case Credits:
+		MenuToOpenRef = WidgetCredits;
+		break;
+	case Options:
+		break;
+	case WeaponSelect:
+		break;
+	case Statistics:
+		break;
+	case Controls:
+		break;
+	}
+
+	// After getting the menu ref, set its widget to visible
+	if(MenuToOpenRef)
+		UBFL_Incursion::OpenMenu(CurrentMenu, MenuToOpenRef);
+}
+
+void AGM_MainMenu::QuitGame()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(), PlayerController, EQuitPreference::Quit, true);
 }

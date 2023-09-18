@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "P_PlayerCamera.h"
+#include "BFL_Incursion.h"
+#include "W_MainMenu.h"
+#include "W_Credits.h"
 
 #include "GM_MainMenu.generated.h"
 
@@ -23,15 +26,30 @@ private:
 
 	APlayerController* PlayerController;
 
+
+	// Main Menu
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UW_MainMenu> WidgetMainMenuClass;
-
 	// Widget Instance
 	UPROPERTY()
 		class UW_MainMenu* WidgetMainMenu;
 
+	// Credits Menu
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_Credits> WidgetCreditsClass;
+	// Widget Instance
+	UPROPERTY()
+		class UW_Credits* WidgetCredits;
+
+
 	virtual void BeginPlay();
 
 	void SetUpMenus();
+
+	UFUNCTION()
+	void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
+
+	UFUNCTION()
+	void QuitGame();
 
 };

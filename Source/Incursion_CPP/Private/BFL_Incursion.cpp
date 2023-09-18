@@ -32,3 +32,10 @@ void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
 		Button->SetStyle(NewButtonStyle);
 	}
 }
+
+void UBFL_Incursion::OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen)
+{
+	// Hides the current menu and displays the requested menu
+	CurrentMenu->SetVisibility(ESlateVisibility::Collapsed);
+	MenuToOpen->SetVisibility(ESlateVisibility::Visible);
+}
