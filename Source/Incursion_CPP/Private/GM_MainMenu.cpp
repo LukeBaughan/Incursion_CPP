@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+// ToDo: MAKE MENU CREATION CODE MORE OPTIMAL IN THE FUTURE 
+
+
 #include "GM_MainMenu.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,6 +17,21 @@ AGM_MainMenu::AGM_MainMenu()
 	
 	WidgetMainMenu = nullptr;
 
+	// Weapon Select Menu
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetWeaponSelectClassFinder(TEXT("/Game/Luke/UI/W_WeaponSelectBP"));
+	if (WidgetWeaponSelectClassFinder.Succeeded())
+		WidgetWeaponSelectClass = WidgetWeaponSelectClassFinder.Class;
+
+	WidgetWeaponSelect = nullptr;
+
+	// Controls Menu
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetControlsClassFinder(TEXT("/Game/Luke/UI/W_ControlsBP"));
+	if (WidgetControlsClassFinder.Succeeded())
+		WidgetControlsClass = WidgetControlsClassFinder.Class;
+
+	WidgetControls = nullptr;
+
+	// Credits Menu
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetCreditsClassFinder(TEXT("/Game/Luke/UI/W_CreditsBP"));
 	if (WidgetCreditsClassFinder.Succeeded())
 		WidgetCreditsClass = WidgetCreditsClassFinder.Class;
@@ -60,14 +78,47 @@ void AGM_MainMenu::SetUpMenus()
 
 	PlayerController->bShowMouseCursor = true;
 
+	// Weapon Select
+	if (WidgetWeaponSelectClass != nullptr)
+	{
+		WidgetWeaponSelect = CreateWidget<UW_WeaponSelect>(PlayerController, WidgetWeaponSelectClass);
+		if (WidgetWeaponSelect)
+		{
+			WidgetWeaponSelect->Initialise();
+			WidgetWeaponSelect->AddToViewport();
+
+			// Opens the level when a weapon is selected
+			WidgetWeaponSelect->OnWeaponSelected.AddDynamic(this, &AGM_MainMenu::StartGame);
+			// Set Up Back Button Delegate
+			WidgetWeaponSelect->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
+		}
+	}
+	
+	// Controls
+	if (WidgetControlsClass != nullptr)
+	{
+		WidgetControls = CreateWidget<UW_Controls>(PlayerController, WidgetControlsClass);
+		if (WidgetControls)
+		{
+			WidgetControls->Initialise();
+			WidgetControls->AddToViewport();
+
+			// Set Up Back Button Delegate
+			WidgetControls->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
+		}
+	}
+
 	// Credits Menu
 	if (WidgetCreditsClass != nullptr)
 	{
 		WidgetCredits = CreateWidget<UW_Credits>(PlayerController, WidgetCreditsClass);
 		if (WidgetCredits)
 		{
-			WidgetCredits->Initialize();
+			WidgetCredits->Initialise();
 			WidgetCredits->AddToViewport();
+
+			// Set Up Back Button Delegate
+			WidgetCredits->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 	}
 }
@@ -88,16 +139,23 @@ void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
 	case Options:
 		break;
 	case WeaponSelect:
+		MenuToOpenRef = WidgetWeaponSelect;
 		break;
 	case Statistics:
 		break;
 	case Controls:
+		MenuToOpenRef = WidgetControls;
 		break;
 	}
 
 	// After getting the menu ref, set its widget to visible
 	if(MenuToOpenRef)
 		UBFL_Incursion::OpenMenu(CurrentMenu, MenuToOpenRef);
+}
+
+void AGM_MainMenu::StartGame()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_1"), true);
 }
 
 void AGM_MainMenu::QuitGame()

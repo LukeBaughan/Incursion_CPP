@@ -8,6 +8,8 @@
 #include "BFL_Incursion.h"
 #include "W_MainMenu.h"
 #include "W_Credits.h"
+#include "W_Controls.h"
+#include "W_WeaponSelect.h"
 
 #include "GM_MainMenu.generated.h"
 
@@ -34,6 +36,19 @@ private:
 	UPROPERTY()
 		class UW_MainMenu* WidgetMainMenu;
 
+	// Weapon Select Menu
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_WeaponSelect> WidgetWeaponSelectClass;
+	UPROPERTY()
+		class UW_WeaponSelect* WidgetWeaponSelect;
+
+	// Controls Menu
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_Controls> WidgetControlsClass;
+	// Widget Instance
+	UPROPERTY()
+		class UW_Controls* WidgetControls;
+
 	// Credits Menu
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UW_Credits> WidgetCreditsClass;
@@ -45,6 +60,9 @@ private:
 	virtual void BeginPlay();
 
 	void SetUpMenus();
+
+	UFUNCTION()
+		void StartGame();
 
 	UFUNCTION()
 	void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);

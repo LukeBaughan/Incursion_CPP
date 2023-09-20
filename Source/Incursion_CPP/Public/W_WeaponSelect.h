@@ -5,23 +5,25 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "W_BackButton.h"
+#include "W_WeaponSelect.generated.h"
 
-#include "W_Credits.generated.h"
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponSelected);
 
-/**
- * 
- */
 UCLASS()
-class INCURSION_CPP_API UW_Credits : public UUserWidget
+class INCURSION_CPP_API UW_WeaponSelect : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category = "UI")
 		UW_BackButton* BackButton;
-	
+
+	UPROPERTY(BlueprintCallable)
+		FOnWeaponSelected OnWeaponSelected;
+
 	UFUNCTION(BlueprintNativeEvent)
 		void Initialise();
+
 	
 };

@@ -5,23 +5,22 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "W_BackButton.h"
-
-#include "W_Credits.generated.h"
+#include "W_Controls.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INCURSION_CPP_API UW_Credits : public UUserWidget
+class INCURSION_CPP_API UW_Controls : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Category = "UI")
 		UW_BackButton* BackButton;
-	
+
 	UFUNCTION(BlueprintNativeEvent)
 		void Initialise();
-	
+
 };
