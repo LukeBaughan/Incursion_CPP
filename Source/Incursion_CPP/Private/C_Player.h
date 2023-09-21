@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "A_Gun.h"
 
 #include "C_Player.generated.h"
 
@@ -24,6 +25,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// Gun
+	AA_Gun* Gun;
+	USkeletalMeshComponent* GunPositionMesh;
 
 public:	
 	// Called every frame

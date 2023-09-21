@@ -12,8 +12,17 @@ AC_Player::AC_Player()
 	// Sets up the camera and attaches it to the capsule
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(GetCapsuleComponent());
+	CameraComponent->bUsePawnControlRotation = true;
+
+	CameraComponent->SetRelativeLocation(FVector(-39.5f, 0.0f, 64.2f));
 
 	MovementComponent = GetCharacterMovement();
+	MovementComponent->bOrientRotationToMovement = false;
+
+	Gun = NULL;
+	GunPositionMesh = NULL;
+	GunPositionMesh->bHiddenInGame = false;///////CHANGE TO TRUE WHEN DONE
+
 }
 
 // Called when the game starts or when spawned
@@ -37,8 +46,10 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Sets the chaaracter to allow looking around (left/right/up/down)
+		// Allows the player to still move when looking up/ down
+	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
-	bUseControllerRotationPitch = true;
+	bUseControllerRotationRoll = false;
 
 	// Mouse Movement Inputs 
 	// "Text" is the input name in the project settings, &AC_Player::Function is the function to be called upon input
@@ -60,6 +71,7 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Called to bind functionality to input
 void AC_Player::Initialise()
 {
+
 }
 
 void AC_Player::LookLeftRight(float AxisValue)
