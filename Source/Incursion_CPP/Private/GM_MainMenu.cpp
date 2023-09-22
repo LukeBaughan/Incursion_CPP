@@ -37,6 +37,14 @@ AGM_MainMenu::AGM_MainMenu()
 		WidgetCreditsClass = WidgetCreditsClassFinder.Class;
 
 	WidgetCredits = nullptr;
+
+// TEST CODE
+/*
+	WidgetMenus.Add(WidgetMainMenu);
+	WidgetMenus.Add(WidgetWeappnSelect);
+	WidgetMenus.Add(Controls);
+ WidgetMenus.Add(Credits);
+*/
 }
 
 void AGM_MainMenu::BeginPlay()
@@ -122,6 +130,32 @@ void AGM_MainMenu::SetUpMenus()
 		}
 	}
 }
+
+// TEST FUNCTION (Havent tested in UE5; created with GitHub IOS app)
+/*
+void AGM_MainMenu::SetUpMenusTest()
+{
+
+// Iterates through each menu widget and set them up
+	for(UUserWidget* WidgetMenu : WidgetMenus)
+	{
+		if(WidgetMenu != nullptr)
+		{
+			WidgetMenu = CreateMenu<WidgetMenu.Class>(PlayerControler, WidgetMenu.Class);
+// If the created menu is valid, initialise it and and it to the players viewport
+			if(WidgetMenu)
+			{
+				WidgetMenu.Initialise();
+				WidgetMenu.AddToViewport();
+
+				WidgetMenu->BackButton->ButtonOnRequesOpenMenu.AddDynamic(this, &UGM_MainMenu::OpenMenu);
+				if(WidgetMenu->QuitButton)
+					WidgetMenu->QuitButton->OnRequestQuitGame.AddDynamic(this, &AGM_MainMenu::QuitGame);
+			}
+		}
+	}
+}
+*/
 
 // Closes the current menu and opens the selected menu
 void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
