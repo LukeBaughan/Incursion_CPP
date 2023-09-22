@@ -55,6 +55,9 @@ private:
 	// Widget Instance
 	UPROPERTY()
 		class UW_Credits* WidgetCredits;
+		
+		UPROPERTY(EditAnywhere)
+		TArray<UUserWidget*> MenuWidgets;
 
 
 	virtual void BeginPlay();
