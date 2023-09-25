@@ -26,9 +26,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+		UCameraComponent* CameraComponent;
+
 	// Gun
-	AA_Gun* Gun;
-	USkeletalMeshComponent* GunPositionMesh;
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+		AA_Gun* Gun;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+		USkeletalMeshComponent* GunPositionMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+		FTransform GunPositonMeshTransform;
 
 public:	
 	// Called every frame
@@ -43,7 +52,7 @@ private:
 	void LookLeftRight(float AxisValue);
 	void LookUpDown(float AxisValue);
 
-	UCameraComponent* CameraComponent;
+	FVector CameraSpawnLocation;
 	float MouseSensitivity = 1.0f;
 
 	// Movement

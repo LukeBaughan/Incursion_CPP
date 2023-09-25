@@ -14,7 +14,7 @@
 #include "GM_MainMenu.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class INCURSION_CPP_API AGM_MainMenu : public AGameModeBase
@@ -55,22 +55,23 @@ private:
 	// Widget Instance
 	UPROPERTY()
 		class UW_Credits* WidgetCredits;
-		
-		UPROPERTY(EditAnywhere)
-		TArray<UUserWidget*> MenuWidgets;
+
+	UPROPERTY(EditAnywhere)
+		TArray<UUserWidget*> WidgetMenus;
 
 
 	virtual void BeginPlay();
 
 	void SetUpMenus();
+	void SetUpMenusTest();
 
 	UFUNCTION()
 		void StartGame();
 
 	UFUNCTION()
-	void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
+		void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
 
 	UFUNCTION()
-	void QuitGame();
+		void QuitGame();
 
 };

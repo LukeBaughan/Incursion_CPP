@@ -20,8 +20,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		USkeletalMeshComponent* GunMesh;
 
+	UPROPERTY(EditAnywhere, Category = "Mesh")
+		FVector GunMeshSpawnLocation;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Properties")
-		UArrowComponent* ShootTransform;
+		UArrowComponent* ShootTransformArrow;
+
+	UPROPERTY(EditAnywhere, Category = "Properties")
+		FTransform ShootTransform;
 
 protected:
 	// Called when the game starts or when spawned

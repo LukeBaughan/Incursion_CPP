@@ -10,11 +10,13 @@
 
 AGM_MainMenu::AGM_MainMenu()
 {
+	DefaultPawnClass = NULL;
+
 	// Gets a blueprint of each menu widget to set each class reference
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetMainMenuClassFinder(TEXT("/Game/Luke/UI/W_MainMenuBP"));
 	if (WidgetMainMenuClassFinder.Succeeded())
 		WidgetMainMenuClass = WidgetMainMenuClassFinder.Class;
-	
+
 	WidgetMainMenu = nullptr;
 
 	// Weapon Select Menu
@@ -38,13 +40,14 @@ AGM_MainMenu::AGM_MainMenu()
 
 	WidgetCredits = nullptr;
 
-// TEST CODE
-/*
+	// TEST CODE
+	/*
 	WidgetMenus.Add(WidgetMainMenu);
-	WidgetMenus.Add(WidgetWeappnSelect);
-	WidgetMenus.Add(Controls);
- WidgetMenus.Add(Credits);
-*/
+	WidgetMenus.Add(WidgetWeaponSelect);
+	WidgetMenus.Add(WidgetControls);
+	WidgetMenus.Add(WidgetCredits);
+	*/
+
 }
 
 void AGM_MainMenu::BeginPlay()
@@ -101,7 +104,7 @@ void AGM_MainMenu::SetUpMenus()
 			WidgetWeaponSelect->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 	}
-	
+
 	// Controls
 	if (WidgetControlsClass != nullptr)
 	{
@@ -136,20 +139,20 @@ void AGM_MainMenu::SetUpMenus()
 void AGM_MainMenu::SetUpMenusTest()
 {
 
-// Iterates through each menu widget and set them up
-	for(UUserWidget* WidgetMenu : WidgetMenus)
+	// Iterates through each menu widget and set them up
+	for (UUserWidget* WidgetMenu : WidgetMenus)
 	{
-		if(WidgetMenu != nullptr)
+		if (WidgetMenu != nullptr)
 		{
-			WidgetMenu = CreateMenu<WidgetMenu.Class>(PlayerControler, WidgetMenu.Class);
-// If the created menu is valid, initialise it and and it to the players viewport
-			if(WidgetMenu)
+			WidgetMenu = CreateWidget<UUserWidget>(PlayerController, WidgetMenu->GetClass());
+			// If the created menu is valid, initialise it and and it to the players viewport
+			if (WidgetMenu)
 			{
-				WidgetMenu.Initialise();
-				WidgetMenu.AddToViewport();
+				//WidgetMenu->init
+				WidgetMenu->AddToViewport();
 
 				WidgetMenu->BackButton->ButtonOnRequesOpenMenu.AddDynamic(this, &UGM_MainMenu::OpenMenu);
-				if(WidgetMenu->QuitButton)
+				if (WidgetMenu->QuitButton)
 					WidgetMenu->QuitButton->OnRequestQuitGame.AddDynamic(this, &AGM_MainMenu::QuitGame);
 			}
 		}
@@ -183,7 +186,7 @@ void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
 	}
 
 	// After getting the menu ref, set its widget to visible
-	if(MenuToOpenRef)
+	if (MenuToOpenRef)
 		UBFL_Incursion::OpenMenu(CurrentMenu, MenuToOpenRef);
 }
 

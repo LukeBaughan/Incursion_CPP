@@ -2,6 +2,7 @@
 
 
 #include "C_Player.h"
+#include "UObject/ConstructorHelpers.h"
 
 // Sets default values
 AC_Player::AC_Player()
@@ -10,19 +11,38 @@ AC_Player::AC_Player()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Sets up the camera and attaches it to the capsule
+
+	CameraSpawnLocation = FVector(-39.5f, 0.0f, 64.2f);
+
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(GetCapsuleComponent());
 	CameraComponent->bUsePawnControlRotation = true;
 
-	CameraComponent->SetRelativeLocation(FVector(-39.5f, 0.0f, 64.2f));
+	CameraComponent->SetRelativeLocation(CameraSpawnLocation);
 
 	MovementComponent = GetCharacterMovement();
 	MovementComponent->bOrientRotationToMovement = false;
 
-	Gun = NULL;
-	GunPositionMesh = NULL;
-	GunPositionMesh->bHiddenInGame = false;///////CHANGE TO TRUE WHEN DONE
 
+	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
+
+	GunPositonMeshTransform = FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector(1.0f, 1.0f, 1.0f));
+
+	Gun = NULL;
+	GunPositionMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh"));
+	GunPositionMesh->SetupAttachment(CameraComponent);
+
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> GunPositionMeshFinder(TEXT("/Game/MilitaryWeapSilver/Weapons/Shotgun_A"));
+	if (GunPositionMeshFinder.Succeeded())
+	{
+		GunPositionMesh->SetSkeletalMesh(GunPositionMeshFinder.Object);
+		GunPositionMesh->SetRelativeLocationAndRotation(GunPositonMeshTransform.GetLocation(), GunPositonMeshTransform.GetRotation());
+		GunPositionMesh->bHiddenInGame = false;///////CHANGE TO TRUE WHEN DONE
+		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: GunPositionMesh"));
+	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("Unable to set static mesh for C_Player: GunPositionMesh"));
 }
 
 // Called when the game starts or when spawned

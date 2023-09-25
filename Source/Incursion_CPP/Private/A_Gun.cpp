@@ -9,6 +9,9 @@ AA_Gun::AA_Gun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GunMeshSpawnLocation = FVector::Zero();
+	ShootTransform = FTransform(FRotator(0.0f, 90.0f, 0.0f), FVector(0.0f, 56.0f, 11.0f), FVector(1.0f, 1.0f, 1.0f));
+
 	// Sets up the gun skeletal mesh component
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 	GunMesh->SetupAttachment(RootComponent);
@@ -18,7 +21,7 @@ AA_Gun::AA_Gun()
 	if (GunMeshAsset.Succeeded())
 	{
 		GunMesh->SetSkeletalMesh(GunMeshAsset.Object);
-		GunMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+		GunMesh->SetRelativeLocation(GunMeshSpawnLocation);
 		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for AA_Gun."));
 	}
 	else
@@ -26,11 +29,11 @@ AA_Gun::AA_Gun()
 
 
 	// Sets up the shoot transform arrow component
-	ShootTransform = CreateDefaultSubobject<UArrowComponent>(TEXT("Shoot Transform"));
-	ShootTransform->SetupAttachment(GunMesh);
+	ShootTransformArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Shoot Transform"));
+	ShootTransformArrow->SetupAttachment(GunMesh);
 
-	ShootTransform->SetRelativeLocation(FVector(0.0f, 56.0f, 11.0f));
-	ShootTransform->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	ShootTransformArrow->SetRelativeLocation(ShootTransform.GetLocation());
+	ShootTransformArrow->SetRelativeRotation(ShootTransform.GetRotation());
 
 }
 
