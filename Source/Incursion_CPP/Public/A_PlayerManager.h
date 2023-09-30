@@ -19,7 +19,8 @@ class INCURSION_CPP_API AA_PlayerManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AA_PlayerManager();
-	void Initialise();
+
+	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,7 +35,9 @@ private:
 
 	ASpawnPoint* SpawnPoint;
 	FVector PlayerSpawnLocation;
-	FActorSpawnParameters PlayerSpawnParams;
+	FActorSpawnParameters PlayerSpawnParameters;
+
+	TSubclassOf<class AA_Gun> PlayerSpawnWeaponClass;
 
 public:
 	// Called every frame

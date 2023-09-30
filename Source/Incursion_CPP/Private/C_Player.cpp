@@ -38,7 +38,8 @@ AC_Player::AC_Player()
 	{
 		GunPositionMesh->SetSkeletalMesh(GunPositionMeshFinder.Object);
 		GunPositionMesh->SetRelativeLocationAndRotation(GunPositonMeshTransform.GetLocation(), GunPositonMeshTransform.GetRotation());
-		GunPositionMesh->bHiddenInGame = false;///////CHANGE TO TRUE WHEN DONE
+		// Sets the mesh to be hidden in game (its only used in the viewport to test the position of gun models being held)
+		GunPositionMesh->bHiddenInGame = true;
 		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: GunPositionMesh"));
 	}
 	else
@@ -78,10 +79,13 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("Look Up / Down", this, &AC_Player::LookUpDown);
 	PlayerInputComponent->BindAxis("Look Up / Down", this, &AC_Player::LookUpDown);
 
+	// IE = Input Event
+	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AC_Player::PerformPrimaryAction);
+
 	// Keyboard Movement Inputs
 	PlayerInputComponent->BindAxis("Move Forward / Backwards", this, &AC_Player::MoveForwardBackwards);
 	PlayerInputComponent->BindAxis("Move Left / Right", this, &AC_Player::MoveLeftRight);
-	// IE = Input Event
+
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AC_Player::StartPerformSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AC_Player::EndPerformSprint);
 
@@ -89,9 +93,22 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 }
 
 // Called to bind functionality to input
-void AC_Player::Initialise()
+void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 {
+	GunSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+	// Spawns the gun in the same posiiton as the gun position mesh
+	Gun = GetWorld()->SpawnActor<AA_Gun>(GunPositionMesh->GetComponentLocation(), GunPositionMesh->GetComponentRotation(), GunSpawnParameters);
+
+	// Attaches the gun to the character
+	if (Gun)
+		Gun->AttachToComponent(CameraComponent, FAttachmentTransformRules::KeepWorldTransform); //NEED SOCKET NAME WHEN PLAYER MESH IS SET UP + CHANGE LOCATION FROM GUNPOS->CHARMESH
+}
+
+void AC_Player::PerformPrimaryAction()
+{
+	// TEMP: Shoots the gun
+	Gun->ShootLineTrace();
 }
 
 void AC_Player::LookLeftRight(float AxisValue)
@@ -126,6 +143,8 @@ void AC_Player::MoveLeftRight(float AxisValue)
 		this->AddMovementInput(this->GetActorRightVector(), AxisValue);
 	}
 }
+
+
 
 void AC_Player::SetSprint(bool Sprint)
 {

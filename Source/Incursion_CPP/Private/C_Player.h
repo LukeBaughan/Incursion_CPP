@@ -20,8 +20,6 @@ public:
 	// Sets default values for this character's properties
 	AC_Player();
 
-	void Initialise();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,6 +44,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void Initialise(TSubclassOf<class AA_Gun> GunSpawnClass);
+
 private:
 
 	// Camera
@@ -65,6 +65,8 @@ private:
 	void EndPerformSprint();
 	void PerformJump();
 
+	void PerformPrimaryAction();
+
 	void SetSprint(bool Sprint);
 
 	float ForwardWalkAmount = 0.0f;
@@ -76,4 +78,6 @@ private:
 	float SprintAcceleration = 4048.0f;
 
 	bool IsDead = false;
+
+	FActorSpawnParameters GunSpawnParameters;
 };

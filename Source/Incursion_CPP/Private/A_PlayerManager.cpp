@@ -9,6 +9,13 @@ AA_PlayerManager::AA_PlayerManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	PlayerController = nullptr;
+	PlayerCharacter = nullptr;
+
+	SpawnPoint = nullptr;
+	PlayerSpawnLocation = FVector::Zero();
+
+	PlayerSpawnWeaponClass = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -25,9 +32,10 @@ void AA_PlayerManager::Tick(float DeltaTime)
 
 }
 
-void AA_PlayerManager::Initialise() 
+void AA_PlayerManager::Initialise(TSubclassOf<AA_Gun> SpawnWeapon) 
 {
 	PlayerCharacter = nullptr;
+	PlayerSpawnWeaponClass = SpawnWeapon;
 
 	SetUpPlayerController();
 	SetUpPlayer();
@@ -62,10 +70,10 @@ void AA_PlayerManager::SetUpPlayer()
 		//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), PlayerSpawnLocation.X));
 
 		// Spawns and inits the player character at the spawn location
-		PlayerSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		PlayerSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerSpawnLocation, FRotator(0.0f, 0.0f, 0.0f), PlayerSpawnParams);
-		PlayerCharacter->Initialise();
+		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerSpawnLocation, FRotator(0.0f, 0.0f, 0.0f), PlayerSpawnParameters);
+		PlayerCharacter->Initialise(PlayerSpawnWeaponClass);
 
 		// If theres a valid player character and controller, make the controller possess the character
 		if (PlayerCharacter && PlayerController)

@@ -7,6 +7,7 @@
 #include "A_PlayerManager.h"
 #include "C_Player.h"
 #include "PC_PlayerController.h"
+#include "A_Gun.h"
 
 #include "GM_Incursion.generated.h"
 
@@ -25,6 +26,10 @@ protected:
 	virtual void BeginPlay();
 
 private:
-	//TSubclassOf<AA_PlayerManager> playerManager;
-	AA_PlayerManager* playerManager;
+	AA_PlayerManager* PlayerManager;
+
+	void ExecutePreGameFunctions();
+
+	void SpawnPlayerManager();
+	void SetUpPlayerManager();
 };

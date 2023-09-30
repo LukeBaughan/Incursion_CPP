@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
+#include "Camera/CameraComponent.h"
 
 #include "A_Gun.generated.h"
 
@@ -36,5 +37,13 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void Initialise(UCameraComponent* FirstPersonCamera);
+
+	void ShootLineTrace(); // MAKE PRIVATE
+
+private:
+
+	UCameraComponent* PlayerCamera;
 
 };
