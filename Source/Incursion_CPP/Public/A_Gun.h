@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
 #include "Camera/CameraComponent.h"
+#include "BFL_Incursion.h"
 
 #include "A_Gun.generated.h"
 
@@ -34,6 +35,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	float Damage;
+	float Range;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -45,5 +49,5 @@ public:
 private:
 
 	UCameraComponent* PlayerCamera;
-
+	UBFL_Incursion* BFL_Incursion;
 };

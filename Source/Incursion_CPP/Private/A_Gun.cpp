@@ -10,8 +10,11 @@ AA_Gun::AA_Gun()
 	PrimaryActorTick.bCanEverTick = true;
 
 	PlayerCamera = nullptr;
+	BFL_Incursion = NewObject<UBFL_Incursion>();
 
 	GunMeshSpawnLocation = FVector::Zero();
+	Damage = 25.0f;
+	Range = 10000.0f;
 
 	ShootTransform = FTransform(FRotator(0.0f, 90.0f, 0.0f), FVector(0.0f, 56.0f, 11.0f), FVector(1.0f, 1.0f, 1.0f));
 
@@ -59,7 +62,11 @@ void AA_Gun::Initialise(UCameraComponent* FirstPersonCamera)
 	PlayerCamera = FirstPersonCamera;
 }
 
+// Shoots the gun from the camera's position
 void AA_Gun::ShootLineTrace()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("A_Gun: Shot Fired!"));
+	FVector ShotStartLocation = PlayerCamera->GetComponentLocation();
+	FVector ShotEndLocation = ShotStartLocation + (PlayerCamera->GetForwardVector() * Range);
+
+	BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShotStartLocation, ShotEndLocation, Damage);
 }

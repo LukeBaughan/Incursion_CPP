@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Components/Button.h"
+#include "AttenuationWeaponShot.h"
+
 #include "BFL_Incursion.generated.h"
 
 /**
@@ -22,6 +24,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	static void OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen);
+
+	FVector LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound = nullptr);
+
+private:
+
+	UAttenuationWeaponShot* AttWeaponShot;
+
 };
 
 UENUM(BlueprintType)

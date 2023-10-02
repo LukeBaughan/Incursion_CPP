@@ -3,6 +3,8 @@
 #include "BFL_Incursion.h"
 #include "Math/Color.h"
 #include "Styling/SlateBrush.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h" 
 
 void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
 {
@@ -38,4 +40,25 @@ void UBFL_Incursion::OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen)
 	// Hides the current menu and displays the requested menu
 	CurrentMenu->SetVisibility(ESlateVisibility::Collapsed);
 	MenuToOpen->SetVisibility(ESlateVisibility::Visible);
+}
+
+// Performs a line trace and damages the first enemy if hit
+FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound)
+{
+	FHitResult HitResult;
+	FCollisionObjectQueryParams CollisionParameters;
+
+	// ECC_GameTraceChannel2 = Enemy Collision Object Channel
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
+
+	if(ShootSound)
+		UGameplayStatics::PlaySoundAtLocation(WorldObject, ShootSound, StartLocation, 1.0f, 1.0f, 0.0f, AttWeaponShot);
+
+	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);
+
+
+	// Debug Line
+	DrawDebugLine(WorldObject, StartLocation, EndLocation, FColor::Red, false, 3.0f, 0, 2.0f);
+
+	return HitResult.Location;
 }

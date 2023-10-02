@@ -103,6 +103,8 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 	// Attaches the gun to the character
 	if (Gun)
 		Gun->AttachToComponent(CameraComponent, FAttachmentTransformRules::KeepWorldTransform); //NEED SOCKET NAME WHEN PLAYER MESH IS SET UP + CHANGE LOCATION FROM GUNPOS->CHARMESH
+
+	Gun->Initialise(CameraComponent);
 }
 
 void AC_Player::PerformPrimaryAction()
