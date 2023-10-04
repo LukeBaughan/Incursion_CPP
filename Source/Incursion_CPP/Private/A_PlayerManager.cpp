@@ -16,6 +16,10 @@ AA_PlayerManager::AA_PlayerManager()
 	PlayerSpawnLocation = FVector::Zero();
 
 	PlayerSpawnWeaponClass = nullptr;
+
+	static ConstructorHelpers::FClassFinder<AC_Player> PlayerBP_ClassFinder(TEXT("/Game/Luke/Player/C_PlayerBP"));
+	if (PlayerBP_ClassFinder.Succeeded())
+		PlayerBP_Class = PlayerBP_ClassFinder.Class;
 }
 
 // Called when the game starts or when spawned
@@ -72,22 +76,20 @@ void AA_PlayerManager::SetUpPlayer()
 		// Spawns and inits the player character at the spawn location
 		PlayerSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerSpawnLocation, FRotator(0.0f, 0.0f, 0.0f), PlayerSpawnParameters);
-		PlayerCharacter->Initialise(PlayerSpawnWeaponClass);
+		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerBP_Class, PlayerSpawnLocation, FRotator::ZeroRotator, PlayerSpawnParameters);
+	
+		if(PlayerCharacter)
+			PlayerCharacter->Initialise(PlayerSpawnWeaponClass);
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Player Character NULL")));
 
 		// If theres a valid player character and controller, make the controller possess the character
 		if (PlayerCharacter && PlayerController)
-		{
 			PlayerController->Possess(PlayerCharacter);
-		}
 		else
-		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Player Controller or Character NULL")));
-		}
 	}
 	else
-	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Spawn Point NULL")));
-	}
 }
 

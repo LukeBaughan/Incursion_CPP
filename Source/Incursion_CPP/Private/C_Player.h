@@ -27,15 +27,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 		UCameraComponent* CameraComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Arms")
+		USkeletalMeshComponent* ArmsMesh;
+
 	// Gun
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 		AA_Gun* Gun;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 		USkeletalMeshComponent* GunPositionMesh;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-		FTransform GunPositonMeshTransform;
 
 public:	
 	// Called every frame
@@ -48,6 +48,10 @@ public:
 
 private:
 
+	// Capsule Collider
+	float CapsuleHalfHeightSize;
+	float CapsuleRadiusSize;
+
 	// Camera
 	void LookLeftRight(float AxisValue);
 	void LookUpDown(float AxisValue);
@@ -56,7 +60,6 @@ private:
 	float MouseSensitivity = 1.0f;
 
 	// Movement
-
 	UCharacterMovementComponent* MovementComponent;
 
 	void MoveForwardBackwards(float AxisValue);
@@ -77,7 +80,13 @@ private:
 	float SprintSpeed = 1200.0f;
 	float SprintAcceleration = 4048.0f;
 
+	// Other
 	bool IsDead = false;
 
+	// Arms
+	FTransform ArmsMeshTransform;
+
+	//Gun
+	FTransform GunPositonMeshTransform;
 	FActorSpawnParameters GunSpawnParameters;
 };

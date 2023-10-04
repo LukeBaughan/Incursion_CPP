@@ -10,8 +10,14 @@ AC_Player::AC_Player()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Sets up the camera and attaches it to the capsule
+	// Sets the shape of the capsule collider
+	CapsuleHalfHeightSize = 96.0f;
+	CapsuleRadiusSize = 55.0f;
 
+	GetCapsuleComponent()->SetCapsuleHalfHeight(CapsuleHalfHeightSize);
+	GetCapsuleComponent()->SetCapsuleRadius(CapsuleRadiusSize);
+
+	// Sets up the camera and attaches it to the capsule
 	CameraSpawnLocation = FVector(-39.5f, 0.0f, 64.2f);
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -23,10 +29,25 @@ AC_Player::AC_Player()
 	MovementComponent = GetCharacterMovement();
 	MovementComponent->bOrientRotationToMovement = false;
 
+	// Sets up the player arms mesh
+	ArmsMeshTransform = FTransform(FRotator(1.73f, -80.15f, -6.0f), FVector(-5.33f, -15.25f, -164.54f), FVector::One());
+
+	ArmsMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms Mesh"));
+	ArmsMesh->SetupAttachment(CameraComponent);
+	ArmsMesh->SetRelativeTransform(ArmsMeshTransform);
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ArmsMeshFinder(TEXT("/Game/FPS_Military_Arms/Mesh/SK_FPS_Military_Arm_Forest"));
+	if (ArmsMeshFinder.Succeeded())
+	{
+		ArmsMesh->SetSkeletalMesh(ArmsMeshFinder.Object);
+		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: ArmsMesh"));
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: ArmsMesh"));
 
 	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
 
-	GunPositonMeshTransform = FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector(1.0f, 1.0f, 1.0f));
+	GunPositonMeshTransform = FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector::One());
 
 	Gun = NULL;
 	GunPositionMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh"));
@@ -37,13 +58,13 @@ AC_Player::AC_Player()
 	if (GunPositionMeshFinder.Succeeded())
 	{
 		GunPositionMesh->SetSkeletalMesh(GunPositionMeshFinder.Object);
-		GunPositionMesh->SetRelativeLocationAndRotation(GunPositonMeshTransform.GetLocation(), GunPositonMeshTransform.GetRotation());
+		GunPositionMesh->SetRelativeTransform(GunPositonMeshTransform);
 		// Sets the mesh to be hidden in game (its only used in the viewport to test the position of gun models being held)
 		GunPositionMesh->bHiddenInGame = true;
 		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: GunPositionMesh"));
 	}
 	else
-		UE_LOG(LogTemp, Warning, TEXT("Unable to set static mesh for C_Player: GunPositionMesh"));
+		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: GunPositionMesh"));
 }
 
 // Called when the game starts or when spawned

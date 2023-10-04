@@ -32,6 +32,7 @@ private:
 
 	APC_PlayerController* PlayerController;
 	AC_Player* PlayerCharacter;
+	TSubclassOf<class AC_Player> PlayerBP_Class;
 
 	ASpawnPoint* SpawnPoint;
 	FVector PlayerSpawnLocation;
