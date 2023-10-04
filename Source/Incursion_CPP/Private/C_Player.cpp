@@ -45,13 +45,22 @@ AC_Player::AC_Player()
 	else
 		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: ArmsMesh"));
 
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ArmsMeshAnimFinder(TEXT("/Game/Luke/Player/Animation/ABP_Player_Base"));
+	if (ArmsMeshAnimFinder.Succeeded())
+	{
+		ArmsMesh->SetAnimInstanceClass(ArmsMeshAnimFinder.Class);
+		UE_LOG(LogTemp, Warning, TEXT("Anim class successfully set for C_Player: ArmsMeshAnim"));
+	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Unable to set anim class for C_Player: ArmsMeshAnim"));
+
 	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
 
 	GunPositonMeshTransform = FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector::One());
 
 	Gun = NULL;
 	GunPositionMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh"));
-	GunPositionMesh->SetupAttachment(CameraComponent);
+	GunPositionMesh->SetupAttachment(ArmsMesh, FName(TEXT("hand_rGrip")));
 
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> GunPositionMeshFinder(TEXT("/Game/MilitaryWeapSilver/Weapons/Shotgun_A"));
@@ -119,11 +128,11 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 	GunSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// Spawns the gun in the same posiiton as the gun position mesh
-	Gun = GetWorld()->SpawnActor<AA_Gun>(GunPositionMesh->GetComponentLocation(), GunPositionMesh->GetComponentRotation(), GunSpawnParameters);
+	Gun = GetWorld()->SpawnActor<AA_Gun>(GunSpawnClass, GunPositionMesh->GetComponentLocation(), GunPositionMesh->GetComponentRotation(), GunSpawnParameters);
 
 	// Attaches the gun to the character
 	if (Gun)
-		Gun->AttachToComponent(CameraComponent, FAttachmentTransformRules::KeepWorldTransform); //NEED SOCKET NAME WHEN PLAYER MESH IS SET UP + CHANGE LOCATION FROM GUNPOS->CHARMESH
+		Gun->AttachToComponent(ArmsMesh, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("hand_rGrip")));
 
 	Gun->Initialise(CameraComponent);
 }

@@ -10,6 +10,8 @@
 
 AGM_MainMenu::AGM_MainMenu()
 {
+
+	GameInstance = nullptr;
 	DefaultPawnClass = NULL;
 
 	// Gets a blueprint of each menu widget to set each class reference
@@ -53,6 +55,8 @@ AGM_MainMenu::AGM_MainMenu()
 void AGM_MainMenu::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameInstance = Cast<UGI_Incursion>(GetGameInstance());
 
 	// Sets the player controller to the in-game player controller 
 	// index = 0 to get the first player controller (theres only one since its single-player)
@@ -190,8 +194,11 @@ void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
 		UBFL_Incursion::OpenMenu(CurrentMenu, MenuToOpenRef);
 }
 
-void AGM_MainMenu::StartGame()
+void AGM_MainMenu::StartGame(TSubclassOf<AA_Gun> SpawnWeaponClass)
 {
+	// Sets the spawn weapon in the game instance so that GM_Incursion can access it
+	GameInstance->SetSpawnWeaponClass(SpawnWeaponClass);
+
 	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_1"), true);
 }
 

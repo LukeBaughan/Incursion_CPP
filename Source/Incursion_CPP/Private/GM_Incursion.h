@@ -8,6 +8,7 @@
 #include "C_Player.h"
 #include "PC_PlayerController.h"
 #include "A_Gun.h"
+#include "GI_Incursion.h"
 
 #include "GM_Incursion.generated.h"
 
@@ -26,6 +27,8 @@ protected:
 	virtual void BeginPlay();
 
 private:
+
+	UGI_Incursion* GameInstance;
 	AA_PlayerManager* PlayerManager;
 
 	void ExecutePreGameFunctions();

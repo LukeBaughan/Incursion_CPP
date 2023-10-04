@@ -36,7 +36,7 @@ void AA_PlayerManager::Tick(float DeltaTime)
 
 }
 
-void AA_PlayerManager::Initialise(TSubclassOf<AA_Gun> SpawnWeapon) 
+void AA_PlayerManager::Initialise(TSubclassOf<class AA_Gun> SpawnWeapon) 
 {
 	PlayerCharacter = nullptr;
 	PlayerSpawnWeaponClass = SpawnWeapon;

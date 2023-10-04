@@ -10,6 +10,7 @@
 #include "W_Credits.h"
 #include "W_Controls.h"
 #include "W_WeaponSelect.h"
+#include "GI_Incursion.h"
 
 #include "GM_MainMenu.generated.h"
 
@@ -28,6 +29,7 @@ private:
 
 	APlayerController* PlayerController;
 
+	UGI_Incursion* GameInstance;
 
 	// Main Menu
 	UPROPERTY(EditAnywhere)
@@ -66,7 +68,7 @@ private:
 	void SetUpMenusTest();
 
 	UFUNCTION()
-		void StartGame();
+		void StartGame(TSubclassOf<class AA_Gun> SpawnWeaponClass);
 
 	UFUNCTION()
 		void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);

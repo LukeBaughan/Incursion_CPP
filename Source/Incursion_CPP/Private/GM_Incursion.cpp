@@ -5,8 +5,9 @@
 
 AGM_Incursion::AGM_Incursion()
 {
-	DefaultPawnClass = nullptr;
+	GameInstance = nullptr;
 
+	DefaultPawnClass = nullptr;
 	PlayerManager = nullptr;
 	PlayerControllerClass = APC_PlayerController::StaticClass();
 }
@@ -18,9 +19,12 @@ void AGM_Incursion::BeginPlay()
 
 void AGM_Incursion::ExecutePreGameFunctions()
 {
+	GameInstance = Cast<UGI_Incursion>(GetGameInstance());
+
 	SpawnPlayerManager();
 	SetUpPlayerManager();
 }
+
 
 void AGM_Incursion::SpawnPlayerManager()
 {
@@ -29,7 +33,5 @@ void AGM_Incursion::SpawnPlayerManager()
 
 void AGM_Incursion::SetUpPlayerManager()
 {
-	TSubclassOf<AA_Gun> SpawnWeapon;
-
-	PlayerManager->Initialise(SpawnWeapon);
+	PlayerManager->Initialise(GameInstance->GetSpawnWeaponClass());
 }

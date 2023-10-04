@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "W_BackButton.h"
+#include "A_Gun.h"
+
 #include "W_WeaponSelect.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponSelected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponSelected, TSubclassOf<class AA_Gun>, WeaponClass);
 
 UCLASS()
 class INCURSION_CPP_API UW_WeaponSelect : public UUserWidget
