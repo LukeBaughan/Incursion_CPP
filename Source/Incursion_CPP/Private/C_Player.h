@@ -11,6 +11,8 @@
 
 #include "C_Player.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoAmountChanged, int, MaxAmmo, int, CurrentAmmo);
+
 UCLASS()
 class AC_Player : public ACharacter
 {
@@ -38,6 +40,9 @@ protected:
 		USkeletalMeshComponent* GunPositionMesh;
 
 public:	
+
+	FOnAmmoAmountChanged OnAmmoAmountChanged;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -45,6 +50,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Initialise(TSubclassOf<class AA_Gun> GunSpawnClass);
+	void CallOnAmmoAmountChangedED();
 
 private:
 
@@ -89,4 +95,7 @@ private:
 	//Gun
 	FTransform GunPositonMeshTransform;
 	FActorSpawnParameters GunSpawnParameters;
+
+	UFUNCTION()
+	void OnGunShotFired();
 };

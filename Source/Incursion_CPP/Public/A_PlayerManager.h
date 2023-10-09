@@ -8,6 +8,7 @@
 #include "C_Player.h"
 #include "SpawnPoint.h"
 #include "PC_PlayerController.h"
+#include "W_HUD.h"
 
 #include "A_PlayerManager.generated.h"
 
@@ -20,7 +21,11 @@ public:
 	// Sets default values for this actor's properties
 	AA_PlayerManager();
 
+	APC_PlayerController* PlayerController;
+	UW_HUD* WidgetHUD;
+
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
+	void SetUpEventDispatchers();
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,7 +35,6 @@ private:
 	void SetUpPlayerController();
 	void SetUpPlayer();
 
-	APC_PlayerController* PlayerController;
 	AC_Player* PlayerCharacter;
 	TSubclassOf<class AC_Player> PlayerBP_Class;
 

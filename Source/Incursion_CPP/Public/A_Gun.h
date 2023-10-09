@@ -10,6 +10,8 @@
 
 #include "A_Gun.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShotFired);
+
 UCLASS()
 class INCURSION_CPP_API AA_Gun : public AActor
 {
@@ -18,6 +20,9 @@ class INCURSION_CPP_API AA_Gun : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AA_Gun();
+
+	float MaxAmmo;
+	float CurrentAmmo;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		USkeletalMeshComponent* GunMesh;
@@ -38,16 +43,24 @@ protected:
 	float Damage;
 	float Range;
 
+	virtual void PlayShootAnimation();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FOnShotFired OnShotFired;
+
 	void Initialise(UCameraComponent* FirstPersonCamera);
 
-	void ShootLineTrace(); // MAKE PRIVATE
+	void ShootOnceSequence(); // MAKE PRIVATE LATER
 
 private:
 
 	UCameraComponent* PlayerCamera;
 	UBFL_Incursion* BFL_Incursion;
+
+	bool Reloading;
+
+	void ShootLineTrace(); 
 };

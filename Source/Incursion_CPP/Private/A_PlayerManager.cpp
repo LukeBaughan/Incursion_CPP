@@ -2,6 +2,7 @@
 
 
 #include "A_PlayerManager.h"
+#include "W_HUD_Ammo.h"
 
 // Sets default values
 AA_PlayerManager::AA_PlayerManager()
@@ -93,3 +94,9 @@ void AA_PlayerManager::SetUpPlayer()
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Spawn Point NULL")));
 }
 
+void AA_PlayerManager::SetUpEventDispatchers()
+{
+	// Updates the ammo count when the player reloads/ shoots
+	PlayerCharacter->OnAmmoAmountChanged.AddDynamic(WidgetHUD->WidgetAmmo, &UW_HUD_Ammo::SetAmmoAmount);
+	PlayerCharacter->CallOnAmmoAmountChangedED();
+}

@@ -15,6 +15,10 @@ AA_Gun::AA_Gun()
 	GunMeshSpawnLocation = FVector::Zero();
 	Damage = 25.0f;
 	Range = 10000.0f;
+	MaxAmmo = 5;
+	CurrentAmmo = MaxAmmo;
+
+	Reloading = false;
 
 	ShootTransform = FTransform(FRotator(0.0f, 90.0f, 0.0f), FVector(0.0f, 56.0f, 11.0f), FVector(1.0f, 1.0f, 1.0f));
 
@@ -60,6 +64,27 @@ void AA_Gun::Tick(float DeltaTime)
 void AA_Gun::Initialise(UCameraComponent* FirstPersonCamera)
 {
 	PlayerCamera = FirstPersonCamera;
+}
+
+void AA_Gun::ShootOnceSequence()
+{
+	// Only shoots if the gun has ammo and isn't reloading
+	if (CurrentAmmo > 0)
+	{
+		if (!Reloading)
+		{
+			PlayShootAnimation();
+			ShootLineTrace();
+			// Decrease the current ammo by one after a shot is fired
+			CurrentAmmo--;
+			OnShotFired.Broadcast();
+		}
+	}
+}
+
+void AA_Gun::PlayShootAnimation()
+{
+	// Override in child classes
 }
 
 // Shoots the gun from the camera's position

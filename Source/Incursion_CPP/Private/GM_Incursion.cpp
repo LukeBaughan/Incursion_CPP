@@ -9,6 +9,8 @@ AGM_Incursion::AGM_Incursion()
 
 	DefaultPawnClass = nullptr;
 	PlayerManager = nullptr;
+	UI_Manager = nullptr;
+
 	PlayerControllerClass = APC_PlayerController::StaticClass();
 }
 
@@ -23,15 +25,33 @@ void AGM_Incursion::ExecutePreGameFunctions()
 
 	SpawnPlayerManager();
 	SetUpPlayerManager();
+	SetUpUI_Manager();
+	PlayerManager->SetUpEventDispatchers();
 }
 
 
 void AGM_Incursion::SpawnPlayerManager()
 {
-	PlayerManager = GetWorld()->SpawnActor<AA_PlayerManager>(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 0.0f, 0.0f));
+	PlayerManager = GetWorld()->SpawnActor<AA_PlayerManager>(FVector::Zero(), FRotator::ZeroRotator);
 }
 
 void AGM_Incursion::SetUpPlayerManager()
 {
-	PlayerManager->Initialise(GameInstance->GetSpawnWeaponClass());
+	if(PlayerManager)
+		PlayerManager->Initialise(GameInstance->GetSpawnWeaponClass());
+	else
+		UE_LOG(LogTemp, Error, TEXT("GM_Incursion: PlayerManager Invalid"));
+}
+
+// Spawns and sets up the UI manager 
+void AGM_Incursion::SetUpUI_Manager()
+{
+	UI_Manager = GetWorld()->SpawnActor<AA_UI_Manager>(FVector::Zero(), FRotator::ZeroRotator);
+
+	if (UI_Manager)
+		UI_Manager->Initialise(PlayerManager->PlayerController);
+	else
+		UE_LOG(LogTemp, Error, TEXT("GM_Incursion: UI_Manager Invalid"));
+
+	PlayerManager->WidgetHUD = UI_Manager->WidgetHUD;
 }

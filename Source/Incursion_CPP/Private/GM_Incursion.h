@@ -9,6 +9,7 @@
 #include "PC_PlayerController.h"
 #include "A_Gun.h"
 #include "GI_Incursion.h"
+#include "A_UI_Manager.h"
 
 #include "GM_Incursion.generated.h"
 
@@ -30,9 +31,11 @@ private:
 
 	UGI_Incursion* GameInstance;
 	AA_PlayerManager* PlayerManager;
+	AA_UI_Manager* UI_Manager;
 
 	void ExecutePreGameFunctions();
 
 	void SpawnPlayerManager();
 	void SetUpPlayerManager();
+	void SetUpUI_Manager();
 };

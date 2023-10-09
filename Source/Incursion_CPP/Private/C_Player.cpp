@@ -135,12 +135,13 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 		Gun->AttachToComponent(ArmsMesh, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("hand_rGrip")));
 
 	Gun->Initialise(CameraComponent);
+	Gun->OnShotFired.AddDynamic(this, &AC_Player::OnGunShotFired);
 }
 
 void AC_Player::PerformPrimaryAction()
 {
 	// TEMP: Shoots the gun
-	Gun->ShootLineTrace();
+	Gun->ShootOnceSequence();
 }
 
 void AC_Player::LookLeftRight(float AxisValue)
@@ -207,4 +208,14 @@ void AC_Player::PerformJump()
 {
 	if(!IsDead)
 		this->Jump();
+}
+
+void AC_Player::OnGunShotFired()
+{
+	CallOnAmmoAmountChangedED();
+}
+
+void AC_Player::CallOnAmmoAmountChangedED()
+{
+	OnAmmoAmountChanged.Broadcast(Gun->MaxAmmo, Gun->CurrentAmmo);
 }
