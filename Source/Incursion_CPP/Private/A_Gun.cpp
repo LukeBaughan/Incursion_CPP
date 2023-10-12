@@ -2,6 +2,7 @@
 
 #include "A_Gun.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AA_Gun::AA_Gun()
@@ -18,7 +19,7 @@ AA_Gun::AA_Gun()
 	MaxAmmo = 5;
 	CurrentAmmo = MaxAmmo;
 
-	Reloading = false;
+	CurrentlyReloading = false;
 
 	ShootTransform = FTransform(FRotator(0.0f, 90.0f, 0.0f), FVector(0.0f, 56.0f, 11.0f), FVector(1.0f, 1.0f, 1.0f));
 
@@ -26,11 +27,11 @@ AA_Gun::AA_Gun()
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 	GunMesh->SetupAttachment(RootComponent);
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> GunMeshAsset(TEXT("/Game/FPWeapon/Mesh/SK_FPGun"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> GunMeshFinder(TEXT("/Game/FPWeapon/Mesh/SK_FPGun"));
 
-	if (GunMeshAsset.Succeeded())
+	if (GunMeshFinder.Succeeded())
 	{
-		GunMesh->SetSkeletalMesh(GunMeshAsset.Object);
+		GunMesh->SetSkeletalMesh(GunMeshFinder.Object);
 		GunMesh->SetRelativeLocation(GunMeshSpawnLocation);
 		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for AA_Gun."));
 	}
@@ -45,6 +46,16 @@ AA_Gun::AA_Gun()
 	ShootTransformArrow->SetRelativeLocation(ShootTransform.GetLocation());
 	ShootTransformArrow->SetRelativeRotation(ShootTransform.GetRotation());
 
+	// Reload Sound
+	static ConstructorHelpers::FObjectFinder<USoundBase> ReloadSoundFinder(TEXT("/Game/MilitaryWeapDark/Sound/Rifle/Rifle_Reload_Cue"));
+
+	if (ReloadSoundFinder.Succeeded())
+	{
+		ReloadSound = ReloadSoundFinder.Object;
+		UE_LOG(LogTemp, Warning, TEXT("ReloadSound successfully set for AA_Gun."));
+	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("Failed to set ReloadSound for AA_Gun."));
 }
 
 // Called when the game starts or when spawned
@@ -71,7 +82,7 @@ void AA_Gun::ShootOnceSequence()
 	// Only shoots if the gun has ammo and isn't reloading
 	if (CurrentAmmo > 0)
 	{
-		if (!Reloading)
+		if (!CurrentlyReloading)
 		{
 			PlayShootAnimation();
 			ShootLineTrace();
@@ -94,4 +105,11 @@ void AA_Gun::ShootLineTrace()
 	FVector ShotEndLocation = ShotStartLocation + (PlayerCamera->GetForwardVector() * Range);
 
 	BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShotStartLocation, ShotEndLocation, Damage);
+}
+
+void AA_Gun::StartReloading()
+{
+	CurrentlyReloading = true;
+	// Reload Sound
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReloadSound, GunMesh->GetComponentLocation(), 1.0f, 2.0f);
 }

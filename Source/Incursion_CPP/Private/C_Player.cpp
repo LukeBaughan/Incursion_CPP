@@ -111,6 +111,7 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	// IE = Input Event
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AC_Player::PerformPrimaryAction);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AC_Player::ReloadGun);
 
 	// Keyboard Movement Inputs
 	PlayerInputComponent->BindAxis("Move Forward / Backwards", this, &AC_Player::MoveForwardBackwards);
@@ -142,6 +143,14 @@ void AC_Player::PerformPrimaryAction()
 {
 	// TEMP: Shoots the gun
 	Gun->ShootOnceSequence();
+}
+
+void AC_Player::ReloadGun()
+{
+	// If the gun isnt currently being reloaded and the gun hasnt got a full magazine, reload it
+	// OVERRIDE AND SET ANIM_BP RELOADING TO TRUE BEFORE PARENT FUNCTION
+	if (!Gun->CurrentlyReloading && Gun->CurrentAmmo != Gun->MaxAmmo)
+		Gun->StartReloading();
 }
 
 void AC_Player::LookLeftRight(float AxisValue)

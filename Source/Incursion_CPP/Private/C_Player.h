@@ -97,5 +97,7 @@ private:
 	FActorSpawnParameters GunSpawnParameters;
 
 	UFUNCTION()
-	void OnGunShotFired();
+		void OnGunShotFired();
+
+	void ReloadGun();
 };

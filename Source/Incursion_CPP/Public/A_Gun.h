@@ -24,6 +24,11 @@ public:
 	float MaxAmmo;
 	float CurrentAmmo;
 
+	USoundBase* ReloadSound;
+	bool CurrentlyReloading;
+
+	FOnShotFired OnShotFired;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		USkeletalMeshComponent* GunMesh;
 
@@ -36,6 +41,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Properties")
 		FTransform ShootTransform;
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void Initialise(UCameraComponent* FirstPersonCamera);
+
+	void ShootOnceSequence(); // MAKE PRIVATE LATER
+
+	void StartReloading();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,22 +59,10 @@ protected:
 
 	virtual void PlayShootAnimation();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	FOnShotFired OnShotFired;
-
-	void Initialise(UCameraComponent* FirstPersonCamera);
-
-	void ShootOnceSequence(); // MAKE PRIVATE LATER
-
 private:
 
 	UCameraComponent* PlayerCamera;
 	UBFL_Incursion* BFL_Incursion;
-
-	bool Reloading;
 
 	void ShootLineTrace(); 
 };
