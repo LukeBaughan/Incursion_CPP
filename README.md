@@ -2,8 +2,26 @@
 
 A recreation of Incursion (My final year university project made in Unreal Engine 5) made almost entirely with  C++ instead of blueprints. (IN DEVELOPMENT)
 
-<br/>
-<br/>
+**Completed**
+-	Movement
+-	Gun Base Class
+
+**In Progress**
+- Movement
+-	Gun Types
+-	Grid System
+-	Levels
+-	Main Menu
+-	Player
+-	Player HUD
+
+**ToDo
+**-	Enemy Base Class
+-	Enemy Types
+-	Towers
+-	Store
+-	Wave Spawning
+
 <br/>
 
 # What is Incursion?
