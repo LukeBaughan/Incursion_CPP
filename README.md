@@ -15,8 +15,8 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Player
 -	Player HUD
 
-**ToDo
-**-	Enemy Base Class
+**ToDo**
+-	Enemy Base Class
 -	Enemy Types
 -	Towers
 -	Store
