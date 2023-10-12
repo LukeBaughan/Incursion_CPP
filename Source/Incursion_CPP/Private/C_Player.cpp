@@ -45,10 +45,11 @@ AC_Player::AC_Player()
 	else
 		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: ArmsMesh"));
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> ArmsMeshAnimFinder(TEXT("/Game/Luke/Player/Animation/ABP_Player_Base"));
-	if (ArmsMeshAnimFinder.Succeeded())
+	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstPlayerClassFinder(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Base_BP"));
+	if (AnimInstPlayerClassFinder.Succeeded())
 	{
-		ArmsMesh->SetAnimInstanceClass(ArmsMeshAnimFinder.Class);
+		ArmsMesh->SetAnimInstanceClass(AnimInstPlayerClassFinder.Class);
+		AnimInstPlayer = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
 		UE_LOG(LogTemp, Warning, TEXT("Anim class successfully set for C_Player: ArmsMeshAnim"));
 	}
 	else
@@ -141,6 +142,7 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 
 void AC_Player::PerformPrimaryAction()
 {
+	//AnimInstPlayer
 	// TEMP: Shoots the gun
 	Gun->ShootOnceSequence();
 }

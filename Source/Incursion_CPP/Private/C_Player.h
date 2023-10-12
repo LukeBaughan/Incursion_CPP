@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "A_Gun.h"
+#include "AnimInst_Player_Base.h"
 
 #include "C_Player.generated.h"
 
@@ -95,6 +96,7 @@ private:
 	//Gun
 	FTransform GunPositonMeshTransform;
 	FActorSpawnParameters GunSpawnParameters;
+	UAnimInst_Player_Base* AnimInstPlayer;
 
 	UFUNCTION()
 		void OnGunShotFired();
