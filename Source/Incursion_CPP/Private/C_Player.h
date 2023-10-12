@@ -75,7 +75,8 @@ private:
 	void EndPerformSprint();
 	void PerformJump();
 
-	void PerformPrimaryAction();
+	void PerformPrimaryActionPressed();
+	void PerformPrimaryActionReleased();
 
 	void SetSprint(bool Sprint);
 
@@ -98,8 +99,20 @@ private:
 	FActorSpawnParameters GunSpawnParameters;
 	UAnimInst_Player_Base* AnimInstPlayer;
 
+	bool CurrentlyShooting;
+	FTimerHandle TH_Shooting;
+
 	UFUNCTION()
 		void OnGunShotFired();
 
-	void ReloadGun();
+	void ResetShooting();
+
+	UFUNCTION()
+		void StopArmsShootAnimation();
+
+	UFUNCTION()
+		void ReloadGun();
+
+	UFUNCTION()
+		void OnGunReloadFinished();
 };

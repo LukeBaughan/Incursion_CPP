@@ -11,6 +11,9 @@
 #include "A_Gun.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShotFired);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShotFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestReload);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReloadFinished);
 
 UCLASS()
 class INCURSION_CPP_API AA_Gun : public AActor
@@ -23,11 +26,15 @@ public:
 
 	float MaxAmmo;
 	float CurrentAmmo;
+	float RateOfFire;
 
 	USoundBase* ReloadSound;
 	bool CurrentlyReloading;
 
 	FOnShotFired OnShotFired;
+	FOnShotFinished OnShotFinished;
+	FOnRequestReload OnRequestReload;
+	FOnReloadFinished OnReloadFinished;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 		USkeletalMeshComponent* GunMesh;
@@ -46,9 +53,12 @@ public:
 
 	void Initialise(UCameraComponent* FirstPersonCamera);
 
-	void ShootOnceSequence(); // MAKE PRIVATE LATER
-
+	void StartShoting();
+	void EndShooting();
 	void StartReloading();
+
+	UFUNCTION()
+		void FinishReloading();
 
 protected:
 	// Called when the game starts or when spawned
@@ -57,12 +67,16 @@ protected:
 	float Damage;
 	float Range;
 
-	virtual void PlayShootAnimation();
+	UAnimSequence* ShootAnimSequence;
 
 private:
 
 	UCameraComponent* PlayerCamera;
 	UBFL_Incursion* BFL_Incursion;
 
+	FTimerHandle TH_Shooting;
+
+	void ShootOnceSequence();
 	void ShootLineTrace(); 
+	void PlayShootAnimation();
 };

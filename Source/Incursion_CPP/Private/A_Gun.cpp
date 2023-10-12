@@ -12,12 +12,14 @@ AA_Gun::AA_Gun()
 
 	PlayerCamera = nullptr;
 	BFL_Incursion = NewObject<UBFL_Incursion>();
+	ShootAnimSequence = nullptr;
 
 	GunMeshSpawnLocation = FVector::Zero();
 	Damage = 25.0f;
 	Range = 10000.0f;
-	MaxAmmo = 5;
-	CurrentAmmo = MaxAmmo;
+	RateOfFire = 0.25f;
+	MaxAmmo = 15;
+	CurrentAmmo = 0;
 
 	CurrentlyReloading = false;
 
@@ -75,6 +77,20 @@ void AA_Gun::Tick(float DeltaTime)
 void AA_Gun::Initialise(UCameraComponent* FirstPersonCamera)
 {
 	PlayerCamera = FirstPersonCamera;
+	CurrentAmmo = MaxAmmo;
+}
+
+// Loops the shoot function for full-auto weapons
+void AA_Gun::StartShoting()
+{
+	ShootOnceSequence();
+	GetWorldTimerManager().SetTimer(TH_Shooting, this, &AA_Gun::ShootOnceSequence, RateOfFire, true);
+}
+
+void AA_Gun::EndShooting()
+{
+	GetWorldTimerManager().ClearTimer(TH_Shooting);
+	OnShotFinished.Broadcast();
 }
 
 void AA_Gun::ShootOnceSequence()
@@ -91,11 +107,20 @@ void AA_Gun::ShootOnceSequence()
 			OnShotFired.Broadcast();
 		}
 	}
+	else
+	{
+		OnShotFinished.Broadcast();
+		// Auto reloads if the mag is empty
+		if (!CurrentlyReloading)
+			OnRequestReload.Broadcast();
+	}
 }
 
 void AA_Gun::PlayShootAnimation()
 {
-	// Override in child classes
+	// Override animation sequence in child classes
+	if(ShootAnimSequence)
+		GunMesh->PlayAnimation(ShootAnimSequence, false);
 }
 
 // Shoots the gun from the camera's position
@@ -111,5 +136,13 @@ void AA_Gun::StartReloading()
 {
 	CurrentlyReloading = true;
 	// Reload Sound
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReloadSound, GunMesh->GetComponentLocation());
+}
+
+void AA_Gun::FinishReloading()
+{
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReloadSound, GunMesh->GetComponentLocation(), 1.0f, 2.0f);
+	CurrentAmmo = MaxAmmo;
+	CurrentlyReloading = false;
+	OnReloadFinished.Broadcast();
 }

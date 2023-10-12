@@ -3,12 +3,15 @@
 
 #include "C_Player.h"
 #include "UObject/ConstructorHelpers.h"
+#include "TimerManager.h"
 
 // Sets default values
 AC_Player::AC_Player()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	CurrentlyShooting = false;
 
 	// Sets the shape of the capsule collider
 	CapsuleHalfHeightSize = 96.0f;
@@ -49,11 +52,12 @@ AC_Player::AC_Player()
 	if (AnimInstPlayerClassFinder.Succeeded())
 	{
 		ArmsMesh->SetAnimInstanceClass(AnimInstPlayerClassFinder.Class);
-		AnimInstPlayer = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
 		UE_LOG(LogTemp, Warning, TEXT("Anim class successfully set for C_Player: ArmsMeshAnim"));
 	}
 	else
 		UE_LOG(LogTemp, Error, TEXT("Unable to set anim class for C_Player: ArmsMeshAnim"));
+
+	AnimInstPlayer = nullptr;
 
 	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
 
@@ -111,7 +115,8 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("Look Up / Down", this, &AC_Player::LookUpDown);
 
 	// IE = Input Event
-	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AC_Player::PerformPrimaryAction);
+	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AC_Player::PerformPrimaryActionPressed);
+	PlayerInputComponent->BindAction("PrimaryAction", IE_Released, this, &AC_Player::PerformPrimaryActionReleased);
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AC_Player::ReloadGun);
 
 	// Keyboard Movement Inputs
@@ -124,9 +129,12 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("PerformJump", IE_Pressed, this, &AC_Player::PerformJump);
 }
 
-// Called to bind functionality to input
+// Spawns and attaches the gun to the player character
 void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 {
+
+	AnimInstPlayer = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
+
 	GunSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// Spawns the gun in the same posiiton as the gun position mesh
@@ -137,23 +145,76 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 		Gun->AttachToComponent(ArmsMesh, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("hand_rGrip")));
 
 	Gun->Initialise(CameraComponent);
+
+	// Binds events to gun delegates
 	Gun->OnShotFired.AddDynamic(this, &AC_Player::OnGunShotFired);
+	Gun->OnShotFinished.AddDynamic(this, &AC_Player::StopArmsShootAnimation);
+	Gun->OnRequestReload.AddDynamic(this, &AC_Player::ReloadGun);
+	Gun->OnReloadFinished.AddDynamic(this, &AC_Player::OnGunReloadFinished);
+
+	AnimInstPlayer->OnReloadFinishedAnimInst.AddDynamic(Gun, &AA_Gun::FinishReloading);
 }
 
-void AC_Player::PerformPrimaryAction()
+// Shoots the gun / places tower
+void AC_Player::PerformPrimaryActionPressed()
 {
-	//AnimInstPlayer
-	// TEMP: Shoots the gun
-	Gun->ShootOnceSequence();
+	if (!IsDead && !CurrentlyShooting)
+	{
+		CurrentlyShooting = true;
+		Gun->StartShoting();
+
+		GetWorldTimerManager().SetTimer(TH_Shooting, this, &AC_Player::ResetShooting, Gun->RateOfFire, false);
+	}
+}
+
+void AC_Player::PerformPrimaryActionReleased()
+{
+	Gun->EndShooting();
+}
+
+
+
+// Gun Functions
+
+void AC_Player::OnGunShotFired()
+{
+	AnimInstPlayer->CurrentlyShooting = true;
+	CallOnAmmoAmountChangedED();
+}
+
+void AC_Player::ResetShooting()
+{
+	CurrentlyShooting = false;
+}
+
+void AC_Player::StopArmsShootAnimation()
+{
+	AnimInstPlayer->CurrentlyShooting = false;
+}
+
+void AC_Player::CallOnAmmoAmountChangedED()
+{
+	OnAmmoAmountChanged.Broadcast(Gun->MaxAmmo, Gun->CurrentAmmo);
 }
 
 void AC_Player::ReloadGun()
 {
 	// If the gun isnt currently being reloaded and the gun hasnt got a full magazine, reload it
-	// OVERRIDE AND SET ANIM_BP RELOADING TO TRUE BEFORE PARENT FUNCTION
 	if (!Gun->CurrentlyReloading && Gun->CurrentAmmo != Gun->MaxAmmo)
+	{
+		AnimInstPlayer->CurrentlyReloading = true;
 		Gun->StartReloading();
+	}
 }
+
+void AC_Player::OnGunReloadFinished()
+{
+	CallOnAmmoAmountChangedED();
+}
+
+
+
+// Movement Functions
 
 void AC_Player::LookLeftRight(float AxisValue)
 {
@@ -188,8 +249,6 @@ void AC_Player::MoveLeftRight(float AxisValue)
 	}
 }
 
-
-
 void AC_Player::SetSprint(bool Sprint)
 {
 	if (Sprint)
@@ -219,14 +278,4 @@ void AC_Player::PerformJump()
 {
 	if(!IsDead)
 		this->Jump();
-}
-
-void AC_Player::OnGunShotFired()
-{
-	CallOnAmmoAmountChangedED();
-}
-
-void AC_Player::CallOnAmmoAmountChangedED()
-{
-	OnAmmoAmountChanged.Broadcast(Gun->MaxAmmo, Gun->CurrentAmmo);
 }
