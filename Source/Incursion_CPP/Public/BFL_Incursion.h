@@ -27,10 +27,11 @@ public:
 
 	FVector LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound = nullptr);
 
+	float GetAveragePelletOffset(float MaxOffset);
+
 private:
 
 	UAttenuationWeaponShot* AttWeaponShot;
-
 };
 
 UENUM(BlueprintType)

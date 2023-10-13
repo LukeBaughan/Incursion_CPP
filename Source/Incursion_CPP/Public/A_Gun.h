@@ -67,16 +67,17 @@ protected:
 	float Damage;
 	float Range;
 
-	UAnimSequence* ShootAnimSequence;
-
-private:
+	UBFL_Incursion* BFL_Incursion;
 
 	UCameraComponent* PlayerCamera;
-	UBFL_Incursion* BFL_Incursion;
+	UAnimSequence* ShootAnimSequence;
+
+	virtual void ShootLineTrace();
+
+private:
 
 	FTimerHandle TH_Shooting;
 
 	void ShootOnceSequence();
-	void ShootLineTrace(); 
 	void PlayShootAnimation();
 };

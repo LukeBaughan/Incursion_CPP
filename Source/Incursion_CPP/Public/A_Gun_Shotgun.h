@@ -16,4 +16,12 @@ class INCURSION_CPP_API AA_Gun_Shotgun : public AA_Gun
 	
 public:
 	AA_Gun_Shotgun();
+
+protected:
+	virtual void ShootLineTrace() override;
+
+private:
+	int PelletAmount;
+	float MaxPelletOffset;
+
 };

@@ -5,10 +5,10 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 **Completed**
 -	Movement
 -	Gun Base Class
+-	Gun Types
 
 **In Progress**
 - Movement
--	Gun Types
 -	Grid System
 -	Levels
 -	Main Menu

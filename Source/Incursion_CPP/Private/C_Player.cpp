@@ -4,6 +4,8 @@
 #include "C_Player.h"
 #include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
+#include "A_Gun_AssaultRifle.h"
+#include "A_Gun_Shotgun.h"
 
 // Sets default values
 AC_Player::AC_Player()
@@ -40,24 +42,36 @@ AC_Player::AC_Player()
 	ArmsMesh->SetRelativeTransform(ArmsMeshTransform);
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ArmsMeshFinder(TEXT("/Game/FPS_Military_Arms/Mesh/SK_FPS_Military_Arm_Forest"));
+
 	if (ArmsMeshFinder.Succeeded())
-	{
 		ArmsMesh->SetSkeletalMesh(ArmsMeshFinder.Object);
-		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: ArmsMesh"));
-	}
 	else
-		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: ArmsMesh"));
+		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set ArmsMesh"));
 
-	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstPlayerClassFinder(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Base_BP"));
-	if (AnimInstPlayerClassFinder.Succeeded())
-	{
-		ArmsMesh->SetAnimInstanceClass(AnimInstPlayerClassFinder.Class);
-		UE_LOG(LogTemp, Warning, TEXT("Anim class successfully set for C_Player: ArmsMeshAnim"));
-	}
+	// Gets the player animation class types (to be used after initialisation)
+
+	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassBaseCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Base_BP"));
+
+	if (AnimInstClassBaseCF.Succeeded())
+		AnimInstClassBase = AnimInstClassBaseCF.Class;
 	else
-		UE_LOG(LogTemp, Error, TEXT("Unable to set anim class for C_Player: ArmsMeshAnim"));
+		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassBase"));
 
-	AnimInstPlayer = nullptr;
+	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassAssaultRifleCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_AssaultRifle_BP"));
+
+	if (AnimInstClassAssaultRifleCF.Succeeded())
+		AnimInstClassAssaultRifle = AnimInstClassAssaultRifleCF.Class;
+	else
+		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassAssaultRifle"));
+
+	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassShotgunCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Shotgun_BP"));
+
+	if (AnimInstClassShotgunCF.Succeeded())
+		AnimInstClassShotgun = AnimInstClassShotgunCF.Class;
+	else
+		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassShotgun"));
+
+	AnimInst = nullptr;
 
 	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
 
@@ -132,8 +146,8 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Spawns and attaches the gun to the player character
 void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 {
-
-	AnimInstPlayer = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
+	SetUpAnimInstanceType(GunSpawnClass);
+	AnimInst = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
 
 	GunSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
@@ -152,7 +166,7 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 	Gun->OnRequestReload.AddDynamic(this, &AC_Player::ReloadGun);
 	Gun->OnReloadFinished.AddDynamic(this, &AC_Player::OnGunReloadFinished);
 
-	AnimInstPlayer->OnReloadFinishedAnimInst.AddDynamic(Gun, &AA_Gun::FinishReloading);
+	AnimInst->OnReloadFinishedAnimInst.AddDynamic(Gun, &AA_Gun::FinishReloading);
 }
 
 // Shoots the gun / places tower
@@ -176,9 +190,27 @@ void AC_Player::PerformPrimaryActionReleased()
 
 // Gun Functions
 
+// Changes the players blueprint animation class and gun spawn transform based on the gun class being used
+void AC_Player::SetUpAnimInstanceType(TSubclassOf<class AA_Gun> GunSpawnClass)
+{
+	if (GunSpawnClass == AA_Gun_AssaultRifle::StaticClass())
+		SetUpAnimInst(AnimInstClassAssaultRifle, AssaultRifleTransform);
+	else if (GunSpawnClass == AA_Gun_Shotgun::StaticClass())
+		SetUpAnimInst(AnimInstClassShotgun, ShotgunTransform);
+	else
+		SetUpAnimInst(AnimInstClassBase, GunTransform);
+}
+
+void AC_Player::SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInstRef, FTransform GunTranformRef)
+{
+	ArmsMesh->SetAnimInstanceClass(AnimInstRef);
+	GunTransform = GunTranformRef;
+	GunPositionMesh->SetRelativeTransform(GunTransform);
+}
+
 void AC_Player::OnGunShotFired()
 {
-	AnimInstPlayer->CurrentlyShooting = true;
+	AnimInst->CurrentlyShooting = true;
 	CallOnAmmoAmountChangedED();
 }
 
@@ -189,7 +221,7 @@ void AC_Player::ResetShooting()
 
 void AC_Player::StopArmsShootAnimation()
 {
-	AnimInstPlayer->CurrentlyShooting = false;
+	AnimInst->CurrentlyShooting = false;
 }
 
 void AC_Player::CallOnAmmoAmountChangedED()
@@ -202,7 +234,7 @@ void AC_Player::ReloadGun()
 	// If the gun isnt currently being reloaded and the gun hasnt got a full magazine, reload it
 	if (!Gun->CurrentlyReloading && Gun->CurrentAmmo != Gun->MaxAmmo)
 	{
-		AnimInstPlayer->CurrentlyReloading = true;
+		AnimInst->CurrentlyReloading = true;
 		Gun->StartReloading();
 	}
 }

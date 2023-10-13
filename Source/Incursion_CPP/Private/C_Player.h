@@ -44,6 +44,18 @@ public:
 
 	FOnAmmoAmountChanged OnAmmoAmountChanged;
 
+
+	UPROPERTY(BlueprintReadWrite, Category = "Gun")
+		FTransform GunTransform;
+	
+	// SET IN BLUEPRINT
+	UPROPERTY(BlueprintReadWrite, Category = "Gun")
+		FTransform AssaultRifleTransform;
+
+	// SET IN BLUEPRINT
+	UPROPERTY(BlueprintReadWrite, Category = "Gun")
+		FTransform ShotgunTransform;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -97,7 +109,9 @@ private:
 	//Gun
 	FTransform GunPositonMeshTransform;
 	FActorSpawnParameters GunSpawnParameters;
-	UAnimInst_Player_Base* AnimInstPlayer;
+
+	UAnimInst_Player_Base* AnimInst;
+	TSubclassOf<class UAnimInst_Player_Base> AnimInstClassBase, AnimInstClassAssaultRifle, AnimInstClassShotgun;
 
 	bool CurrentlyShooting;
 	FTimerHandle TH_Shooting;
@@ -115,4 +129,7 @@ private:
 
 	UFUNCTION()
 		void OnGunReloadFinished();
+
+	void SetUpAnimInstanceType(TSubclassOf<class AA_Gun> GunSpawnClass);
+	void SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInst, FTransform GunTranform);
 };

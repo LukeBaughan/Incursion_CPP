@@ -5,8 +5,6 @@
 
 AA_Gun_AssaultRifle::AA_Gun_AssaultRifle() : AA_Gun()
 {
-	// Sets up the gun skeletal mesh component
-
 	Damage = 25.0f;
 	Range = 10000.0f;
 	RateOfFire = 0.09f;

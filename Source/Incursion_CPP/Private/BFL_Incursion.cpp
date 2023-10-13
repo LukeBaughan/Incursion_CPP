@@ -62,3 +62,20 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 
 	return HitResult.Location;
 }
+
+float UBFL_Incursion::GetAveragePelletOffset(float MaxOffset)
+{
+	float FinalRandPelletOffset = 0.0f;
+	float CurrentRandPelletOffset = 0.0f;
+
+	// Uses gaussian randomness so that most pellets are still fairly close to where the player is looking
+	for (int i = 0; i < 3; i++)
+	{
+		CurrentRandPelletOffset = FMath::RandRange(MaxOffset * -1.0f, MaxOffset);
+		FinalRandPelletOffset += CurrentRandPelletOffset;
+	}
+
+	FinalRandPelletOffset = FinalRandPelletOffset / 3;
+
+	return FinalRandPelletOffset;
+}
