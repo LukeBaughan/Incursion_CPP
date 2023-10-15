@@ -6,9 +6,6 @@
 #include "A_Gun.h"
 #include "A_Gun_Shotgun.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API AA_Gun_Shotgun : public AA_Gun
 {

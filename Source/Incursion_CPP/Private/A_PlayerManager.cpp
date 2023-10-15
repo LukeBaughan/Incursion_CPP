@@ -5,18 +5,17 @@
 #include "W_HUD_Ammo.h"
 
 // Sets default values
-AA_PlayerManager::AA_PlayerManager()
+AA_PlayerManager::AA_PlayerManager() :
+	PlayerController(nullptr),
+	PlayerCharacter(nullptr),
+
+
+	SpawnPoint(nullptr),
+	PlayerSpawnLocation(FVector::Zero()),
+	PlayerSpawnWeaponClass(nullptr)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	PlayerController = nullptr;
-	PlayerCharacter = nullptr;
-
-	SpawnPoint = nullptr;
-	PlayerSpawnLocation = FVector::Zero();
-
-	PlayerSpawnWeaponClass = nullptr;
 
 	static ConstructorHelpers::FClassFinder<AC_Player> PlayerBP_ClassFinder(TEXT("/Game/Luke/Player/C_PlayerBP"));
 	if (PlayerBP_ClassFinder.Succeeded())
@@ -27,19 +26,16 @@ AA_PlayerManager::AA_PlayerManager()
 void AA_PlayerManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AA_PlayerManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void AA_PlayerManager::Initialise(TSubclassOf<class AA_Gun> SpawnWeapon) 
+void AA_PlayerManager::Initialise(TSubclassOf<class AA_Gun> SpawnWeapon)
 {
-	PlayerCharacter = nullptr;
 	PlayerSpawnWeaponClass = SpawnWeapon;
 
 	SetUpPlayerController();
@@ -58,9 +54,8 @@ void AA_PlayerManager::SetUpPlayerController()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Player Controller not Found (In Player Manager)")));
+		UE_LOG(LogTemp, Warning, TEXT("A_PlayerManager: Unable to get PlayerController"));
 	}
-
 }
 
 void AA_PlayerManager::SetUpPlayer()
@@ -78,20 +73,30 @@ void AA_PlayerManager::SetUpPlayer()
 		PlayerSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerBP_Class, PlayerSpawnLocation, FRotator::ZeroRotator, PlayerSpawnParameters);
-	
-		if(PlayerCharacter)
+
+		if (PlayerCharacter)
+		{
 			PlayerCharacter->Initialise(PlayerSpawnWeaponClass);
+		}
 		else
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Player Character NULL")));
+		{
+			UE_LOG(LogTemp, Warning, TEXT("A_PlayerManager: Unable to get PlayerCharacter"));
+		}
 
 		// If theres a valid player character and controller, make the controller possess the character
 		if (PlayerCharacter && PlayerController)
+		{
 			PlayerController->Possess(PlayerCharacter);
+		}
 		else
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Player Controller or Character NULL")));
+		{
+			UE_LOG(LogTemp, Warning, TEXT("A_PlayerManager: Unable to get PlayerCharacter or PlayerController"));
+		}
 	}
 	else
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("Spawn Point NULL")));
+	{
+		UE_LOG(LogTemp, Warning, TEXT("A_PlayerManager: Unable to get SpawnPoint"));
+	}
 }
 
 void AA_PlayerManager::SetUpEventDispatchers()

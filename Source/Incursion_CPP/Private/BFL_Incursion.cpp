@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BFL_Incursion.h"
+
+#include "DrawDebugHelpers.h" 
+#include "Kismet/GameplayStatics.h"
 #include "Math/Color.h"
 #include "Styling/SlateBrush.h"
-#include "Kismet/GameplayStatics.h"
-#include "DrawDebugHelpers.h" 
 
 void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
 {
@@ -52,7 +53,9 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
 
 	if(ShootSound)
+	{
 		UGameplayStatics::PlaySoundAtLocation(WorldObject, ShootSound, StartLocation, 1.0f, 1.0f, 0.0f, AttWeaponShot);
+	}
 
 	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);
 
@@ -69,7 +72,7 @@ float UBFL_Incursion::GetAveragePelletOffset(float MaxOffset)
 	float CurrentRandPelletOffset = 0.0f;
 
 	// Uses gaussian randomness so that most pellets are still fairly close to where the player is looking
-	for (int i = 0; i < 3; i++)
+	for (int CurrentPellet = 0; CurrentPellet < 3; ++CurrentPellet)
 	{
 		CurrentRandPelletOffset = FMath::RandRange(MaxOffset * -1.0f, MaxOffset);
 		FinalRandPelletOffset += CurrentRandPelletOffset;

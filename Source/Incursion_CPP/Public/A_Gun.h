@@ -37,8 +37,8 @@ public:
 	UFUNCTION()
 		void FinishReloading();
 
-	float MaxAmmo;
-	float CurrentAmmo;
+	int8 MaxAmmo;
+	int8 CurrentAmmo;
 	float RateOfFire;
 
 	bool CurrentlyReloading;

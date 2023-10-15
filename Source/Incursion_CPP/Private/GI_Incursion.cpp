@@ -2,9 +2,9 @@
 
 #include "GI_Incursion.h"
 
-UGI_Incursion::UGI_Incursion()
+UGI_Incursion::UGI_Incursion() :
+	SpawnWeaponClass(NULL)
 {
-	SpawnWeaponClass = NULL;
 }
 
 void UGI_Incursion::SetSpawnWeaponClass(TSubclassOf<class AA_Gun>  SpawnWeaponClassType)

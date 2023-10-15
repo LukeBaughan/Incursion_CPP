@@ -5,13 +5,17 @@
 
 
 #include "GM_MainMenu.h"
+
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
-AGM_MainMenu::AGM_MainMenu()
+AGM_MainMenu::AGM_MainMenu() :
+	GameInstance(nullptr),
+	WidgetMainMenu(nullptr),
+	WidgetWeaponSelect(nullptr),
+	WidgetControls(nullptr),
+	WidgetCredits(nullptr)
 {
-
-	GameInstance = nullptr;
 	DefaultPawnClass = NULL;
 
 	// Gets a blueprint of each menu widget to set each class reference
@@ -19,28 +23,21 @@ AGM_MainMenu::AGM_MainMenu()
 	if (WidgetMainMenuClassFinder.Succeeded())
 		WidgetMainMenuClass = WidgetMainMenuClassFinder.Class;
 
-	WidgetMainMenu = nullptr;
-
 	// Weapon Select Menu
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetWeaponSelectClassFinder(TEXT("/Game/Luke/UI/MainMenu/W_WeaponSelectBP"));
 	if (WidgetWeaponSelectClassFinder.Succeeded())
 		WidgetWeaponSelectClass = WidgetWeaponSelectClassFinder.Class;
-
-	WidgetWeaponSelect = nullptr;
 
 	// Controls Menu
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetControlsClassFinder(TEXT("/Game/Luke/UI/MainMenu/W_ControlsBP"));
 	if (WidgetControlsClassFinder.Succeeded())
 		WidgetControlsClass = WidgetControlsClassFinder.Class;
 
-	WidgetControls = nullptr;
-
 	// Credits Menu
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetCreditsClassFinder(TEXT("/Game/Luke/UI/MainMenu/W_CreditsBP"));
 	if (WidgetCreditsClassFinder.Succeeded())
 		WidgetCreditsClass = WidgetCreditsClassFinder.Class;
 
-	WidgetCredits = nullptr;
 
 	// TEST CODE
 	/*
@@ -90,10 +87,14 @@ void AGM_MainMenu::SetUpMenus()
 			WidgetMainMenu->OnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 		else
+		{
 			UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetMainMenu Invalid"));
+		}
 	}
 	else
+	{
 		UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetMainMenuClass Invalid"));
+	}
 
 	PlayerController->bShowMouseCursor = true;
 
@@ -112,10 +113,14 @@ void AGM_MainMenu::SetUpMenus()
 			WidgetWeaponSelect->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 		else
+		{
 			UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetWeaponSelect Invalid"));
+		}
 	}
 	else
+	{
 		UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetWeaponSelectClass Invalid"));
+	}
 
 	// Controls
 	if (WidgetControlsClass != nullptr)
@@ -130,10 +135,14 @@ void AGM_MainMenu::SetUpMenus()
 			WidgetControls->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 		else
+		{
 			UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetControls Invalid"));
+		}
 	}
 	else
+	{
 		UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetControlsClass Invalid"));
+	}
 
 	// Credits Menu
 	if (WidgetCreditsClass != nullptr)
@@ -148,10 +157,14 @@ void AGM_MainMenu::SetUpMenus()
 			WidgetCredits->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 		}
 		else
+		{
 			UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetCredits Invalid"));
+		}
 	}
 	else
+	{
 		UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetCreditsClass Invalid"));
+	}
 }
 
 // TEST FUNCTION (Havent tested in UE5; created with GitHub IOS app)
@@ -207,7 +220,9 @@ void AGM_MainMenu::OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen)
 
 	// After getting the menu ref, set its widget to visible
 	if (MenuToOpenRef)
+	{
 		UBFL_Incursion::OpenMenu(CurrentMenu, MenuToOpenRef);
+	}
 }
 
 void AGM_MainMenu::StartGame(TSubclassOf<AA_Gun> SpawnWeaponClass)

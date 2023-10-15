@@ -4,7 +4,8 @@
 #include "SpawnPoint.h"
 
 // Sets default values
-ASpawnPoint::ASpawnPoint()
+ASpawnPoint::ASpawnPoint():
+	BillboardComponent(CreateDefaultSubobject<UBillboardComponent>(TEXT("BillboardComponent")))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,7 +13,6 @@ ASpawnPoint::ASpawnPoint()
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	// Creates the editor viewport icon and attaches it to the root component
-	BillboardComponent = CreateDefaultSubobject<UBillboardComponent>(TEXT("BillboardComponent"));
 	BillboardComponent->SetupAttachment(RootComponent);
 }
 
@@ -20,7 +20,6 @@ ASpawnPoint::ASpawnPoint()
 void ASpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

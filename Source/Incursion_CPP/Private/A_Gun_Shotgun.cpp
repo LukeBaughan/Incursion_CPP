@@ -33,7 +33,7 @@ AA_Gun_Shotgun::AA_Gun_Shotgun() : AA_Gun()
 // Shoots multiple line traces in a filtered random directions
 void AA_Gun_Shotgun::ShootLineTrace()
 {
-	for (int8 i = 0; i < PelletAmount; ++i)
+	for (int8 CurrentPellet = 0; CurrentPellet < PelletAmount; ++CurrentPellet)
 	{
 		FVector ShotStartLocation = PlayerCamera->GetComponentLocation();
 
