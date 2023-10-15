@@ -3,19 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "A_PlayerManager.h"
-#include "C_Player.h"
-#include "PC_PlayerController.h"
+
 #include "A_Gun.h"
-#include "GI_Incursion.h"
+#include "A_PlayerManager.h"
 #include "A_UI_Manager.h"
+#include "C_Player.h"
+#include "GameFramework/GameModeBase.h"
+#include "GI_Incursion.h"
+#include "PC_PlayerController.h"
 
 #include "GM_Incursion.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class AGM_Incursion : public AGameModeBase
 {
@@ -28,14 +26,13 @@ protected:
 	virtual void BeginPlay();
 
 private:
-
-	UGI_Incursion* GameInstance;
-	AA_PlayerManager* PlayerManager;
-	AA_UI_Manager* UI_Manager;
-
 	void ExecutePreGameFunctions();
 
 	void SpawnPlayerManager();
 	void SetUpPlayerManager();
 	void SetUpUI_Manager();
+
+	UGI_Incursion* GameInstance;
+	AA_PlayerManager* PlayerManager;
+	AA_UI_Manager* UI_Manager;
 };

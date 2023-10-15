@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "A_GridNode.generated.h"
 
@@ -14,16 +15,13 @@ class INCURSION_CPP_API AA_GridNode : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AA_GridNode();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh")
-	UStaticMeshComponent* PlaneMesh;
+		UStaticMeshComponent* PlaneMesh;
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 };

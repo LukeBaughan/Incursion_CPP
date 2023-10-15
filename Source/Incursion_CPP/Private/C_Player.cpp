@@ -13,6 +13,14 @@ AC_Player::AC_Player()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MouseSensitivity = 1.0f;
+	ForwardWalkAmount = 0.0f;
+
+	WalkSpeed = 600.0f;
+	WalkAcceleration = 2048.0f;
+	SprintSpeed = 1200.0f;
+	SprintAcceleration = 4048.0f;
+
 	CurrentlyShooting = false;
 
 	// Sets the shape of the capsule collider
@@ -77,7 +85,7 @@ AC_Player::AC_Player()
 
 	GunPositonMeshTransform = FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector::One());
 
-	Gun = NULL;
+	Gun = nullptr;
 	GunPositionMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh"));
 	GunPositionMesh->SetupAttachment(ArmsMesh, FName(TEXT("hand_rGrip")));
 

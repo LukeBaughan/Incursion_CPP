@@ -21,7 +21,7 @@ protected:
 	virtual void ShootLineTrace() override;
 
 private:
-	int PelletAmount;
+	int8 PelletAmount;
 	float MaxPelletOffset;
 
 };

@@ -16,13 +16,12 @@ class INCURSION_CPP_API UW_MainMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintNativeEvent)
+	void Initialise();
 
 	UPROPERTY(BlueprintCallable)
 	FOnRequestQuitGame OnRequestQuitGame;
 
 	UPROPERTY(BlueprintCallable)
 	FOnRequestOpenMenu OnRequestOpenMenu;
-
-	UFUNCTION(BlueprintNativeEvent)
-	void Initialise();
 };

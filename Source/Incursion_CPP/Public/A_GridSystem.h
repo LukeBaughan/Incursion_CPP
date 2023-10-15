@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+
 #include "Components/ChildActorComponent.h"
+#include "GameFramework/Actor.h"
+
 #include "A_GridSystem.generated.h"
 
 UCLASS()
@@ -17,26 +19,25 @@ public:
 	AA_GridSystem();
 	~AA_GridSystem();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	// Called when the actor is being destroyed
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	// move all asigns to constructor in cpp (h: int GridRows cpp: GridRows = 4;
 	UPROPERTY(EditAnywhere, Category = "Grid Size")
-	int GridRows = 4;
+		int8 GridRows;;
 	UPROPERTY(EditAnywhere, Category = "Grid Size")
-	int GridColumns = 4;
+		int8 GridColumns;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
-	int CurrentGridSize = 0;
-	int MaxGridSize = 1;
+	int8 CurrentGridSize = 0;
+	int8 MaxGridSize = 1;
+
 	TArray<AActor*> AllGridNodes;
-
 	USceneComponent* SceneComponent;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	// Called when the actor is being destroyed
-	virtual void OnConstruction(const FTransform& Transform) override;
 };

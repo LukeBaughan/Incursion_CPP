@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "PC_PlayerController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API APC_PlayerController : public APlayerController
 {
@@ -16,5 +13,4 @@ class INCURSION_CPP_API APC_PlayerController : public APlayerController
 
 public:
 	APC_PlayerController();
-	
 };

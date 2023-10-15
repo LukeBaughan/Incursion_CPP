@@ -3,20 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "P_PlayerCamera.h"
+
 #include "BFL_Incursion.h"
-#include "W_MainMenu.h"
-#include "W_Credits.h"
-#include "W_Controls.h"
-#include "W_WeaponSelect.h"
+#include "GameFramework/GameModeBase.h"
 #include "GI_Incursion.h"
+#include "P_PlayerCamera.h"
+#include "W_Controls.h"
+#include "W_Credits.h"
+#include "W_MainMenu.h"
+#include "W_WeaponSelect.h"
 
 #include "GM_MainMenu.generated.h"
 
-/**
- *
- */
 UCLASS()
 class INCURSION_CPP_API AGM_MainMenu : public AGameModeBase
 {
@@ -26,6 +24,19 @@ public:
 	AGM_MainMenu();
 
 private:
+	virtual void BeginPlay();
+
+	void SetUpMenus();
+	void SetUpMenusTest();
+
+	UFUNCTION()
+		void StartGame(TSubclassOf<class AA_Gun> SpawnWeaponClass);
+
+	UFUNCTION()
+		void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
+
+	UFUNCTION()
+		void QuitGame();
 
 	APlayerController* PlayerController;
 
@@ -60,20 +71,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		TArray<UUserWidget*> WidgetMenus;
-
-
-	virtual void BeginPlay();
-
-	void SetUpMenus();
-	void SetUpMenusTest();
-
-	UFUNCTION()
-		void StartGame(TSubclassOf<class AA_Gun> SpawnWeaponClass);
-
-	UFUNCTION()
-		void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
-
-	UFUNCTION()
-		void QuitGame();
-
 };

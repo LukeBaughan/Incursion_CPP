@@ -6,12 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "W_HUD_Crosshair.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API UW_HUD_Crosshair : public UUserWidget
 {
 	GENERATED_BODY()
-	
 };

@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "C_Player.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
-#include "C_Player.h"
-#include "SpawnPoint.h"
 #include "PC_PlayerController.h"
+#include "SpawnPoint.h"
 #include "W_HUD.h"
 
 #include "A_PlayerManager.generated.h"
@@ -21,11 +22,14 @@ public:
 	// Sets default values for this actor's properties
 	AA_PlayerManager();
 
-	APC_PlayerController* PlayerController;
-	UW_HUD* WidgetHUD;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
 	void SetUpEventDispatchers();
+
+	APC_PlayerController* PlayerController;
+	UW_HUD* WidgetHUD;
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,8 +47,4 @@ private:
 	FActorSpawnParameters PlayerSpawnParameters;
 
 	TSubclassOf<class AA_Gun> PlayerSpawnWeaponClass;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };

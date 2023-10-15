@@ -3,14 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
+
 #include "A_Gun.h"
+#include "Engine/GameInstance.h"
 
 #include "GI_Incursion.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API UGI_Incursion : public UGameInstance
 {
@@ -20,10 +18,10 @@ public:
 	UGI_Incursion();
 
 	void SetSpawnWeaponClass(TSubclassOf<class AA_Gun>  SpawnWeaponClassType);
+
 	TSubclassOf<class AA_Gun>  GetSpawnWeaponClass();
 
 private:
 
 	TSubclassOf<class AA_Gun> SpawnWeaponClass;
-	
 };

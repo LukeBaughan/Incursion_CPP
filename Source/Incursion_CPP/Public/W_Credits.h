@@ -3,25 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "Blueprint/UserWidget.h"
 #include "W_BackButton.h"
 
 #include "W_Credits.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API UW_Credits : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-		UW_BackButton* BackButton;
-	
 	UFUNCTION(BlueprintNativeEvent)
 		void Initialise();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+		UW_BackButton* BackButton;	
 };

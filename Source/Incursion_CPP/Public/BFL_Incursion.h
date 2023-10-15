@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "Components/Button.h"
+
 #include "AttenuationWeaponShot.h"
+#include "Components/Button.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "BFL_Incursion.generated.h"
 

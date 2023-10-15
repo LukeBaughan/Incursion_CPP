@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+
 #include "BFL_Incursion.h"
+#include "Blueprint/UserWidget.h"
 
 #include "W_BackButton.generated.h"
 
@@ -17,13 +18,12 @@ class INCURSION_CPP_API UW_BackButton : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintNativeEvent)
+		void Initialise(UUserWidget* WidgetOwnerMenu);
 
 	UPROPERTY(BlueprintReadOnly)
 		UUserWidget* OwnerMenu;
 
 	UPROPERTY(BlueprintCallable)
 		FButtonOnRequestOpenMenu ButtonOnRequestOpenMenu;
-
-	UFUNCTION(BlueprintNativeEvent)
-		void Initialise(UUserWidget* WidgetOwnerMenu);
 };

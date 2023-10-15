@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "PC_PlayerController.h"
 #include "W_HUD.h"
@@ -18,26 +19,23 @@ public:
 	// Sets default values for this actor's properties
 	AA_UI_Manager();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-private:
-
-	APC_PlayerController* PlayerController;
-
-	// HUD Class
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UW_HUD> WidgetHUD_Class;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void Initialise(APC_PlayerController* PlayerControllerRef);
 
 	// HUD Widget Instance;
 	UPROPERTY()
 		class UW_HUD* WidgetHUD;
 
-	void Initialise(APC_PlayerController* PlayerControllerRef);
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
+private:
+	APC_PlayerController* PlayerController;
+
+	// HUD Class
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD> WidgetHUD_Class;
 };

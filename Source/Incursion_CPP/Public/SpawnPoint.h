@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/BillboardComponent.h"
 
+#include "Components/BillboardComponent.h"
 #include "Engine/StreamableManager.h"
 #include "Engine/Texture2D.h"
+#include "GameFramework/Actor.h"
 
 #include "SpawnPoint.generated.h"
 
@@ -21,7 +21,7 @@ public:
 	ASpawnPoint();
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Billboard")
-	class UBillboardComponent* BillboardComponent;
+		class UBillboardComponent* BillboardComponent;
 
 protected:
 	// Called when the game starts or when spawned

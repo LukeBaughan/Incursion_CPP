@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Components/ArrowComponent.h"
-#include "Camera/CameraComponent.h"
+
 #include "BFL_Incursion.h"
+#include "Camera/CameraComponent.h"
+#include "Components/ArrowComponent.h"
+#include "GameFramework/Actor.h"
 
 #include "A_Gun.generated.h"
 
@@ -24,12 +25,24 @@ public:
 	// Sets default values for this actor's properties
 	AA_Gun();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void Initialise(UCameraComponent* FirstPersonCamera);
+
+	void StartShoting();
+	void EndShooting();
+	void StartReloading();
+
+	UFUNCTION()
+		void FinishReloading();
+
 	float MaxAmmo;
 	float CurrentAmmo;
 	float RateOfFire;
 
-	USoundBase* ReloadSound;
 	bool CurrentlyReloading;
+	USoundBase* ReloadSound;
 
 	FOnShotFired OnShotFired;
 	FOnShotFinished OnShotFinished;
@@ -48,36 +61,23 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Properties")
 		FTransform ShootTransform;
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void Initialise(UCameraComponent* FirstPersonCamera);
-
-	void StartShoting();
-	void EndShooting();
-	void StartReloading();
-
-	UFUNCTION()
-		void FinishReloading();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void ShootLineTrace();
 
 	float Damage;
 	float Range;
 
 	UBFL_Incursion* BFL_Incursion;
-
 	UCameraComponent* PlayerCamera;
 	UAnimSequence* ShootAnimSequence;
 
-	virtual void ShootLineTrace();
 
 private:
-
-	FTimerHandle TH_Shooting;
-
 	void ShootOnceSequence();
 	void PlayShootAnimation();
+
+	FTimerHandle TH_Shooting;
 };
