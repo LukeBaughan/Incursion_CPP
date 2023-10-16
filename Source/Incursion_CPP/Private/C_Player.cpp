@@ -20,6 +20,7 @@ AC_Player::AC_Player() :
 
 	CurrentlyShooting(false),
 
+	CapsuleCollider(GetCapsuleComponent()),
 	CapsuleHalfHeightSize(96.0f),
 	CapsuleRadiusSize(55.0f),
 
@@ -35,14 +36,11 @@ AC_Player::AC_Player() :
 	GunPositonMeshTransform(FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector::One())),
 	GunPositionMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh")))
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	GetCapsuleComponent()->SetCapsuleHalfHeight(CapsuleHalfHeightSize);
-	GetCapsuleComponent()->SetCapsuleRadius(CapsuleRadiusSize);
+	CapsuleCollider->SetCapsuleHalfHeight(CapsuleHalfHeightSize);
+	CapsuleCollider->SetCapsuleRadius(CapsuleRadiusSize);
 
 	// Sets up the camera and attaches it to the capsule
-	CameraComponent->SetupAttachment(GetCapsuleComponent());
+	CameraComponent->SetupAttachment(CapsuleCollider);
 	CameraComponent->bUsePawnControlRotation = true;
 	CameraComponent->SetRelativeLocation(CameraSpawnLocation);
 
@@ -103,7 +101,7 @@ void AC_Player::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetCapsuleComponent()->SetVisibility(true);
+	CapsuleCollider->SetVisibility(true);
 }
 
 // Called every frame

@@ -104,6 +104,7 @@ private:
 
 	// Capsule Collider
 
+	UCapsuleComponent* CapsuleCollider;
 	float CapsuleHalfHeightSize;
 	float CapsuleRadiusSize;
 

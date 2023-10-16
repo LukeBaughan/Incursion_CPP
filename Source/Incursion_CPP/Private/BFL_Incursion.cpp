@@ -3,6 +3,7 @@
 #include "BFL_Incursion.h"
 
 #include "DrawDebugHelpers.h" 
+#include "I_Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Math/Color.h"
 #include "Styling/SlateBrush.h"
@@ -51,6 +52,7 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 
 	// ECC_GameTraceChannel2 = Enemy Collision Object Channel
 	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
+	//CollisionParameters.RemoveObjectTypesToQuery()
 
 	if(ShootSound)
 	{
@@ -59,6 +61,12 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 
 	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);
 
+	// Casting for an interface is less expensive than casting for a actor
+	II_Character* CharacterInterfaceActor = Cast<II_Character>(HitResult.GetActor());
+	if (CharacterInterfaceActor)
+	{
+		CharacterInterfaceActor->TakeDamageCharacter(Damage);
+	}
 
 	// Debug Line
 	DrawDebugLine(WorldObject, StartLocation, EndLocation, FColor::Red, false, 3.0f, 0, 2.0f);
