@@ -8,7 +8,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Gun Types
 
 **In Progress**
-- Movement
 -	Grid System
 -	Levels
 -	Main Menu
