@@ -84,7 +84,7 @@ private:
 	UFUNCTION()
 		void OnGunReloadFinished();
 
-	void SetUpAnimInstanceType(TSubclassOf<class AA_Gun> GunSpawnClass);
+	void SetUpAnimInstanceType();
 	void SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInst, FTransform GunTranform);
 
 	// Movement

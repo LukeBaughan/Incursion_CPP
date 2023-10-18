@@ -19,7 +19,7 @@ AA_Gun::AA_Gun() :
 	CurrentAmmo(0),
 	CurrentlyReloading(false),
 
-	ShootTransform(FTransform(FRotator(0.0f, 90.0f, 0.0f), FVector(0.0f, 56.0f, 11.0f), FVector::One())),
+	ShootArrowSpawnLocation(FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::OneVector)),
 	GunMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"))),
 	ShootTransformArrow(CreateDefaultSubobject<UArrowComponent>(TEXT("Shoot Transform")))
 {
@@ -42,8 +42,7 @@ AA_Gun::AA_Gun() :
 
 	// Sets up the shoot transform arrow component
 	ShootTransformArrow->SetupAttachment(GunMesh);
-	ShootTransformArrow->SetRelativeLocation(ShootTransform.GetLocation());
-	ShootTransformArrow->SetRelativeRotation(ShootTransform.GetRotation());
+	ShootTransformArrow->SetRelativeTransform(ShootArrowSpawnLocation);
 
 	// Reload Sound
 	static ConstructorHelpers::FObjectFinder<USoundBase> ReloadSoundFinder(TEXT("/Game/MilitaryWeapDark/Sound/Rifle/Rifle_Reload_Cue"));

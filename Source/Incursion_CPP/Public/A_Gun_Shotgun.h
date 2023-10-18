@@ -12,13 +12,13 @@ class INCURSION_CPP_API AA_Gun_Shotgun : public AA_Gun
 	GENERATED_BODY()
 	
 public:
-	AA_Gun_Shotgun();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		uint8 PelletAmount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float MaxPelletOffset;
 
 protected:
 	virtual void ShootLineTrace() override;
-
-private:
-	int8 PelletAmount;
-	float MaxPelletOffset;
-
 };

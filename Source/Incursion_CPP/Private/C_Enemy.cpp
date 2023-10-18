@@ -10,6 +10,8 @@ AC_Enemy::AC_Enemy() :
 	BodyMeshSpawnTransform(FTransform(FRotator::ZeroRotator, FVector(0.0f, 0.0f, -90.0f), FVector::OneVector)),
 	BodyMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Body Mesh")))
 {
+	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Vehicle);
+
 	// Sets up the body mesh
 	BodyMesh->SetupAttachment(GetCapsuleComponent());	
 	BodyMesh->SetRelativeTransform(BodyMeshSpawnTransform);

@@ -18,7 +18,9 @@ public:
 	// Sets default values for this character's properties
 	AC_Enemy();
 	void TakeDamageCharacter(float Amount) override;
-private:
+
 	USkeletalMeshComponent* BodyMesh;
+
+private:
 	FTransform BodyMeshSpawnTransform;
 };

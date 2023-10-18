@@ -16,12 +16,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShotFinished);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestReload);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnReloadFinished);
 
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	AssaultRifle,
+	Shotgun
+};
+
 UCLASS()
 class INCURSION_CPP_API AA_Gun : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AA_Gun();
 
@@ -37,9 +44,31 @@ public:
 	UFUNCTION()
 		void FinishReloading();
 
-	int8 MaxAmmo;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		EWeaponType WeaponType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		USkeletalMeshComponent* GunMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		UArrowComponent* ShootTransformArrow;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		UAnimSequence* ShootAnimSequence;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float Damage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float Range;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float RateOfFire;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		int MaxAmmo;
+
 	int8 CurrentAmmo;
-	float RateOfFire;
 
 	bool CurrentlyReloading;
 	USoundBase* ReloadSound;
@@ -49,35 +78,20 @@ public:
 	FOnRequestReload OnRequestReload;
 	FOnReloadFinished OnReloadFinished;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
-		USkeletalMeshComponent* GunMesh;
-
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		FVector GunMeshSpawnLocation;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Properties")
-		UArrowComponent* ShootTransformArrow;
-
-	UPROPERTY(EditAnywhere, Category = "Properties")
-		FTransform ShootTransform;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void ShootLineTrace();
 
-	float Damage;
-	float Range;
-
 	UBFL_Incursion* BFL_Incursion;
 	UCameraComponent* PlayerCamera;
-	UAnimSequence* ShootAnimSequence;
-
 
 private:
 	void ShootOnceSequence();
 	void PlayShootAnimation();
 
+	FVector GunMeshSpawnLocation;
+	FTransform ShootArrowSpawnLocation;
 	FTimerHandle TH_Shooting;
 };

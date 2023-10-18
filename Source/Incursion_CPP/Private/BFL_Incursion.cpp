@@ -51,7 +51,7 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 	FCollisionObjectQueryParams CollisionParameters;
 
 	// ECC_GameTraceChannel2 = Enemy Collision Object Channel
-	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
 	//CollisionParameters.RemoveObjectTypesToQuery()
 
 	if(ShootSound)

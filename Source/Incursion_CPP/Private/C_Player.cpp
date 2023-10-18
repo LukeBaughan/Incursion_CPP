@@ -3,7 +3,6 @@
 
 #include "C_Player.h"
 
-#include "A_Gun_AssaultRifle.h"
 #include "A_Gun_Shotgun.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
@@ -146,9 +145,6 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // Spawns and attaches the gun to the player character
 void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 {
-	SetUpAnimInstanceType(GunSpawnClass);
-	AnimInst = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
-
 	GunSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// Spawns the gun in the same posiiton as the gun position mesh
@@ -161,6 +157,9 @@ void AC_Player::Initialise(TSubclassOf<class AA_Gun> GunSpawnClass)
 	}
 
 	Gun->Initialise(CameraComponent);
+
+	SetUpAnimInstanceType();
+	AnimInst = Cast<UAnimInst_Player_Base>(ArmsMesh->GetAnimInstance());
 
 	// Binds events to gun delegates
 	Gun->OnShotFired.AddDynamic(this, &AC_Player::OnGunShotFired);
@@ -193,20 +192,33 @@ void AC_Player::PerformPrimaryActionReleased()
 // Gun Functions
 
 // Changes the players blueprint animation class and gun spawn transform based on the gun class being used
-void AC_Player::SetUpAnimInstanceType(TSubclassOf<class AA_Gun> GunSpawnClass)
+void AC_Player::SetUpAnimInstanceType()
 {
-	if (GunSpawnClass == AA_Gun_AssaultRifle::StaticClass())
+	switch (Gun->WeaponType)
 	{
+	case EWeaponType::AssaultRifle:
 		SetUpAnimInst(AnimInstClassAssaultRifle, AssaultRifleTransform);
-	}
-	else if (GunSpawnClass == AA_Gun_Shotgun::StaticClass())
-	{
+		break;
+	case EWeaponType::Shotgun:
 		SetUpAnimInst(AnimInstClassShotgun, ShotgunTransform);
-	}
-	else
-	{
+		break;
+	default:
 		SetUpAnimInst(AnimInstClassBase, GunTransform);
+		break;
 	}
+
+	//if (GunSpawnClass == AA_Gun_AssaultRifle::StaticClass())
+	//{
+	//	SetUpAnimInst(AnimInstClassAssaultRifle, AssaultRifleTransform);
+	//}
+	//else if (GunSpawnClass == AA_Gun_Shotgun::StaticClass())
+	//{
+	//	SetUpAnimInst(AnimInstClassShotgun, ShotgunTransform);
+	//}
+	//else
+	//{
+	//	SetUpAnimInst(AnimInstClassBase, GunTransform);
+	//}
 }
 
 void AC_Player::SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInstRef, FTransform GunTranformRef)
