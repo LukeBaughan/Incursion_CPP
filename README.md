@@ -8,6 +8,8 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Gun Types
 
 **In Progress**
+-	Enemy Base Class
+-	Enemy Types
 -	Grid System
 -	Levels
 -	Main Menu
@@ -15,8 +17,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Player HUD
 
 **ToDo**
--	Enemy Base Class
--	Enemy Types
 -	Towers
 -	Store
 -	Wave Spawning
