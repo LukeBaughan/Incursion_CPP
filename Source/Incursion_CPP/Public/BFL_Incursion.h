@@ -6,13 +6,11 @@
 
 #include "AttenuationWeaponShot.h"
 #include "Components/Button.h"
+#include "Components/ProgressBar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "BFL_Incursion.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API UBFL_Incursion : public UBlueprintFunctionLibrary
 {
@@ -25,6 +23,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	static void OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen);
+
+	void SetHealthBarAmount(UProgressBar* HealthBar, float CurrentHealth, float MaxHealth);
 
 	FVector LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound = nullptr);
 

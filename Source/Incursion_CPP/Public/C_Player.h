@@ -45,6 +45,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USkeletalMeshComponent* ArmsMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		TSubclassOf<class UAnimInst_Player_Base> AnimInstClassBase;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		TSubclassOf<class UAnimInst_Player_Base> AnimInstClassAssaultRifle;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		TSubclassOf<class UAnimInst_Player_Base> AnimInstClassShotgun;
+
 	FOnAmmoAmountChanged OnAmmoAmountChanged;
 
 private:
@@ -116,7 +125,6 @@ private:
 	FActorSpawnParameters GunSpawnParameters;
 
 	UAnimInst_Player_Base* AnimInst;
-	TSubclassOf<class UAnimInst_Player_Base> AnimInstClassBase, AnimInstClassAssaultRifle, AnimInstClassShotgun;
 
 	bool CurrentlyShooting;
 	FTimerHandle TH_Shooting;

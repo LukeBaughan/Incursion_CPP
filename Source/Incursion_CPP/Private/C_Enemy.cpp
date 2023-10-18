@@ -7,28 +7,68 @@
 
 // Sets default values
 AC_Enemy::AC_Enemy() :
-	BodyMeshSpawnTransform(FTransform(FRotator::ZeroRotator, FVector(0.0f, 0.0f, -90.0f), FVector::OneVector)),
-	BodyMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Body Mesh")))
+	CapsuleCollider(GetCapsuleComponent()),
+	BodyMesh(GetMesh()),
+	IsDead(false),
+	MaxHealth(100.0f),
+	CurrentHealth(0.0f),
+	HitSound(nullptr),
+	HealthBar(CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"))),
+	HealthBarInterface(nullptr)
 {
-	GetCapsuleComponent()->SetCollisionObjectType(ECollisionChannel::ECC_Vehicle);
+	// Collsion
+	CapsuleCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// ECC_GameTraceChannel2 = Enemy Channel
+	CapsuleCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+	CapsuleCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Ignore);
 
-	// Sets up the body mesh
-	BodyMesh->SetupAttachment(GetCapsuleComponent());	
-	BodyMesh->SetRelativeTransform(BodyMeshSpawnTransform);
+	BodyMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	BodyMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
-	
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> BodyMeshOF(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Manny"));
-	if (BodyMeshOF.Succeeded())
+	BodyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	BodyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	BodyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Ignore);
+	BodyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Ignore);
+
+	HealthBar->SetupAttachment(CapsuleCollider);
+	HealthBar->SetRelativeTransform(FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::OneVector));
+}
+
+void AC_Enemy::BeginPlay() // TEMP MOVE TO INITIALISE WHEN CREATED
+{
+	Super::BeginPlay();
+
+	CurrentHealth = MaxHealth;
+
+	HealthBarInterface = Cast<II_HealthBar>(HealthBar->GetWidget());
+	if (HealthBarInterface)
 	{
-		BodyMesh->SetSkeletalMesh(BodyMeshOF.Object);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("C_Enemy: Unable to set BodyMesh"));
+		HealthBarInterface->InitialiseWidget();
 	}
 }
 
-void AC_Enemy::TakeDamageCharacter(float Amount)
+void AC_Enemy::TakeDamageCharacter(float DamageAmount)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("C_Enemy: TakeDamage Called"));
+	if (!IsDead)
+	{
+		UGameplayStatics::SpawnSoundAttached(HitSound, BodyMesh);
+		// Loses health when recieving damage
+		CurrentHealth -= DamageAmount;
+		UpdateHealthBar();
+		// If they have no health left, they die
+		if (CurrentHealth <= 0)
+		{
+			IsDead = true;
+			// TEMPORARY
+			this->Destroy();
+		}
+	}
+}
+
+void AC_Enemy::UpdateHealthBar()
+{
+	if (HealthBarInterface)
+	{
+		HealthBarInterface->SetHealth(CurrentHealth, MaxHealth);
+	}
 }

@@ -49,36 +49,6 @@ AC_Player::AC_Player() :
 	ArmsMesh->SetupAttachment(CameraComponent);
 	ArmsMesh->SetRelativeTransform(ArmsMeshTransform);
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ArmsMeshFinder(TEXT("/Game/FPS_Military_Arms/Mesh/SK_FPS_Military_Arm_Forest"));
-
-	if (ArmsMeshFinder.Succeeded())
-		ArmsMesh->SetSkeletalMesh(ArmsMeshFinder.Object);
-	else
-		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set ArmsMesh"));
-
-	// Gets the player animation class types (to be used after initialisation)
-
-	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassBaseCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Base_BP"));
-
-	if (AnimInstClassBaseCF.Succeeded())
-		AnimInstClassBase = AnimInstClassBaseCF.Class;
-	else
-		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassBase"));
-
-	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassAssaultRifleCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_AssaultRifle_BP"));
-
-	if (AnimInstClassAssaultRifleCF.Succeeded())
-		AnimInstClassAssaultRifle = AnimInstClassAssaultRifleCF.Class;
-	else
-		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassAssaultRifle"));
-
-	static ConstructorHelpers::FClassFinder<UAnimInst_Player_Base> AnimInstClassShotgunCF(TEXT("/Game/Luke/Player/Animation/AnimInst_Player_Shotgun_BP"));
-
-	if (AnimInstClassShotgunCF.Succeeded())
-		AnimInstClassShotgun = AnimInstClassShotgunCF.Class;
-	else
-		UE_LOG(LogTemp, Error, TEXT("C_Player: Unable to set AnimInstClassShotgun"));
-
 	// Sets Up Gun Postion Mesh (A visiual representation of where the player's gun will be)
 	GunPositionMesh->SetupAttachment(ArmsMesh, FName(TEXT("hand_rGrip")));
 

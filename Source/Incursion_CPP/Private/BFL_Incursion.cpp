@@ -44,6 +44,13 @@ void UBFL_Incursion::OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen)
 	MenuToOpen->SetVisibility(ESlateVisibility::Visible);
 }
 
+void UBFL_Incursion::SetHealthBarAmount(UProgressBar* HealthBar, float CurrentHealth, float MaxHealth)
+{
+	float HealthPercent = CurrentHealth / MaxHealth;
+	HealthBar->SetPercent(HealthPercent);
+	HealthBar->SetFillColorAndOpacity(FLinearColor::LerpUsingHSV(FLinearColor::Red, FLinearColor(0.0f, 0.395833f, 0.0f), HealthPercent));
+}
+
 // Performs a line trace and damages the first enemy if hit
 FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound)
 {
@@ -51,7 +58,7 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 	FCollisionObjectQueryParams CollisionParameters;
 
 	// ECC_GameTraceChannel2 = Enemy Collision Object Channel
-	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
+	CollisionParameters.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel2);
 	//CollisionParameters.RemoveObjectTypesToQuery()
 
 	if(ShootSound)
@@ -60,6 +67,8 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 	}
 
 	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("HIT: %s"), *HitResult.GetActor()->GetName()));
 
 	// Casting for an interface is less expensive than casting for a actor
 	II_Character* CharacterInterfaceActor = Cast<II_Character>(HitResult.GetActor());
@@ -69,7 +78,7 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 	}
 
 	// Debug Line
-	DrawDebugLine(WorldObject, StartLocation, EndLocation, FColor::Red, false, 3.0f, 0, 2.0f);
+	//DrawDebugLine(WorldObject, StartLocation, EndLocation, FColor::Red, false, 3.0f, 0, 2.0f);
 
 	return HitResult.Location;
 }
