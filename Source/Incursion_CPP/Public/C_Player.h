@@ -24,44 +24,28 @@ public:
 	// Sets default values for this character's properties
 	AC_Player();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Initialise(TSubclassOf<class AA_Gun> GunSpawnClass);
 	void CallOnAmmoAmountChangedED();
 
-	FOnAmmoAmountChanged OnAmmoAmountChanged;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Gun")
-		FTransform GunTransform;
-
-	// SET IN BLUEPRINT
-	UPROPERTY(BlueprintReadWrite, Category = "Gun")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
 		FTransform AssaultRifleTransform;
 
-	// SET IN BLUEPRINT
-	UPROPERTY(BlueprintReadWrite, Category = "Gun")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
 		FTransform ShotgunTransform;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
+		USkeletalMeshComponent* GunPositionMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Camera")
 		UCameraComponent* CameraComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Arms")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USkeletalMeshComponent* ArmsMesh;
 
-	// Gun
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-		AA_Gun* Gun;
-
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
-		USkeletalMeshComponent* GunPositionMesh;
+	FOnAmmoAmountChanged OnAmmoAmountChanged;
 
 private:
 	// Camera
@@ -125,7 +109,9 @@ private:
 	// Arms
 	FTransform ArmsMeshTransform;
 
-	//Gun
+	//Gun	
+	AA_Gun* Gun;
+	FTransform GunTransform;
 	FTransform GunPositonMeshTransform;
 	FActorSpawnParameters GunSpawnParameters;
 

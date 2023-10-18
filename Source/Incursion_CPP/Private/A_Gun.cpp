@@ -35,7 +35,6 @@ AA_Gun::AA_Gun() :
 	{
 		GunMesh->SetSkeletalMesh(GunMeshFinder.Object);
 		GunMesh->SetRelativeLocation(GunMeshSpawnLocation);
-		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for AA_Gun."));
 	}
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Failed to set static mesh for AA_Gun."));
@@ -43,17 +42,6 @@ AA_Gun::AA_Gun() :
 	// Sets up the shoot transform arrow component
 	ShootTransformArrow->SetupAttachment(GunMesh);
 	ShootTransformArrow->SetRelativeTransform(ShootArrowSpawnLocation);
-
-	// Reload Sound
-	static ConstructorHelpers::FObjectFinder<USoundBase> ReloadSoundFinder(TEXT("/Game/MilitaryWeapDark/Sound/Rifle/Rifle_Reload_Cue"));
-
-	if (ReloadSoundFinder.Succeeded())
-	{
-		ReloadSound = ReloadSoundFinder.Object;
-		UE_LOG(LogTemp, Warning, TEXT("ReloadSound successfully set for AA_Gun."));
-	}
-	else
-		UE_LOG(LogTemp, Warning, TEXT("Failed to set ReloadSound for AA_Gun."));
 }
 
 // Called when the game starts or when spawned

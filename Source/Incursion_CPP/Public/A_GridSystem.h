@@ -19,8 +19,6 @@ public:
 	AA_GridSystem();
 	~AA_GridSystem();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	// Called when the actor is being destroyed
 	virtual void OnConstruction(const FTransform& Transform) override;
 
@@ -29,10 +27,6 @@ public:
 		int8 GridRows;;
 	UPROPERTY(EditAnywhere, Category = "Grid Size")
 		int8 GridColumns;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 private:
 	int8 CurrentGridSize = 0;

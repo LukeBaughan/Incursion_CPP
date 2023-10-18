@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		UAnimSequence* ShootAnimSequence;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		USoundBase* ReloadSound;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float Damage;
 
@@ -71,7 +74,6 @@ public:
 	int8 CurrentAmmo;
 
 	bool CurrentlyReloading;
-	USoundBase* ReloadSound;
 
 	FOnShotFired OnShotFired;
 	FOnShotFinished OnShotFinished;

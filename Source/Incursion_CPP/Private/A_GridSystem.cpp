@@ -11,9 +11,6 @@ AA_GridSystem::AA_GridSystem() :
 	GridRows(4), GridColumns(4),
 	SceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceenRoot")))
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	SceneComponent->SetupAttachment(RootComponent);
 }
 
@@ -24,19 +21,6 @@ AA_GridSystem::~AA_GridSystem()
 	{
 		GridNode->Destroy();
 	}
-}
-
-
-// Called when the game starts or when spawned
-void AA_GridSystem::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void AA_GridSystem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 // Called when an actor is done spawning into the world 
@@ -77,4 +61,3 @@ void AA_GridSystem::OnConstruction(const FTransform& Transform)
 		++RowIndex;
 	}
 }
-

@@ -95,20 +95,6 @@ AC_Player::AC_Player() :
 		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: GunPositionMesh"));
 }
 
-// Called when the game starts or when spawned
-void AC_Player::BeginPlay()
-{
-	Super::BeginPlay();
-
-	CapsuleCollider->SetVisibility(true);
-}
-
-// Called every frame
-void AC_Player::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 // Called to bind functionality to input
 void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -206,19 +192,6 @@ void AC_Player::SetUpAnimInstanceType()
 		SetUpAnimInst(AnimInstClassBase, GunTransform);
 		break;
 	}
-
-	//if (GunSpawnClass == AA_Gun_AssaultRifle::StaticClass())
-	//{
-	//	SetUpAnimInst(AnimInstClassAssaultRifle, AssaultRifleTransform);
-	//}
-	//else if (GunSpawnClass == AA_Gun_Shotgun::StaticClass())
-	//{
-	//	SetUpAnimInst(AnimInstClassShotgun, ShotgunTransform);
-	//}
-	//else
-	//{
-	//	SetUpAnimInst(AnimInstClassBase, GunTransform);
-	//}
 }
 
 void AC_Player::SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInstRef, FTransform GunTranformRef)

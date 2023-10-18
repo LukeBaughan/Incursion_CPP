@@ -14,24 +14,9 @@ AA_PlayerManager::AA_PlayerManager() :
 	PlayerSpawnLocation(FVector::Zero()),
 	PlayerSpawnWeaponClass(nullptr)
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	static ConstructorHelpers::FClassFinder<AC_Player> PlayerBP_ClassFinder(TEXT("/Game/Luke/Player/C_PlayerBP"));
 	if (PlayerBP_ClassFinder.Succeeded())
 		PlayerBP_Class = PlayerBP_ClassFinder.Class;
-}
-
-// Called when the game starts or when spawned
-void AA_PlayerManager::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void AA_PlayerManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void AA_PlayerManager::Initialise(TSubclassOf<class AA_Gun> SpawnWeapon)

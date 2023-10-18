@@ -22,18 +22,11 @@ public:
 	// Sets default values for this actor's properties
 	AA_PlayerManager();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
 	void SetUpEventDispatchers();
 
 	APC_PlayerController* PlayerController;
 	UW_HUD* WidgetHUD;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 private:	
 	void SetUpPlayerController();
