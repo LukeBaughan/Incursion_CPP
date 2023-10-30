@@ -41,6 +41,7 @@ private:
 	USkeletalMeshComponent* BodyMesh;
 	FTransform BodyMeshSpawnTransform;
 	II_HealthBar* HealthBarInterface;
+	UCharacterMovementComponent* MovementComponent;
 
 	bool IsDead;
 	float CurrentHealth;

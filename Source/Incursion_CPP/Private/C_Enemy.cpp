@@ -3,24 +3,31 @@
 
 #include "C_Enemy.h"
 
+#include "AIC_Enemy.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AC_Enemy::AC_Enemy() :
 	CapsuleCollider(GetCapsuleComponent()),
 	BodyMesh(GetMesh()),
+	MovementComponent(GetCharacterMovement()),
 	IsDead(false),
 	MaxHealth(100.0f),
 	CurrentHealth(0.0f),
 	HitSound(nullptr),
 	HealthBar(CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar"))),
 	HealthBarInterface(nullptr)
-{
+{ 
 	// Collsion
 	CapsuleCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	// ECC_GameTraceChannel2 = Enemy Channel
 	CapsuleCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	CapsuleCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Ignore);
+
+	// Smooth Rotation
+	bUseControllerRotationYaw = false;
+	MovementComponent->bOrientRotationToMovement = true;
+	MovementComponent->bUseControllerDesiredRotation = false;
 
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	BodyMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
