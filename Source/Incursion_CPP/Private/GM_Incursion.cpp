@@ -6,7 +6,8 @@
 AGM_Incursion::AGM_Incursion() :
 	GameInstance(nullptr),
 	PlayerManager(nullptr),
-	UI_Manager(nullptr)
+	UI_Manager(nullptr),
+	WaveManager(nullptr)
 {
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = APC_PlayerController::StaticClass();
@@ -15,6 +16,7 @@ AGM_Incursion::AGM_Incursion() :
 void AGM_Incursion::BeginPlay()
 {
 	ExecutePreGameFunctions();
+	ExecuteInGameFunctions();
 }
 
 void AGM_Incursion::ExecutePreGameFunctions()
@@ -24,6 +26,7 @@ void AGM_Incursion::ExecutePreGameFunctions()
 	SpawnPlayerManager();
 	SetUpPlayerManager();
 	SetUpUI_Manager();
+	SetUpWaveManager();
 	PlayerManager->SetUpEventDispatchers();
 }
 
@@ -60,4 +63,15 @@ void AGM_Incursion::SetUpUI_Manager()
 	}
 
 	PlayerManager->WidgetHUD = UI_Manager->WidgetHUD;
+}
+
+void AGM_Incursion::SetUpWaveManager()
+{
+	WaveManager = GetWorld()->SpawnActor<AA_WaveManager>(FVector::Zero(), FRotator::ZeroRotator);
+	WaveManager->Initialise();
+}
+
+void AGM_Incursion::ExecuteInGameFunctions()
+{
+	WaveManager->BeginWaveCountdown();
 }
