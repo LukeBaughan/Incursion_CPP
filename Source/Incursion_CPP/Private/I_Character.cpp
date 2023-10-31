@@ -8,3 +8,8 @@
 void II_Character::TakeDamageCharacter(float Amount)
 {
 }
+
+bool II_Character::GetIsDead()
+{
+	return false;
+}

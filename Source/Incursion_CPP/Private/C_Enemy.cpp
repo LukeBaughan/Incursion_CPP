@@ -10,9 +10,11 @@
 // Sets default values
 AC_Enemy::AC_Enemy() :
 	CapsuleCollider(GetCapsuleComponent()),
+	FollowRangeCylinder(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Follow Range Cylinder"))),
 	BodyMesh(GetMesh()),
 	MovementComponent(GetCharacterMovement()),
 	IsDead(false),
+	PlayerInFollowRange(false),
 	PointsAwarded(100),
 	LivesCost(1),
 	MaxWalkSpeed(100.0f),
@@ -29,7 +31,21 @@ AC_Enemy::AC_Enemy() :
 	CapsuleCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	CapsuleCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Ignore);
 
-	CapsuleCollider->OnComponentBeginOverlap.AddDynamic(this, &AC_Enemy::OnOverlapBegin);
+	CapsuleCollider->OnComponentBeginOverlap.AddDynamic(this, &AC_Enemy::CapsuleColliderOnOverlapBegin);
+
+	// Follow Range Cylinder - Only Interacts with the player
+	FollowRangeCylinder->SetupAttachment(CapsuleCollider);
+	FollowRangeCylinder->SetRelativeTransform(FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::OneVector));
+	FollowRangeCylinder->bHiddenInGame = true;
+	FollowRangeCylinder->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	FollowRangeCylinder->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+	FollowRangeCylinder->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	// ECC_GameTraceChannel2 = Player Channel
+	FollowRangeCylinder->SetCollisionResponseToChannel(ECollisionChannel::ECC_EngineTraceChannel3, ECollisionResponse::ECR_Overlap);
+
+	FollowRangeCylinder->OnComponentBeginOverlap.AddDynamic(this, &AC_Enemy::FollowRangeCylinderOnOverlapBegin);
+	FollowRangeCylinder->OnComponentEndOverlap.AddDynamic(this, &AC_Enemy::FollowRangeCylinderOnOverlapEnd);
+
 
 	// Smooth Rotation
 	bUseControllerRotationYaw = false;
@@ -73,9 +89,26 @@ void AC_Enemy::TakeDamageCharacter(float DamageAmount)
 		if (CurrentHealth <= 0)
 		{
 			IsDead = true;
+			// Continue when starting store manager
+			OnDefeated.Broadcast(PointsAwarded);
+
+			CapsuleCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			MovementComponent->DisableMovement();
+			HealthBar->SetVisibility(false, false);
+
+			// Plays an random animation when defeated				
+			if (DeathAnimations.Num() > 0)
+			{
+				BodyMesh->PlayAnimation(DeathAnimations[FMath::RandRange(0, DeathAnimations.Num() - 1)], false);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("C_Enemy: Unable to get DeathAnimation"));
+			}
+
 			// TEMPORARY
-			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("C_Enemy: %d Points Awarded"), PointsAwarded));
-			DestroySelf();
+			//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("C_Enemy: %d Points Awarded"), PointsAwarded));
+			//DestroySelf();
 		}
 	}
 }
@@ -94,7 +127,7 @@ void AC_Enemy::DestroySelf()
 	this->Destroy();
 }
 
-void AC_Enemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+void AC_Enemy::CapsuleColliderOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AA_EndGoal* EndGoal = Cast<AA_EndGoal>(OtherActor);
@@ -104,4 +137,25 @@ void AC_Enemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* 
 		OnGoalReached.Broadcast(LivesCost);
 		DestroySelf();
 	}
+}
+
+void AC_Enemy::FollowRangeCylinderOnOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!IsDead)
+	{
+		PlayerInFollowRange = true;
+	}
+}
+
+void AC_Enemy::FollowRangeCylinderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	PlayerInFollowRange = false;
+}
+
+bool AC_Enemy::GetPlayerInFollowRange()
+{	
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("%s"), PlayerInFollowRange ? TEXT("true") : TEXT("false")));
+	return PlayerInFollowRange;
 }

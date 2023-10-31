@@ -7,14 +7,16 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 #include "I_Character.h"
+#include "I_Enemy.h"
 #include "W_HealthBar.h"
 
 #include "C_Enemy.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemy_OnGoalReached, uint8, LivesCostAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemy_OnDefeated, int, PointsAwardedAmount);
 
 UCLASS()
-class INCURSION_CPP_API AC_Enemy : public ACharacter, public II_Character
+class INCURSION_CPP_API AC_Enemy : public ACharacter, public II_Character, public II_Enemy
 {
 	GENERATED_BODY()
 
@@ -24,7 +26,10 @@ public:
 	void Initialise();
 	void TakeDamageCharacter(float DamageAmount) override;
 
+	virtual bool GetPlayerInFollowRange() override;
+
 	FEnemy_OnGoalReached OnGoalReached;
+	FEnemy_OnDefeated OnDefeated;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		int PointsAwarded;
@@ -47,13 +52,27 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USoundBase* HitSound;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		TArray<UAnimSequenceBase*> DeathAnimations;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		UStaticMeshComponent* FollowRangeCylinder;
+
 private:
 	void UpdateHealthBar();
 	void DestroySelf();
 
 	UFUNCTION()
-		void OnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,
+		void CapsuleColliderOnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,
 			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void FollowRangeCylinderOnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void FollowRangeCylinderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UCapsuleComponent* CapsuleCollider;
 	USkeletalMeshComponent* BodyMesh;
@@ -63,4 +82,5 @@ private:
 
 	bool IsDead;
 	float CurrentHealth;
+	bool PlayerInFollowRange;
 };

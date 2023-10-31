@@ -10,13 +10,14 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "I_Character.h"
 
 #include "C_Player.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoAmountChanged, int8, MaxAmmo, int8, CurrentAmmo);
 
 UCLASS()
-class AC_Player : public ACharacter
+class AC_Player : public ACharacter, public II_Character
 {
 	GENERATED_BODY()
 
@@ -29,6 +30,7 @@ public:
 
 	void Initialise(TSubclassOf<class AA_Gun> GunSpawnClass);
 	void CallOnAmmoAmountChangedED();
+	virtual bool GetIsDead() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
 		FTransform AssaultRifleTransform;

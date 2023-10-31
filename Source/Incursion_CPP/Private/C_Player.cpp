@@ -284,3 +284,8 @@ void AC_Player::PerformJump()
 		this->Jump();
 	}
 }
+
+bool AC_Player::GetIsDead()
+{
+	return IsDead;
+}
