@@ -17,11 +17,11 @@ Latest Gameplay: https://www.youtube.com/watch?v=4TQmADh78do
 -	Main Menu
 -	Player
 -	Player HUD
+-	Wave Spawning
 
 **ToDo**
 -	Towers
 -	Store
--	Wave Spawning
 
 <br/>
 
