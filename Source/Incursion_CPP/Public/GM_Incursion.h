@@ -36,8 +36,13 @@ private:
 
 	void ExecuteInGameFunctions();
 
+	UFUNCTION()
+		void LoseLives(uint8 Amount);
+
 	UGI_Incursion* GameInstance;
 	AA_PlayerManager* PlayerManager;
 	AA_UI_Manager* UI_Manager;
 	AA_WaveManager* WaveManager;
+
+	int Lives;
 };

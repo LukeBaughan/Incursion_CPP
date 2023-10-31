@@ -15,10 +15,15 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 		void Initialise();
 
+	// Lives Counter
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD_Lives> WidgetLivesClass;
+	UPROPERTY(BlueprintReadWrite)
+		class UW_HUD_Lives* WidgetLives;
+
 	// Ammo Counter
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UW_HUD_Ammo> WidgetAmmoClass;
-	// Widget Instance;
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Ammo* WidgetAmmo;
 };

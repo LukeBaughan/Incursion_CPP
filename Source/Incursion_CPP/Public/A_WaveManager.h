@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "A_WaveManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestLoseLives, uint8, Amount);
+
 UCLASS()
 class INCURSION_CPP_API AA_WaveManager : public AActor
 {
@@ -16,9 +18,14 @@ public:
 	void Initialise();
 	void BeginWaveCountdown();
 
+	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
+
 private:
 	void GetEnemySpawnLocation();
 	void SpawnEnemy(TSubclassOf<class AC_Enemy> EnemyClass);
+
+	UFUNCTION()
+		void OnEnemyGoalReached(uint8 LivesCost);
 
 	TSubclassOf<class AC_Enemy> EnemyClasses[1];
 	FVector EnemySpawnLocation;

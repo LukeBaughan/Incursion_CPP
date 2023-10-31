@@ -11,5 +11,12 @@ void UW_HUD_Ammo::Initialise_Implementation()
 void UW_HUD_Ammo::SetAmmoAmount(int8 MaxAmmo, int8 CurrentAmmo)
 {
 	FText AmmoText = FText::Format(FText::FromString(TEXT("{0} / {1}")), FText::AsNumber(CurrentAmmo), FText::AsNumber(MaxAmmo));
-	TextBlockAmmo->SetText(AmmoText);
+	if(TextBlockAmmo)
+	{
+		TextBlockAmmo->SetText(AmmoText);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("W_HUD_Ammo: Unable to get TextBlockAmmo"));
+	}
 }

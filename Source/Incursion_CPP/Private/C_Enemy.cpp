@@ -3,6 +3,7 @@
 
 #include "C_Enemy.h"
 
+#include "A_EndGoal.h"
 #include "AIC_Enemy.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -12,6 +13,10 @@ AC_Enemy::AC_Enemy() :
 	BodyMesh(GetMesh()),
 	MovementComponent(GetCharacterMovement()),
 	IsDead(false),
+	PointsAwarded(100),
+	LivesCost(1),
+	MaxWalkSpeed(100.0f),
+	MaxAcceleration(100.0f),
 	MaxHealth(100.0f),
 	CurrentHealth(0.0f),
 	HitSound(nullptr),
@@ -23,6 +28,8 @@ AC_Enemy::AC_Enemy() :
 	// ECC_GameTraceChannel2 = Enemy Channel
 	CapsuleCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
 	CapsuleCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Ignore);
+
+	CapsuleCollider->OnComponentBeginOverlap.AddDynamic(this, &AC_Enemy::OnOverlapBegin);
 
 	// Smooth Rotation
 	bUseControllerRotationYaw = false;
@@ -40,10 +47,11 @@ AC_Enemy::AC_Enemy() :
 	HealthBar->SetRelativeTransform(FTransform(FRotator::ZeroRotator, FVector::ZeroVector, FVector::OneVector));
 }
 
-void AC_Enemy::BeginPlay() // TEMP MOVE TO INITIALISE WHEN CREATED
-{
-	Super::BeginPlay();
-
+void AC_Enemy::Initialise()
+{	
+	// Sets up Stats
+	MovementComponent->MaxWalkSpeed = MaxWalkSpeed;
+	MovementComponent->MaxAcceleration = MaxAcceleration;
 	CurrentHealth = MaxHealth;
 
 	HealthBarInterface = Cast<II_HealthBar>(HealthBar->GetWidget());
@@ -55,7 +63,6 @@ void AC_Enemy::BeginPlay() // TEMP MOVE TO INITIALISE WHEN CREATED
 
 void AC_Enemy::TakeDamageCharacter(float DamageAmount)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("C_Enemy: TakeDamage Called"));
 	if (!IsDead)
 	{
 		UGameplayStatics::SpawnSoundAttached(HitSound, BodyMesh);
@@ -67,7 +74,8 @@ void AC_Enemy::TakeDamageCharacter(float DamageAmount)
 		{
 			IsDead = true;
 			// TEMPORARY
-			this->Destroy();
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("C_Enemy: %d Points Awarded"), PointsAwarded));
+			DestroySelf();
 		}
 	}
 }
@@ -77,5 +85,23 @@ void AC_Enemy::UpdateHealthBar()
 	if (HealthBarInterface)
 	{
 		HealthBarInterface->SetHealth(CurrentHealth, MaxHealth);
+	}
+}
+
+void AC_Enemy::DestroySelf()
+{
+	GetController()->Destroy();
+	this->Destroy();
+}
+
+void AC_Enemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AA_EndGoal* EndGoal = Cast<AA_EndGoal>(OtherActor);
+
+	if (EndGoal)
+	{	
+		OnGoalReached.Broadcast(LivesCost);
+		DestroySelf();
 	}
 }

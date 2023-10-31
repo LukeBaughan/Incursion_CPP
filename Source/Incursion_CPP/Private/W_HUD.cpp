@@ -5,7 +5,18 @@
 
 void UW_HUD::Initialise_Implementation()
 {
-	// OVERRIDE IN BP AND SET WidgetAmmo BEFORE PARENT INITIALISE
+	// OVERRIDE IN BP AND SET WIDGETS BEFORE PARENT INITIALISE
+
+	//Lives
+	if (WidgetLives)
+	{
+		WidgetLives->Initialise();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetLives Invalid"));
+	}
+
 	// Ammo
 	if (WidgetAmmo)
 	{

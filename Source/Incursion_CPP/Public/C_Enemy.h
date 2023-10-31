@@ -11,6 +11,8 @@
 
 #include "C_Enemy.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemy_OnGoalReached, uint8, LivesCostAmount);
+
 UCLASS()
 class INCURSION_CPP_API AC_Enemy : public ACharacter, public II_Character
 {
@@ -19,7 +21,22 @@ class INCURSION_CPP_API AC_Enemy : public ACharacter, public II_Character
 public:
 	// Sets default values for this character's properties
 	AC_Enemy();
+	void Initialise();
 	void TakeDamageCharacter(float DamageAmount) override;
+
+	FEnemy_OnGoalReached OnGoalReached;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		int PointsAwarded;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		uint8 LivesCost;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float MaxWalkSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float MaxAcceleration;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float MaxHealth;
@@ -30,12 +47,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USoundBase* HitSound;
 
-protected:
-	// TEMP
-	virtual void BeginPlay() override;
-
 private:
 	void UpdateHealthBar();
+	void DestroySelf();
+
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UCapsuleComponent* CapsuleCollider;
 	USkeletalMeshComponent* BodyMesh;

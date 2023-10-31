@@ -16,7 +16,7 @@ AC_Player::AC_Player() :
 	SprintSpeed(1200.0f),
 	SprintAcceleration(4048.0f),
 	MovementComponent(GetCharacterMovement()),
-
+	
 	CurrentlyShooting(false),
 
 	CapsuleCollider(GetCapsuleComponent()),

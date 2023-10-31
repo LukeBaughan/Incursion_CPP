@@ -41,4 +41,11 @@ void AA_WaveManager::SpawnEnemy(TSubclassOf<class AC_Enemy> EnemyClass)
 {
 	AC_Enemy* Enemy = GetWorld()->SpawnActor<AC_Enemy>(EnemyClass, EnemySpawnLocation, FRotator::ZeroRotator, EnemySpawnParameters);
 	Enemy->SpawnDefaultController();
+	Enemy->Initialise();
+	Enemy->OnGoalReached.AddDynamic(this, &AA_WaveManager::OnEnemyGoalReached);
+}
+
+void AA_WaveManager::OnEnemyGoalReached(uint8 LivesCost)
+{
+	OnRequestLoseLives.Broadcast(LivesCost);
 }
