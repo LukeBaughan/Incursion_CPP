@@ -22,7 +22,10 @@ public:
 		FBlackboardKeySelector PlayerLocationKey;
 
 	UPROPERTY(EditAnywhere, Category = "BP Keys")
-		FBlackboardKeySelector PlayerInFollowRangeKey;
+		FBlackboardKeySelector PlayerInFollowRangeKey;	
+	
+	UPROPERTY(EditAnywhere, Category = "BP Keys")
+		FBlackboardKeySelector PlayerInAttackRange;
 
 private:
 

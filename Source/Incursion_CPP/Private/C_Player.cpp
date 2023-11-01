@@ -143,6 +143,11 @@ void AC_Player::PerformPrimaryActionReleased()
 	Gun->EndShooting();
 }
 
+void AC_Player::TakeDamageCharacter(float DamageAmount)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("C_Player: %f Damage Taken"), DamageAmount));
+}
+
 
 
 // Gun Functions

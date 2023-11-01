@@ -27,6 +27,13 @@ public:
 	void TakeDamageCharacter(float DamageAmount) override;
 
 	virtual bool GetPlayerInFollowRange() override;
+	virtual bool GetPlayerInAttackRange() override;
+	virtual bool GetAttackReady() override;
+	virtual float GetAttackDamage() override;
+	virtual void OnAttackExecuted() override;
+	virtual USkeletalMeshComponent* GetBodyMesh() override;
+	virtual USoundBase* GetAttackSound() override;
+	virtual UAnimMontage* GetAttackAnimation() override;
 
 	FEnemy_OnGoalReached OnGoalReached;
 	FEnemy_OnDefeated OnDefeated;
@@ -36,6 +43,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		uint8 LivesCost;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float AttackRate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float MaxWalkSpeed;
@@ -49,6 +59,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		UWidgetComponent* HealthBar;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float AttackDamage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		UAnimMontage* AttackAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		USoundBase* AttackSound;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USoundBase* HitSound;
 
@@ -56,9 +75,16 @@ public:
 		TArray<UAnimSequenceBase*> DeathAnimations;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
-		UStaticMeshComponent* FollowRangeCylinder;
+		UStaticMeshComponent* FollowRangeCylinder;	
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
+		UStaticMeshComponent* AttackRangeCylinder;
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
+	void EndAttackCooldown();
 	void UpdateHealthBar();
 	void DestroySelf();
 
@@ -74,13 +100,24 @@ private:
 		void FollowRangeCylinderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION()
+		void AttackRangeCylinderOnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void AttackRangeCylinderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	UCapsuleComponent* CapsuleCollider;
 	USkeletalMeshComponent* BodyMesh;
 	FTransform BodyMeshSpawnTransform;
 	II_HealthBar* HealthBarInterface;
 	UCharacterMovementComponent* MovementComponent;
+	FTimerHandle TH_AttackCooldown;
 
 	bool IsDead;
 	float CurrentHealth;
 	bool PlayerInFollowRange;
+	bool PlayerInAttackRange;
+	bool AttackReady;
 };

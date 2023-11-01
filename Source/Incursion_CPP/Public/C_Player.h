@@ -30,6 +30,7 @@ public:
 
 	void Initialise(TSubclassOf<class AA_Gun> GunSpawnClass);
 	void CallOnAmmoAmountChangedED();
+	virtual void TakeDamageCharacter(float DamageAmount) override;
 	virtual bool GetIsDead() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")

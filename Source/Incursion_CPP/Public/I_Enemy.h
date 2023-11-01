@@ -20,4 +20,12 @@ class INCURSION_CPP_API II_Enemy
 public:
 
 	virtual bool GetPlayerInFollowRange();
+	virtual bool GetPlayerInAttackRange();
+	virtual bool GetAttackReady();
+	virtual float GetAttackDamage();
+	virtual void OnAttackExecuted();
+	virtual USkeletalMeshComponent* GetBodyMesh();
+	virtual USoundBase* GetAttackSound();
+	virtual UAnimMontage* GetAttackAnimation();
+
 };

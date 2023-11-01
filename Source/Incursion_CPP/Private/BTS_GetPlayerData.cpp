@@ -26,6 +26,8 @@ void UBTS_GetPlayerData::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 			if (EnemyInterface)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInFollowRangeKey.SelectedKeyName, EnemyInterface->GetPlayerInFollowRange());
+				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInAttackRange.SelectedKeyName, EnemyInterface->GetPlayerInAttackRange());
+				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInAttackRange.SelectedKeyName, EnemyInterface->GetPlayerInAttackRange());
 			}
 		}
 	}
