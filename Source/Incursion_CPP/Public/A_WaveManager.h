@@ -27,6 +27,9 @@ private:
 	UFUNCTION()
 		void OnEnemyGoalReached(uint8 LivesCost);
 
+	UFUNCTION()
+		void OnEnemyDefeated(AC_Enemy* Enemy, int PointsRewarded);
+
 	TSubclassOf<class AC_Enemy> EnemyClasses[1];
 	FVector EnemySpawnLocation;
 	FActorSpawnParameters EnemySpawnParameters;

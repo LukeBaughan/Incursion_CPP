@@ -126,7 +126,7 @@ void AC_Enemy::TakeDamageCharacter(float DamageAmount)
 		{
 			IsDead = true;
 			// Continue when starting store manager
-			OnDefeated.Broadcast(PointsAwarded);
+			OnDefeated.Broadcast(this, PointsAwarded);
 
 			CapsuleCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);

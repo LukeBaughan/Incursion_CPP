@@ -13,7 +13,7 @@
 #include "C_Enemy.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemy_OnGoalReached, uint8, LivesCostAmount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnemy_OnDefeated, int, PointsAwardedAmount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEnemy_OnDefeated, AC_Enemy*, Enemy, int, PointsAwardedAmount);
 
 UCLASS()
 class INCURSION_CPP_API AC_Enemy : public ACharacter, public II_Character, public II_Enemy
