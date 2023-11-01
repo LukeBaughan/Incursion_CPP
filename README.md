@@ -8,9 +8,9 @@ Latest Gameplay: https://www.youtube.com/watch?v=4TQmADh78do
 -	Movement
 -	Gun Base Class
 -	Gun Types
+-	Enemy Base Class
 
 **In Progress**
--	Enemy Base Class
 -	Enemy Types
 -	Grid System
 -	Levels
