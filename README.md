@@ -9,9 +9,9 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Gun Base Class
 -	Gun Types
 -	Enemy Base Class
+-	Enemy Types
 
 **In Progress**
--	Enemy Types
 -	Grid System
 -	Levels
 -	Main Menu
