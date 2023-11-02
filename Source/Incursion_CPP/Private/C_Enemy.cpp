@@ -69,6 +69,8 @@ AC_Enemy::AC_Enemy() :
 	MovementComponent->bOrientRotationToMovement = true;
 	MovementComponent->bUseControllerDesiredRotation = false;
 
+	MovementComponent->bRequestedMoveUseAcceleration = true;
+
 
 
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

@@ -11,7 +11,7 @@ AA_WaveManager::AA_WaveManager()
 	EnemySpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	// make into function? (when there are many classes)
-	ConstructorHelpers::FClassFinder<class AC_Enemy> EnemyStandard_CF(TEXT("/Game/Luke/Enemy/C_Enemy_Standard_BP"));
+	ConstructorHelpers::FClassFinder<class AC_Enemy> EnemyStandard_CF(TEXT("/Game/Luke/Enemy/C_Enemy_Behemoth_BP"));
 	if (EnemyStandard_CF.Succeeded())
 	{
 		EnemyClasses[E_EnemyClass::Standard] = EnemyStandard_CF.Class;
