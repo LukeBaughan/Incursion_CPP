@@ -2,10 +2,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "A_WaveData.h"
 #include "GameFramework/Actor.h"
+#include "W_HUD_Timer.h"
+
 #include "A_WaveManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestLoseLives, uint8, Amount);
+
+// DEPRECIATED: IMPORTANT: Increase the size of EnemyClasses when adding to E_EnemyClass 
+UENUM(BlueprintType)
+enum E_EnemyClass
+{
+	Standard UMETA(DisplayName = "Standard"),
+	Runner UMETA(DisplayName = "Runner"),
+	Maverick UMETA(DisplayName = "Maverick"),
+	Heavy UMETA(DisplayName = "Heavy"),
+	Behemoth UMETA(DisplayName = "Behemoth")
+};
 
 UCLASS()
 class INCURSION_CPP_API AA_WaveManager : public AActor
@@ -15,13 +30,17 @@ class INCURSION_CPP_API AA_WaveManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AA_WaveManager();
-	void Initialise();
+	//void Initialise(UW_HUD_Timer* WidgetHUD_TimerRef, UW_SkipCountdown* WidgetSkipCountdownRef);
 	void BeginWaveCountdown();
 
 	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
 
 private:
+	void GetEnemyClassReference(E_EnemyClass EnemyClass, FString EnemyBP_FileName);
+	void GetWaveData();
 	void GetEnemySpawnLocation();
+	void BeginWave();
+	void DecideSpawnEnemyClass();
 	void SpawnEnemy(TSubclassOf<class AC_Enemy> EnemyClass);
 
 	UFUNCTION()
@@ -30,13 +49,19 @@ private:
 	UFUNCTION()
 		void OnEnemyDefeated(AC_Enemy* Enemy, int PointsRewarded);
 
-	TSubclassOf<class AC_Enemy> EnemyClasses[1];
+	UW_HUD_Timer* WidgetHUD_Timer;
+	//UW_SkipCountdown* WidgetSkipCountdown;
+
+	TArray<FWaveEnemies> AllWaveEnemies;
+	TArray<TSubclassOf<class AC_Enemy>> CurrentWaveEnemies;
+	TSubclassOf<class AC_Enemy> EnemyClasses[5];
 	FVector EnemySpawnLocation;
 	FActorSpawnParameters EnemySpawnParameters;
+	int8 CurrentWave;
+	int8 EnemySpawnIndex;
+	int8 TotalNumberOfEnemiesThisWave;
+	int8 EnemiesDefeatedOrReachedGoalThisWave;
+	FTimerHandle TH_SpawningEnemies;
+	float EnemySpawnRate;
 };
 
-UENUM(BlueprintType)
-enum E_EnemyClass
-{
-	Standard UMETA(DisplayName = "Standard")
-};

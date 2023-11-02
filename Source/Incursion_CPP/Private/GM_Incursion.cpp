@@ -71,7 +71,7 @@ void AGM_Incursion::SetUpUI_Manager()
 void AGM_Incursion::SetUpWaveManager()
 {
 	WaveManager = GetWorld()->SpawnActor<AA_WaveManager>(FVector::Zero(), FRotator::ZeroRotator);
-	WaveManager->Initialise();
+	//WaveManager->Initialise();
 	WaveManager->OnRequestLoseLives.AddDynamic(this, &AGM_Incursion::LoseLives);
 }
 
