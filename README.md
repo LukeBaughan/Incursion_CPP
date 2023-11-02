@@ -22,6 +22,7 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 **ToDo**
 -	Towers
 -	Store
+-	Player Stat Tracking
 
 <br/>
 
