@@ -7,7 +7,6 @@ void UW_HUD::Initialise_Implementation()
 {
 	// OVERRIDE IN BP AND SET WIDGETS BEFORE PARENT INITIALISE
 
-	//Lives
 	if (WidgetLives)
 	{
 		WidgetLives->Initialise();
@@ -17,7 +16,6 @@ void UW_HUD::Initialise_Implementation()
 		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetLives Invalid"));
 	}
 
-	// Ammo
 	if (WidgetAmmo)
 	{
 		WidgetAmmo->Initialise();
@@ -25,5 +23,23 @@ void UW_HUD::Initialise_Implementation()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetAmmo Invalid"));
+	}
+
+	if (WidgetTimer)
+	{
+		WidgetTimer->Initialise();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetTimer Invalid"));
+	}
+
+	if (WidgetSkipCountdown)
+	{
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetSkipCountdown Invalid"));
 	}
 }

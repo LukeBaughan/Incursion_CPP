@@ -25,6 +25,7 @@ public:
 	AC_Enemy();
 	void Initialise();
 	void TakeDamageCharacter(float DamageAmount) override;
+	void DestroySelf();
 
 	virtual bool GetPlayerInFollowRange() override;
 	virtual bool GetPlayerInAttackRange() override;
@@ -86,7 +87,6 @@ protected:
 private:
 	void EndAttackCooldown();
 	void UpdateHealthBar();
-	void DestroySelf();
 
 	UFUNCTION()
 		void CapsuleColliderOnOverlapBegin(class UPrimitiveComponent* HitComp, class AActor* OtherActor,

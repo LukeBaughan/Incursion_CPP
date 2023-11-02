@@ -5,6 +5,7 @@
 
 #include "A_WaveData.h"
 #include "GameFramework/Actor.h"
+#include "W_HUD_SkipCountdown.h"
 #include "W_HUD_Timer.h"
 
 #include "A_WaveManager.generated.h"
@@ -30,7 +31,7 @@ class INCURSION_CPP_API AA_WaveManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AA_WaveManager();
-	//void Initialise(UW_HUD_Timer* WidgetHUD_TimerRef, UW_SkipCountdown* WidgetSkipCountdownRef);
+	void Initialise(UW_HUD_Timer* WidgetHUD_TimerRef, UW_HUD_SkipCountdown* WidgetHUD_SkipCountdownRef);
 	void BeginWaveCountdown();
 
 	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
@@ -39,9 +40,11 @@ private:
 	void GetEnemyClassReference(E_EnemyClass EnemyClass, FString EnemyBP_FileName);
 	void GetWaveData();
 	void GetEnemySpawnLocation();
+	void Countdown();
 	void BeginWave();
 	void DecideSpawnEnemyClass();
 	void SpawnEnemy(TSubclassOf<class AC_Enemy> EnemyClass);
+	void IncrementEnemiesDefeatedOrReachedGoal();
 
 	UFUNCTION()
 		void OnEnemyGoalReached(uint8 LivesCost);
@@ -50,8 +53,11 @@ private:
 		void OnEnemyDefeated(AC_Enemy* Enemy, int PointsRewarded);
 
 	UW_HUD_Timer* WidgetHUD_Timer;
-	//UW_SkipCountdown* WidgetSkipCountdown;
+	UW_HUD_SkipCountdown* WidgetHUD_SkipCountdown;
 
+	int8 MaxCountdownTime;
+	int8 CurrentCountdownTime;
+	FTimerHandle TH_Countdown;
 	TArray<FWaveEnemies> AllWaveEnemies;
 	TArray<TSubclassOf<class AC_Enemy>> CurrentWaveEnemies;
 	TSubclassOf<class AC_Enemy> EnemyClasses[5];
@@ -61,6 +67,7 @@ private:
 	int8 EnemySpawnIndex;
 	int8 TotalNumberOfEnemiesThisWave;
 	int8 EnemiesDefeatedOrReachedGoalThisWave;
+	TArray<AC_Enemy*> DeadEnemies;
 	FTimerHandle TH_SpawningEnemies;
 	float EnemySpawnRate;
 };
