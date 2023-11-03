@@ -95,7 +95,7 @@ void AA_WaveManager::Countdown()
 
 		for (AC_Enemy* Enemy : DeadEnemies)
 		{
-			if (Enemy)
+			if (Enemy && !Enemy->IsPendingKillPending())
 			{
 				Enemy->DestroySelf();
 			}
