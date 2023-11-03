@@ -14,7 +14,10 @@
 
 #include "C_Player.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRequestSkipCountdown);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoAmountChanged, int8, MaxAmmo, int8, CurrentAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerOnDamageTaken, float, PlayerCurrentHealth, float, PlayerMaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerOnDead);
 
 UCLASS()
 class AC_Player : public ACharacter, public II_Character
@@ -33,6 +36,10 @@ public:
 	virtual void TakeDamageCharacter(float DamageAmount) override;
 	virtual bool GetIsDead() override;
 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
+		float MaxHealth;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
 		FTransform AssaultRifleTransform;
 
@@ -42,8 +49,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Weapon")
 		USkeletalMeshComponent* GunPositionMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Camera")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		USoundBase* DamageRecievedSound;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USkeletalMeshComponent* ArmsMesh;
@@ -57,12 +67,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		TSubclassOf<class UAnimInst_Player_Base> AnimInstClassShotgun;
 
+	FPlayerOnDamageTaken OnDamageTaken;
+	FPlayerOnDead OnDead;
+	FRequestSkipCountdown RequestSkipCountdown;
 	FOnAmmoAmountChanged OnAmmoAmountChanged;
+
+	UCapsuleComponent* CapsuleCollider;
+
+	float CurrentHealth;
+	bool IsDead = false;
 
 private:
 	// Camera
 	void LookLeftRight(float AxisValue);
 	void LookUpDown(float AxisValue);
+
+	void SkipCountdown();
 
 	// Gun
 
@@ -96,11 +116,7 @@ private:
 
 	void SetSprint(bool Sprint);
 
-	bool IsDead = false;
-
 	// Capsule Collider
-
-	UCapsuleComponent* CapsuleCollider;
 	float CapsuleHalfHeightSize;
 	float CapsuleRadiusSize;
 

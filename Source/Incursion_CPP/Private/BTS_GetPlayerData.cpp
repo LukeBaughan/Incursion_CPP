@@ -16,19 +16,23 @@ void UBTS_GetPlayerData::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	PlayerCharacterInterface = Cast<II_Character>(Player);
 
 	if (PlayerCharacterInterface)
-	{
+	{			
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector(PlayerLocationKey.SelectedKeyName, Player->GetActorLocation());
+
 		if (!PlayerCharacterInterface->GetIsDead())
 		{
-			OwnerComp.GetBlackboardComponent()->SetValueAsVector(PlayerLocationKey.SelectedKeyName, Player->GetActorLocation());
-
 			EnemyInterface = Cast<II_Enemy>(OwnerComp.GetAIOwner()->GetPawn());
 
 			if (EnemyInterface)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInFollowRangeKey.SelectedKeyName, EnemyInterface->GetPlayerInFollowRange());
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInAttackRange.SelectedKeyName, EnemyInterface->GetPlayerInAttackRange());
-				OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInAttackRange.SelectedKeyName, EnemyInterface->GetPlayerInAttackRange());
 			}
+		}
+		else 
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInFollowRangeKey.SelectedKeyName, false);
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayerInAttackRange.SelectedKeyName, false);
 		}
 	}
 }

@@ -34,6 +34,9 @@ public:
 	void Initialise(UW_HUD_Timer* WidgetHUD_TimerRef, UW_HUD_SkipCountdown* WidgetHUD_SkipCountdownRef);
 	void BeginWaveCountdown();
 
+	UFUNCTION()
+		void SkipCountdown();
+
 	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
 
 private:

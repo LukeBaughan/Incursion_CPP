@@ -4,6 +4,7 @@
 #include "C_Player.h"
 
 #include "A_Gun_Shotgun.h"
+#include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -16,8 +17,10 @@ AC_Player::AC_Player() :
 	SprintSpeed(1200.0f),
 	SprintAcceleration(4048.0f),
 	MovementComponent(GetCharacterMovement()),
-	
+
 	CurrentlyShooting(false),
+	MaxHealth(100.0f),
+	CurrentHealth(MaxHealth),
 
 	CapsuleCollider(GetCapsuleComponent()),
 	CapsuleHalfHeightSize(96.0f),
@@ -25,6 +28,8 @@ AC_Player::AC_Player() :
 
 	CameraSpawnLocation(FVector(-39.5f, 0.0f, 64.2f)),
 	CameraComponent(CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"))),
+
+	DamageRecievedSound(nullptr),
 
 	ArmsMeshTransform(FTransform(FRotator(1.73f, -80.15f, -6.0f), FVector(-5.33f, -15.25f, -164.54f), FVector::One())),
 	ArmsMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms Mesh"))),
@@ -84,6 +89,7 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("Look Up / Down", this, &AC_Player::LookUpDown);
 
 	// IE = Input Event
+	PlayerInputComponent->BindAction("SkipCountdown", IE_Pressed, this, &AC_Player::SkipCountdown);
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Pressed, this, &AC_Player::PerformPrimaryActionPressed);
 	PlayerInputComponent->BindAction("PrimaryAction", IE_Released, this, &AC_Player::PerformPrimaryActionReleased);
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AC_Player::ReloadGun);
@@ -143,9 +149,21 @@ void AC_Player::PerformPrimaryActionReleased()
 	Gun->EndShooting();
 }
 
+void AC_Player::SkipCountdown()
+{
+	RequestSkipCountdown.Broadcast();
+}
+
 void AC_Player::TakeDamageCharacter(float DamageAmount)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("C_Player: %f Damage Taken"), DamageAmount));
+	UGameplayStatics::SpawnSoundAttached(DamageRecievedSound, ArmsMesh);
+	CurrentHealth = FMath::Clamp(CurrentHealth - DamageAmount, 0.0f, MaxHealth);
+	OnDamageTaken.Broadcast(CurrentHealth, MaxHealth);
+
+	if (CurrentHealth == 0.0f)
+	{
+		OnDead.Broadcast();
+	}
 }
 
 

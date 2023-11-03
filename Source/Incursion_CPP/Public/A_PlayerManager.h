@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+#include "A_SpectatorCamera.h"
+#include "A_WaveManager.h"
 #include "C_Player.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
@@ -23,7 +25,7 @@ public:
 	AA_PlayerManager();
 
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
-	void SetUpEventDispatchers();
+	void SetUpEventDispatchers(AA_WaveManager* WaveManager);
 
 	APC_PlayerController* PlayerController;
 	UW_HUD* WidgetHUD;
@@ -31,6 +33,18 @@ public:
 private:	
 	void SetUpPlayerController();
 	void SetUpPlayer();
+	void SwitchToSpectatorCamera();
+	void RespawnPlayer();
+	void EnablePlayer();
+
+	UFUNCTION()
+		void EnterDeadPhase();
+
+	AA_SpectatorCamera* SpectatorCamera;
+	float CameraSwitchBlendTime;
+	FTimerHandle TH_PlayerDead;
+	FTimerHandle TH_PlayerRespawning;
+	float PlayerRespawnTime;
 
 	AC_Player* PlayerCharacter;
 	TSubclassOf<class AC_Player> PlayerBP_Class;

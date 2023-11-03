@@ -28,7 +28,7 @@ void AGM_Incursion::ExecutePreGameFunctions()
 	SetUpPlayerManager();
 	SetUpUI_Manager();
 	SetUpWaveManager();
-	PlayerManager->SetUpEventDispatchers();
+	PlayerManager->SetUpEventDispatchers(WaveManager);
 }
 
 

@@ -16,6 +16,15 @@ void UW_HUD::Initialise_Implementation()
 		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetLives Invalid"));
 	}
 
+	if (WidgetHealthBar)
+	{
+		WidgetHealthBar->Initialise();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetHealthBar Invalid"));
+	}
+
 	if (WidgetAmmo)
 	{
 		WidgetAmmo->Initialise();
@@ -32,14 +41,5 @@ void UW_HUD::Initialise_Implementation()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetTimer Invalid"));
-	}
-
-	if (WidgetSkipCountdown)
-	{
-
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetSkipCountdown Invalid"));
 	}
 }

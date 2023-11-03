@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,9 +5,6 @@
 #include "Blueprint/UserWidget.h"
 #include "W_HUD_SkipCountdown.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class INCURSION_CPP_API UW_HUD_SkipCountdown : public UUserWidget
 {

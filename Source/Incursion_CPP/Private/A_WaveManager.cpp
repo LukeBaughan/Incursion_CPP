@@ -9,7 +9,7 @@
 AA_WaveManager::AA_WaveManager() :
 	WidgetHUD_Timer(nullptr),
 	WidgetHUD_SkipCountdown(nullptr),
-	MaxCountdownTime(5),
+	MaxCountdownTime(30),
 	CurrentCountdownTime(0),
 	EnemySpawnLocation(FVector::ZeroVector),
 	CurrentWave(0),
@@ -102,6 +102,15 @@ void AA_WaveManager::Countdown()
 		}
 
 		BeginWave();
+	}
+}
+
+void AA_WaveManager::SkipCountdown()
+{
+	if (CurrentCountdownTime > 4)
+	{
+		CurrentCountdownTime = 4;
+		WidgetHUD_SkipCountdown->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
