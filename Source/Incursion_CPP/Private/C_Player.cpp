@@ -102,6 +102,8 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AC_Player::EndPerformSprint);
 
 	PlayerInputComponent->BindAction("PerformJump", IE_Pressed, this, &AC_Player::PerformJump);
+
+	PlayerInputComponent->BindAction("PauseGame", IE_Pressed, this, &AC_Player::PauseGameActionPressed).bExecuteWhenPaused = true;
 }
 
 // Spawns and attaches the gun to the player character
@@ -152,6 +154,11 @@ void AC_Player::PerformPrimaryActionReleased()
 void AC_Player::SkipCountdown()
 {
 	RequestSkipCountdown.Broadcast();
+}
+
+void AC_Player::PauseGameActionPressed()
+{
+	RequestPauseGame.Broadcast(!UGameplayStatics::IsGamePaused(GetWorld()));
 }
 
 void AC_Player::TakeDamageCharacter(float DamageAmount)

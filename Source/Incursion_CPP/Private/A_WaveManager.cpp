@@ -70,6 +70,7 @@ void AA_WaveManager::GetEnemySpawnLocation()
 
 void AA_WaveManager::BeginWaveCountdown()
 {
+	OnWaveEnded.Broadcast();
 	WidgetHUD_Timer->SetVisibility(ESlateVisibility::Visible);
 	WidgetHUD_SkipCountdown->SetVisibility(ESlateVisibility::Visible);
 

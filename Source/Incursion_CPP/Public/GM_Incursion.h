@@ -37,6 +37,9 @@ private:
 	void ExecuteInGameFunctions();
 
 	UFUNCTION()
+		void TogglePauseGame(bool Pause);
+
+	UFUNCTION()
 		void LoseLives(uint8 Amount);
 
 	UGI_Incursion* GameInstance;

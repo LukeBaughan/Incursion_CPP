@@ -15,6 +15,8 @@
 
 #include "A_PlayerManager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerManager_RequestTogglePauseGame, bool, PauseGame);
+
 UCLASS()
 class INCURSION_CPP_API AA_PlayerManager : public AActor
 {
@@ -27,6 +29,11 @@ public:
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
 	void SetUpEventDispatchers(AA_WaveManager* WaveManager);
 
+	UFUNCTION()
+		void ReplenishPlayerHealth();
+
+	FPlayerManager_RequestTogglePauseGame RequestTogglePauseGame;
+
 	APC_PlayerController* PlayerController;
 	UW_HUD* WidgetHUD;
 
@@ -36,6 +43,9 @@ private:
 	void SwitchToSpectatorCamera();
 	void RespawnPlayer();
 	void EnablePlayer();
+
+	UFUNCTION()
+		void RequestTogglePauseGameFunction(bool Pause);
 
 	UFUNCTION()
 		void EnterDeadPhase();

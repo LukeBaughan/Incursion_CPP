@@ -1,7 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "GM_Incursion.h"
+
+#include "Kismet/Gameplaystatics.h"
 
 AGM_Incursion::AGM_Incursion() :
 	GameInstance(nullptr),
@@ -42,6 +42,7 @@ void AGM_Incursion::SetUpPlayerManager()
 	if (PlayerManager)
 	{
 		PlayerManager->Initialise(GameInstance->GetSpawnWeaponClass());
+		PlayerManager->RequestTogglePauseGame.AddDynamic(this, &AGM_Incursion::TogglePauseGame);
 	}
 	else
 	{
@@ -73,11 +74,17 @@ void AGM_Incursion::SetUpWaveManager()
 	WaveManager = GetWorld()->SpawnActor<AA_WaveManager>(FVector::Zero(), FRotator::ZeroRotator);
 	WaveManager->Initialise(UI_Manager->WidgetHUD->WidgetTimer, UI_Manager->WidgetHUD->WidgetSkipCountdown);
 	WaveManager->OnRequestLoseLives.AddDynamic(this, &AGM_Incursion::LoseLives);
+	WaveManager->OnWaveEnded.AddDynamic(PlayerManager, &AA_PlayerManager::ReplenishPlayerHealth);
 }
 
 void AGM_Incursion::ExecuteInGameFunctions()
 {
 	WaveManager->BeginWaveCountdown();
+}
+
+void AGM_Incursion::TogglePauseGame(bool Pause)
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), Pause);
 }
 
 void AGM_Incursion::LoseLives(uint8 Amount)

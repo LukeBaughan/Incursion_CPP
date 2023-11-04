@@ -90,11 +90,17 @@ void AA_PlayerManager::SetUpEventDispatchers(AA_WaveManager* WaveManager)
 	//Switches cameras when the player dies
 	PlayerCharacter->OnDead.AddDynamic(this, &AA_PlayerManager::EnterDeadPhase);
 
+	PlayerCharacter->RequestPauseGame.AddDynamic(this, &AA_PlayerManager::RequestTogglePauseGameFunction);
 	PlayerCharacter->RequestSkipCountdown.AddDynamic(WaveManager, &AA_WaveManager::SkipCountdown);
 
 	// Updates the ammo count when the player reloads/ shoots
 	PlayerCharacter->OnAmmoAmountChanged.AddDynamic(WidgetHUD->WidgetAmmo, &UW_HUD_Ammo::SetAmmoAmount);
 	PlayerCharacter->CallOnAmmoAmountChangedED();
+}
+
+void AA_PlayerManager::RequestTogglePauseGameFunction(bool Pause)
+{
+	RequestTogglePauseGame.Broadcast(Pause);
 }
 
 // Switches the view to the spectator camera while the player is respawning
@@ -119,8 +125,7 @@ void AA_PlayerManager::RespawnPlayer()
 {
 	PlayerCharacter->CapsuleCollider->SetWorldLocationAndRotation(PlayerSpawnLocation, FRotator::ZeroRotator);
 	PlayerController->SetViewTargetWithBlend(PlayerCharacter, CameraSwitchBlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
-	PlayerCharacter->CurrentHealth = PlayerCharacter->MaxHealth;
-	PlayerCharacter->OnDamageTaken.Broadcast(PlayerCharacter->CurrentHealth, PlayerCharacter->MaxHealth);
+	ReplenishPlayerHealth();
 
 	GetWorldTimerManager().SetTimer(TH_PlayerRespawning, this, &AA_PlayerManager::EnablePlayer, CameraSwitchBlendTime, false);
 }
@@ -134,5 +139,10 @@ void AA_PlayerManager::EnablePlayer()
 
 	GetWorldTimerManager().ClearTimer(TH_PlayerRespawning);
 	GetWorldTimerManager().ClearTimer(TH_PlayerDead);
+}
 
+void AA_PlayerManager::ReplenishPlayerHealth()
+{
+	PlayerCharacter->CurrentHealth = PlayerCharacter->MaxHealth;
+	PlayerCharacter->OnDamageTaken.Broadcast(PlayerCharacter->CurrentHealth, PlayerCharacter->MaxHealth);
 }

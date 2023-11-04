@@ -14,6 +14,7 @@
 
 #include "C_Player.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayer_RequestPauseGame, bool, PauseGame);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRequestSkipCountdown);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoAmountChanged, int8, MaxAmmo, int8, CurrentAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerOnDamageTaken, float, PlayerCurrentHealth, float, PlayerMaxHealth);
@@ -67,6 +68,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		TSubclassOf<class UAnimInst_Player_Base> AnimInstClassShotgun;
 
+	FPlayer_RequestPauseGame RequestPauseGame;
 	FPlayerOnDamageTaken OnDamageTaken;
 	FPlayerOnDead OnDead;
 	FRequestSkipCountdown RequestSkipCountdown;
@@ -102,6 +104,8 @@ private:
 
 	void SetUpAnimInstanceType();
 	void SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInst, FTransform GunTranform);
+
+	void PauseGameActionPressed();
 
 	// Movement
 
