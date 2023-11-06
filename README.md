@@ -2,7 +2,7 @@
 
 A recreation of Incursion (My final year university project made in Unreal Engine 5) made almost entirely with  C++ instead of blueprints. (IN DEVELOPMENT)
 
-[Latest Gameplay Update Video](https://www.youtube.com/watch?v=xcsnzOrjs9Q)
+[Latest Gameplay Update Video](https://www.youtube.com/watch?v=sv4A0-y4Fsc)
 
 **Completed**
 -	Movement
