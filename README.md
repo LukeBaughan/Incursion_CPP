@@ -10,13 +10,13 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Gun Types
 -	Enemy Base Class
 -	Enemy Types
+-	Player
+-	Player HUD
 
 **In Progress**
 -	Grid System
 -	Levels
 -	Main Menu
--	Player
--	Player HUD
 -	Wave Spawning
 
 **ToDo**
