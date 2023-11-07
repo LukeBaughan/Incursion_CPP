@@ -3,7 +3,12 @@
 
 #include "W_BackButton.h"
 
-void UW_BackButton::Initialise_Implementation(UUserWidget* WidgetOwnerMenu)
+void UW_BackButton::Initialise_Implementation()
+{
+
+}
+
+void UW_BackButton::SetButtonParent(UW_Widget* WidgetOwnerMenu)
 {
 	OwnerMenu = WidgetOwnerMenu;
 }

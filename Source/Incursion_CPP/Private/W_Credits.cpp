@@ -5,5 +5,6 @@
 
 void UW_Credits::Initialise_Implementation()
 {
-	BackButton->Initialise(this);
+	BackButton->Initialise();
+	BackButton->SetButtonParent(this);
 }

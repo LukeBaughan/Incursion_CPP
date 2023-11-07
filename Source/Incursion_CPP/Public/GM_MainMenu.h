@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,6 +11,7 @@
 #include "W_Credits.h"
 #include "W_MainMenu.h"
 #include "W_WeaponSelect.h"
+#include "W_Widget.h"
 
 #include "GM_MainMenu.generated.h"
 
@@ -26,14 +26,16 @@ public:
 private:
 	virtual void BeginPlay();
 
-	void SetUpMenus();
-	void SetUpMenusTest();
+	template <typename WidgetStaticClass>
+	UW_Widget* SetUpMenu(UW_Widget* Widget, TSubclassOf<class UW_Widget> WidgetClass);
+
+	TSubclassOf<class UUserWidget> GetWidgetBP_Class(FString WidgetBP_FileName);
 
 	UFUNCTION()
 		void StartGame(TSubclassOf<class AA_Gun> SpawnWeaponClass);
 
 	UFUNCTION()
-		void OpenMenu(UUserWidget* CurrentMenu, MenuType MenuToOpen);
+		void OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen);
 
 	UFUNCTION()
 		void QuitGame();

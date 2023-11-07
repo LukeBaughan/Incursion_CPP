@@ -5,18 +5,18 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
+#include "W_Widget.h"
 
 #include "W_HUD_Timer.generated.h"
 
 UCLASS()
-class INCURSION_CPP_API UW_HUD_Timer : public UUserWidget
+class INCURSION_CPP_API UW_HUD_Timer : public UW_Widget
 {
 	GENERATED_BODY()
 
 public:
 
-	UFUNCTION(BlueprintNativeEvent)
-		void Initialise();
+	virtual void Initialise_Implementation() override;
 
 	void SetCountdownTime(int Time);
 

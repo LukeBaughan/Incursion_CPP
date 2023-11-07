@@ -37,7 +37,7 @@ void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
 	}
 }
 
-void UBFL_Incursion::OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen)
+void UBFL_Incursion::OpenMenu(UW_Widget* CurrentMenu, UW_Widget* MenuToOpen)
 {
 	// Hides the current menu and displays the requested menu
 	CurrentMenu->SetVisibility(ESlateVisibility::Collapsed);

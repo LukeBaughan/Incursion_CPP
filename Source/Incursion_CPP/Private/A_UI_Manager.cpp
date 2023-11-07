@@ -1,57 +1,121 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "A_UI_Manager.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 AA_UI_Manager::AA_UI_Manager() :
 	PlayerController(nullptr),
 	WidgetHUD(nullptr)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	WidgetHUD_Class = GetWidgetBP_Class(TEXT("HUD/W_HUD_BP"));
+	WidgetPauseMenuClass = GetWidgetBP_Class(TEXT("W_PauseMenu_BP"));
+	WidgetControlsMenuClass = GetWidgetBP_Class(TEXT("MainMenu/W_ControlsBP"));
 
-	// HUD
-	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetHUD_ClassFinder(TEXT("/Game/Luke/UI/HUD/W_HUD_BP"));
-	if (WidgetHUD_ClassFinder.Succeeded())
-		WidgetHUD_Class = WidgetHUD_ClassFinder.Class;
+	InputGameAndUI_Parameters.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+	InputGameAndUI_Parameters.SetHideCursorDuringCapture(true);
 }
 
-// Called when the game starts or when spawned
-void AA_UI_Manager::BeginPlay()
+TSubclassOf<class UUserWidget> AA_UI_Manager::GetWidgetBP_Class(FString WidgetBP_FileName)
 {
-	Super::BeginPlay();
-}
+	FString WidgetFilePath = TEXT("/Game/Luke/UI/") + WidgetBP_FileName;
 
-// Called every frame
-void AA_UI_Manager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	ConstructorHelpers::FClassFinder<class UUserWidget> WidgetCF(*WidgetFilePath);
+	if (WidgetCF.Succeeded())
+	{
+		return WidgetCF.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, (TEXT("A_UI_Manager: Unable to get Widget Class")));
+		return NULL;
+	}
 }
 
 void AA_UI_Manager::Initialise(APC_PlayerController* PlayerControllerRef)
 {
 	PlayerController = PlayerControllerRef;
 
-	// HUD
-	// If the widget class is valid
-	if (WidgetHUD_Class != nullptr)
+	WidgetHUD = Cast<UW_HUD>(SetUpMenu<UW_HUD>(WidgetHUD, WidgetHUD_Class));
+
+	WidgetPauseMenu = Cast<UW_PauseMenu>(SetUpMenu<UW_PauseMenu>(WidgetPauseMenu, WidgetPauseMenuClass));
+	WidgetPauseMenu->OnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
+	WidgetPauseMenu->RequestTogglePause.AddDynamic(this, &AA_UI_Manager::BroadcastRequestTogglePauseGame);
+	WidgetPauseMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);
+
+	WidgetControlsMenu = Cast<UW_Controls>(SetUpMenu<UW_Controls>(WidgetControlsMenu, WidgetControlsMenuClass));
+	WidgetControlsMenu->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
+}
+
+template <typename WidgetStaticClass>
+UW_Widget* AA_UI_Manager::SetUpMenu(UW_Widget* Widget, TSubclassOf<class UW_Widget> WidgetClass)
+{
+	if (WidgetClass)
 	{
-		WidgetHUD = CreateWidget<UW_HUD>(PlayerController, WidgetHUD_Class);
-		// If the created widget is valid, initialise it and add it to the viewport
-		if (WidgetHUD)
-		{ 
-			WidgetHUD->Initialise();
-			WidgetHUD->AddToViewport();
+		Widget = CreateWidget<WidgetStaticClass>(PlayerController, WidgetClass);
+		if (Widget)
+		{
+			Widget->Initialise();
+			Widget->AddToViewport();
+			return Widget;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("A_UI_Manager: WidgetHUD Invalid"));
+			UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: Widget Invalid"));
+			return nullptr;
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("A_UI_Manager: WidgetHUD_Class Invalid"));
+		UE_LOG(LogTemp, Error, TEXT("GM_MainMenu: WidgetClass Invalid"));
+		return nullptr;
 	}
+}
+
+// Shows/ Hides the specified menu widget and enables/ disables mouse input
+void AA_UI_Manager::ToggleMenu(UW_Widget* Widget)
+{
+	switch (Widget->GetVisibility())
+	{
+	case ESlateVisibility::Visible:
+		Widget->SetVisibility(ESlateVisibility::Collapsed);
+		PlayerController->SetInputMode(FInputModeGameOnly());
+		PlayerController->SetShowMouseCursor(false);
+		WidgetHUD->SetVisibility(ESlateVisibility::Visible);
+		break;
+	case ESlateVisibility::Collapsed:
+		Widget->SetVisibility(ESlateVisibility::Visible);
+		PlayerController->SetInputMode(InputGameAndUI_Parameters);
+		PlayerController->SetShowMouseCursor(true);
+		WidgetHUD->SetVisibility(ESlateVisibility::Collapsed);
+		break;
+	}
+}
+
+// Closes the passed menu and opens the selected menu
+void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
+{
+	switch (MenuToOpen)
+	{
+	case Main:
+		BFL_Incursion->OpenMenu(CurrentMenu, WidgetPauseMenu);
+		break;
+	case Options:
+		break;
+	case Controls:
+		BFL_Incursion->OpenMenu(CurrentMenu, WidgetControlsMenu);
+		break;
+	case Win:
+		break;
+	case Lose:
+		break;
+	}
+}
+
+void AA_UI_Manager::BroadcastRequestTogglePauseGame(bool Pause)
+{
+	RequestTogglePauseGame.Broadcast(Pause);
+}
+
+void AA_UI_Manager::BroadcastRequestMainMenu()
+{
+	RequestMainMenu.Broadcast();
 }

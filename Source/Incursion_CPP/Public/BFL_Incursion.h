@@ -8,6 +8,7 @@
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "W_Widget.h"
 
 #include "BFL_Incursion.generated.h"
 
@@ -22,7 +23,7 @@ public:
 	static void SetUpButtonColours(TArray<UButton*> Buttons);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	static void OpenMenu(UUserWidget* CurrentMenu, UUserWidget* MenuToOpen);
+	static void OpenMenu(UW_Widget* CurrentMenu, UW_Widget* MenuToOpen);
 
 	void SetHealthBarAmount(UProgressBar* HealthBar, float CurrentHealth, float MaxHealth);
 

@@ -40,6 +40,9 @@ private:
 		void TogglePauseGame(bool Pause);
 
 	UFUNCTION()
+		void OpenMainMenu();
+
+	UFUNCTION()
 		void LoseLives(uint8 Amount);
 
 	UGI_Incursion* GameInstance;

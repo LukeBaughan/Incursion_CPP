@@ -6,21 +6,25 @@
 
 #include "Blueprint/UserWidget.h"
 #include "W_HUD_Ammo.h"
+#include "W_HUD_Crosshair.h"
 #include "W_HUD_HealthBar.h"
 #include "W_HUD_Lives.h"
 #include "W_HUD_SkipCountdown.h"
 #include "W_HUD_Timer.h"
+#include "W_Widget.h"
 
 #include "W_HUD.generated.h"
 
 UCLASS()
-class INCURSION_CPP_API UW_HUD : public UUserWidget
+class INCURSION_CPP_API UW_HUD : public UW_Widget
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent)
-		void Initialise();
+	virtual void Initialise_Implementation() override;
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<UW_Widget*> AllWidgets;
 
 	// Lives Counter
 	UPROPERTY(EditAnywhere)
@@ -51,4 +55,10 @@ public:
 		TSubclassOf<class UW_HUD_SkipCountdown> WidgetSkipCountdownClass;
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_SkipCountdown* WidgetSkipCountdown;
+
+	// Crosshair
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD_Crosshair> WidgetCrosshairClass;
+	UPROPERTY(BlueprintReadWrite)
+		class UW_HUD_Crosshair* WidgetCrosshair;
 };

@@ -6,40 +6,17 @@
 void UW_HUD::Initialise_Implementation()
 {
 	// OVERRIDE IN BP AND SET WIDGETS BEFORE PARENT INITIALISE
+	Super::Initialise_Implementation();
 
-	if (WidgetLives)
+	for(UW_Widget* Widget : AllWidgets)
 	{
-		WidgetLives->Initialise();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetLives Invalid"));
-	}
-
-	if (WidgetHealthBar)
-	{
-		WidgetHealthBar->Initialise();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetHealthBar Invalid"));
-	}
-
-	if (WidgetAmmo)
-	{
-		WidgetAmmo->Initialise();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetAmmo Invalid"));
-	}
-
-	if (WidgetTimer)
-	{
-		WidgetTimer->Initialise();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("UW_HUD: WidgetTimer Invalid"));
+		if (Widget)
+		{
+			Widget->Initialise();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("W_HUD: Widget Invalid"));
+		}
 	}
 }

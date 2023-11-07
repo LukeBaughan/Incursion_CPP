@@ -6,6 +6,7 @@
 void UW_HUD_Ammo::Initialise_Implementation()
 {
 	// OVERRIDE IN BP AND SET TextBlockAmmo BEFORE PARENT INITIALISE
+	Super::Initialise_Implementation();
 }
 
 void UW_HUD_Ammo::SetAmmoAmount(int8 MaxAmmo, int8 CurrentAmmo)

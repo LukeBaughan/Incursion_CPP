@@ -58,6 +58,8 @@ void AGM_Incursion::SetUpUI_Manager()
 	if (UI_Manager)
 	{
 		UI_Manager->Initialise(PlayerManager->PlayerController);
+		UI_Manager->RequestTogglePauseGame.AddDynamic(this, &AGM_Incursion::TogglePauseGame);
+		UI_Manager->RequestMainMenu.AddDynamic(this, &AGM_Incursion::OpenMainMenu);
 	}
 	else
 	{
@@ -85,6 +87,12 @@ void AGM_Incursion::ExecuteInGameFunctions()
 void AGM_Incursion::TogglePauseGame(bool Pause)
 {
 	UGameplayStatics::SetGamePaused(GetWorld(), Pause);
+	UI_Manager->ToggleMenu(UI_Manager->WidgetPauseMenu);
+}
+
+void AGM_Incursion::OpenMainMenu()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_Dev"), true);
 }
 
 void AGM_Incursion::LoseLives(uint8 Amount)

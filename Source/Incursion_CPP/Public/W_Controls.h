@@ -6,17 +6,17 @@
 
 #include "Blueprint/UserWidget.h"
 #include "W_BackButton.h"
+#include "W_Widget.h"
 
 #include "W_Controls.generated.h"
 
 UCLASS()
-class INCURSION_CPP_API UW_Controls : public UUserWidget
+class INCURSION_CPP_API UW_Controls : public UW_Widget
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent)
-		void Initialise();
+	virtual void Initialise_Implementation() override;
 
 	UPROPERTY(Editanywhere, BlueprintReadWrite, Category = "UI")
 		UW_BackButton* BackButton;
