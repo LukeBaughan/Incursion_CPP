@@ -4,11 +4,23 @@
 
 AA_UI_Manager::AA_UI_Manager() :
 	PlayerController(nullptr),
-	WidgetHUD(nullptr)
+	WidgetHUD(nullptr),
+	WidgetHUD_Class(NULL),
+
+	WidgetPauseMenu(nullptr),
+	WidgetPauseMenuClass(NULL),
+
+	WidgetControlsMenu(nullptr),
+	WidgetControlsMenuClass(NULL),
+
+	WidgetStoreMenu(nullptr),
+	WidgetStoreMenuClass(NULL)
 {
 	WidgetHUD_Class = GetWidgetBP_Class(TEXT("HUD/W_HUD_BP"));
 	WidgetPauseMenuClass = GetWidgetBP_Class(TEXT("W_PauseMenu_BP"));
 	WidgetControlsMenuClass = GetWidgetBP_Class(TEXT("MainMenu/W_ControlsBP"));
+	WidgetStoreMenuClass = GetWidgetBP_Class(TEXT("W_Store_BP"));
+	
 
 	InputGameAndUI_Parameters.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
 	InputGameAndUI_Parameters.SetHideCursorDuringCapture(true);
@@ -43,6 +55,9 @@ void AA_UI_Manager::Initialise(APC_PlayerController* PlayerControllerRef)
 
 	WidgetControlsMenu = Cast<UW_Controls>(SetUpMenu<UW_Controls>(WidgetControlsMenu, WidgetControlsMenuClass));
 	WidgetControlsMenu->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
+
+	WidgetStoreMenu = Cast<UW_Store>(SetUpMenu<UW_Store>(WidgetStoreMenu, WidgetStoreMenuClass));
+	WidgetStoreMenu->OnRequestTower.AddDynamic(this, &AA_UI_Manager::BroadcastRequestCheckCanPurchaseTower);
 }
 
 template <typename WidgetStaticClass>
@@ -86,6 +101,11 @@ void AA_UI_Manager::ToggleMenu(UW_Widget* Widget)
 		PlayerController->SetInputMode(InputGameAndUI_Parameters);
 		PlayerController->SetShowMouseCursor(true);
 		WidgetHUD->SetVisibility(ESlateVisibility::Collapsed);
+		// Hides the store menu if the pause menu is opened
+		if (Widget == WidgetPauseMenu)
+		{
+			WidgetStoreMenu->SetVisibility(ESlateVisibility::Collapsed);
+		}
 		break;
 	}
 }
@@ -118,4 +138,9 @@ void AA_UI_Manager::BroadcastRequestTogglePauseGame(bool Pause)
 void AA_UI_Manager::BroadcastRequestMainMenu()
 {
 	RequestMainMenu.Broadcast();
+}
+
+void AA_UI_Manager::BroadcastRequestCheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerClass)
+{
+	RequestCheckCanPurchaseTower.Broadcast(TowerClass);
 }

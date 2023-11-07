@@ -29,6 +29,8 @@ AC_Player::AC_Player() :
 	CameraSpawnLocation(FVector(-39.5f, 0.0f, 64.2f)),
 	CameraComponent(CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"))),
 
+	TowerPreviewLocation(CreateDefaultSubobject<USceneComponent>(TEXT("Tower Preview Location"))),
+
 	DamageRecievedSound(nullptr),
 
 	ArmsMeshTransform(FTransform(FRotator(1.73f, -80.15f, -6.0f), FVector(-5.33f, -15.25f, -164.54f), FVector::One())),
@@ -38,7 +40,9 @@ AC_Player::AC_Player() :
 
 	Gun(nullptr),
 	GunPositonMeshTransform(FTransform(FRotator(-2.5f, 265.8f, -358.5f), FVector(3.7f, 12.2f, -21.5f), FVector::One())),
-	GunPositionMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh")))
+	GunPositionMesh(CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Position Mesh"))),
+
+	CurrentlyHoldingTower(false)
 {
 	CapsuleCollider->SetCapsuleHalfHeight(CapsuleHalfHeightSize);
 	CapsuleCollider->SetCapsuleRadius(CapsuleRadiusSize);
@@ -47,6 +51,8 @@ AC_Player::AC_Player() :
 	CameraComponent->SetupAttachment(CapsuleCollider);
 	CameraComponent->bUsePawnControlRotation = true;
 	CameraComponent->SetRelativeLocation(CameraSpawnLocation);
+
+	TowerPreviewLocation->SetupAttachment(CapsuleCollider);
 
 	MovementComponent->bOrientRotationToMovement = false;
 
@@ -104,6 +110,7 @@ void AC_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("PerformJump", IE_Pressed, this, &AC_Player::PerformJump);
 
 	PlayerInputComponent->BindAction("PauseGame", IE_Pressed, this, &AC_Player::PauseGameActionPressed).bExecuteWhenPaused = true;
+	PlayerInputComponent->BindAction("ToggleStore", IE_Pressed, this, &AC_Player::ToggleStoreActionPressed);
 }
 
 // Spawns and attaches the gun to the player character
@@ -139,10 +146,17 @@ void AC_Player::PerformPrimaryActionPressed()
 {
 	if (!IsDead && !CurrentlyShooting)
 	{
-		CurrentlyShooting = true;
-		Gun->StartShoting();
+		if (CurrentlyHoldingTower)
+		{
+			RequestPlaceTower.Broadcast();
+		}
+		else
+		{
+			CurrentlyShooting = true;
+			Gun->StartShoting();
 
-		GetWorldTimerManager().SetTimer(TH_Shooting, this, &AC_Player::ResetShooting, Gun->RateOfFire, false);
+			GetWorldTimerManager().SetTimer(TH_Shooting, this, &AC_Player::ResetShooting, Gun->RateOfFire, false);
+		}
 	}
 }
 
@@ -161,6 +175,14 @@ void AC_Player::PauseGameActionPressed()
 	RequestPauseGame.Broadcast(!UGameplayStatics::IsGamePaused(GetWorld()));
 }
 
+void AC_Player::ToggleStoreActionPressed()
+{
+	if(!IsDead)
+	{
+		RequestToggleStore.Broadcast();
+	}
+}
+
 void AC_Player::TakeDamageCharacter(float DamageAmount)
 {
 	UGameplayStatics::SpawnSoundAttached(DamageRecievedSound, ArmsMesh);
@@ -170,6 +192,10 @@ void AC_Player::TakeDamageCharacter(float DamageAmount)
 	if (CurrentHealth == 0.0f)
 	{
 		OnDead.Broadcast();
+		if (CurrentlyHoldingTower)
+		{
+			RequestToggleStore.Broadcast();
+		}
 	}
 }
 
@@ -237,6 +263,11 @@ void AC_Player::OnGunReloadFinished()
 	CallOnAmmoAmountChangedED();
 }
 
+
+void AC_Player::SetCurrentlyHoldingTower(bool HoldingTower)
+{
+	CurrentlyHoldingTower = HoldingTower;
+}
 
 
 // Movement Functions

@@ -171,7 +171,7 @@ void AA_WaveManager::OnEnemyGoalReached(uint8 LivesCost)
 
 void AA_WaveManager::OnEnemyDefeated(AC_Enemy* Enemy, int PointsRewarded)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("A_WaveManager: %d Points Rewarded"), PointsRewarded));
 	DeadEnemies.Add(Enemy);
 	IncrementEnemiesDefeatedOrReachedGoal();
+	OnRequestPoints.Broadcast(PointsRewarded);
 }

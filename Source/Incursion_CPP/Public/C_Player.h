@@ -16,6 +16,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayer_RequestPauseGame, bool, PauseGame);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRequestSkipCountdown);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayer_RequestToggleStore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayer_RequestPlaceTower);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAmmoAmountChanged, int8, MaxAmmo, int8, CurrentAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerOnDamageTaken, float, PlayerCurrentHealth, float, PlayerMaxHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerOnDead);
@@ -37,6 +39,9 @@ public:
 	virtual void TakeDamageCharacter(float DamageAmount) override;
 	virtual bool GetIsDead() override;
 
+	UFUNCTION()
+		void SetCurrentlyHoldingTower(bool HoldingTower);
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float MaxHealth;
@@ -56,6 +61,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USoundBase* DamageRecievedSound;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		USceneComponent* TowerPreviewLocation;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USkeletalMeshComponent* ArmsMesh;
 
@@ -72,6 +80,8 @@ public:
 	FPlayerOnDamageTaken OnDamageTaken;
 	FPlayerOnDead OnDead;
 	FRequestSkipCountdown RequestSkipCountdown;
+	FPlayer_RequestToggleStore RequestToggleStore;
+	FPlayer_RequestPlaceTower RequestPlaceTower;
 	FOnAmmoAmountChanged OnAmmoAmountChanged;
 
 	UCapsuleComponent* CapsuleCollider;
@@ -106,6 +116,7 @@ private:
 	void SetUpAnimInst(TSubclassOf<class UAnimInst_Player_Base> AnimInst, FTransform GunTranform);
 
 	void PauseGameActionPressed();
+	void ToggleStoreActionPressed();
 
 	// Movement
 
@@ -151,4 +162,6 @@ private:
 
 	bool CurrentlyShooting;
 	FTimerHandle TH_Shooting;
+
+	bool CurrentlyHoldingTower;
 };

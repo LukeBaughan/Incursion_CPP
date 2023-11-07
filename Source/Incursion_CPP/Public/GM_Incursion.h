@@ -6,6 +6,7 @@
 
 #include "A_Gun.h"
 #include "A_PlayerManager.h"
+#include "A_StoreManager.h"
 #include "A_UI_Manager.h"
 #include "A_WaveManager.h"
 #include "C_Player.h"
@@ -29,10 +30,12 @@ protected:
 private:
 	void ExecutePreGameFunctions();
 
+	void SpawnStoreManager();
 	void SpawnPlayerManager();
 	void SetUpPlayerManager();
 	void SetUpUI_Manager();
 	void SetUpWaveManager();
+	void SetUpStoreManager();
 
 	void ExecuteInGameFunctions();
 
@@ -46,6 +49,8 @@ private:
 		void LoseLives(uint8 Amount);
 
 	UGI_Incursion* GameInstance;
+
+	AA_StoreManager* StoreManager;
 	AA_PlayerManager* PlayerManager;
 	AA_UI_Manager* UI_Manager;
 	AA_WaveManager* WaveManager;

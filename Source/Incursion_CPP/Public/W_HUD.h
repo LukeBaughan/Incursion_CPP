@@ -9,6 +9,7 @@
 #include "W_HUD_Crosshair.h"
 #include "W_HUD_HealthBar.h"
 #include "W_HUD_Lives.h"
+#include "W_HUD_Points.h"
 #include "W_HUD_SkipCountdown.h"
 #include "W_HUD_Timer.h"
 #include "W_HUD_Wave.h"
@@ -68,4 +69,10 @@ public:
 		TSubclassOf<class UW_HUD_Wave> WidgetWaveClass;
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Wave* WidgetWave;
+
+	// Points Counter
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD_Points> WidgetPointsClass;
+	UPROPERTY(BlueprintReadWrite)
+		class UW_HUD_Points* WidgetPoints;
 };

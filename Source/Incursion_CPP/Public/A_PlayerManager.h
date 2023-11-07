@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "A_SpectatorCamera.h"
+#include "A_StoreManager.h"
 #include "A_WaveManager.h"
 #include "C_Player.h"
 #include "GameFramework/Actor.h"
@@ -27,13 +28,14 @@ public:
 	AA_PlayerManager();
 
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
-	void SetUpEventDispatchers(AA_WaveManager* WaveManager);
+	void SetUpEventDispatchers(AA_StoreManager* StoreManager, AA_WaveManager* WaveManager);
 
 	UFUNCTION()
 		void ReplenishPlayerHealth();
 
 	FPlayerManager_RequestTogglePauseGame RequestTogglePauseGame;
 
+	AC_Player* PlayerCharacter;
 	APC_PlayerController* PlayerController;
 	UW_HUD* WidgetHUD;
 
@@ -56,7 +58,6 @@ private:
 	FTimerHandle TH_PlayerRespawning;
 	float PlayerRespawnTime;
 
-	AC_Player* PlayerCharacter;
 	TSubclassOf<class AC_Player> PlayerBP_Class;
 
 	ASpawnPoint* SpawnPoint;

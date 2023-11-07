@@ -81,8 +81,12 @@ void AA_PlayerManager::SetUpPlayer()
 	}
 }
 
-void AA_PlayerManager::SetUpEventDispatchers(AA_WaveManager* WaveManager)
+void AA_PlayerManager::SetUpEventDispatchers(AA_StoreManager* StoreManager, AA_WaveManager* WaveManager)
 {
+	// Displays the store UI when called
+	PlayerCharacter->RequestToggleStore.AddDynamic(StoreManager, &AA_StoreManager::ToggleStoreUI);
+	PlayerCharacter->RequestPlaceTower.AddDynamic(StoreManager, &AA_StoreManager::CheckCanPlaceTower);
+
 	// Updates the player's health bar when they take damage
 	WidgetHUD->WidgetHealthBar->SetHealthBarAmount(PlayerCharacter->MaxHealth, PlayerCharacter->MaxHealth);
 	PlayerCharacter->OnDamageTaken.AddDynamic(WidgetHUD->WidgetHealthBar, &UW_HUD_HealthBar::SetHealthBarAmount);
