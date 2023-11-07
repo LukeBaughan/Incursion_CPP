@@ -11,6 +11,7 @@
 #include "A_WaveManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestLoseLives, uint8, Amount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWaveManager_OnWaveBegin, uint8, CurrentWave, uint8, MaxWave);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnWaveEnded);
 
 // DEPRECIATED: IMPORTANT: Increase the size of EnemyClasses when adding to E_EnemyClass 
@@ -39,6 +40,7 @@ public:
 		void SkipCountdown();
 
 	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
+	FWaveManager_OnWaveBegin OnWaveBegin;
 	FWaveManager_OnWaveEnded OnWaveEnded;
 
 private:

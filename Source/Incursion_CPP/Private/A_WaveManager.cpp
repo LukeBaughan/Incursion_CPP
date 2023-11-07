@@ -118,6 +118,7 @@ void AA_WaveManager::SkipCountdown()
 void AA_WaveManager::BeginWave()
 {
 	++CurrentWave;
+	OnWaveBegin.Broadcast(CurrentWave, AllWaveEnemies.Num());
 	EnemySpawnIndex = 0;
 	EnemiesDefeatedOrReachedGoalThisWave = 0;
 	CurrentWaveEnemies = AllWaveEnemies[CurrentWave - 1].Enemies;

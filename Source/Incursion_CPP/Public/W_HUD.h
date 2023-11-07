@@ -11,6 +11,7 @@
 #include "W_HUD_Lives.h"
 #include "W_HUD_SkipCountdown.h"
 #include "W_HUD_Timer.h"
+#include "W_HUD_Wave.h"
 #include "W_Widget.h"
 
 #include "W_HUD.generated.h"
@@ -44,7 +45,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Ammo* WidgetAmmo;
 
-	// Wave Counter
+	// Timer Counter
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UW_HUD_Timer> WidgetTimerClass;
 	UPROPERTY(BlueprintReadWrite)
@@ -61,4 +62,10 @@ public:
 		TSubclassOf<class UW_HUD_Crosshair> WidgetCrosshairClass;
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Crosshair* WidgetCrosshair;
+
+	// Wave Counter
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD_Wave> WidgetWaveClass;
+	UPROPERTY(BlueprintReadWrite)
+		class UW_HUD_Wave* WidgetWave;
 };
