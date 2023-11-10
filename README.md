@@ -12,10 +12,11 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Enemy Types
 -	Player
 -	Player HUD
+-	Level
+
 
 **In Progress**
 -	Grid System
--	Levels
 -	Main Menu
 -	Wave Spawning
 -	Tower Base Class
