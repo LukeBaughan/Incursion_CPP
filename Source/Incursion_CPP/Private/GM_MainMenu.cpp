@@ -133,7 +133,7 @@ void AGM_MainMenu::StartGame(TSubclassOf<AA_Gun> SpawnWeaponClass)
 	// Sets the spawn weapon in the game instance so that GM_Incursion can access it
 	GameInstance->SetSpawnWeaponClass(SpawnWeaponClass);
 
-	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_1"), true);
+	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_2"), true);
 }
 
 void AGM_MainMenu::QuitGame()
