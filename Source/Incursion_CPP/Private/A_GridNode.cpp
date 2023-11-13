@@ -1,15 +1,28 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "A_GridNode.h"
 
-#include "Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
-#include "UObject/ConstructorHelpers.h"
-
-// Sets default values
 AA_GridNode::AA_GridNode(): 
     PlaneMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Plane Component")))
 {
 	PlaneMesh->SetupAttachment(RootComponent);
+    PlaneMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    // ECC_GameTraceChannel5 = Gird Node Channel
+    PlaneMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel5);
+    PlaneMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+}
+
+void AA_GridNode::SetOccupied(bool IsOccupied, AA_Tower* OccupyingTowerRef)
+{
+    Occupied = IsOccupied;
+    OccupyingTower = OccupyingTowerRef;
+}
+
+bool AA_GridNode::GetOccupied()
+{
+    return Occupied;
+}
+
+AA_Tower* AA_GridNode::GetOccupyingTower()
+{
+    return OccupyingTower;
 }

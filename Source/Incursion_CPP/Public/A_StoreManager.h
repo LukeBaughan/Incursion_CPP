@@ -38,9 +38,12 @@ public:
 
 	FStoreManager_OnRequestSetPlayerHoldingTower OnRequestSetPlayerHoldingTower;
 
-	USceneComponent* TowerPreviewLocation;
+	USceneComponent* TowerPreviewLocationComponent;
 
 private:
+	AActor* GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview);
+	void PlaceTower();
+
 	AA_UI_Manager* UI_Manager;
 
 	AA_Tower* PreviewTower;
