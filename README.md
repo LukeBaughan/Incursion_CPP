@@ -13,10 +13,9 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Player
 -	Player HUD
 -	Level
-
+-	Grid System
 
 **In Progress**
--	Grid System
 -	Main Menu
 -	Wave Spawning
 -	Tower Base Class
