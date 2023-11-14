@@ -204,6 +204,11 @@ void AC_Enemy::AttackRangeCylinderOnOverlapEnd(class UPrimitiveComponent* Overla
 	PlayerInAttackRange = false;
 }
 
+bool AC_Enemy::GetIsDead()
+{
+	return IsDead;
+}
+
 bool AC_Enemy::GetPlayerInFollowRange()
 {	
 	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("%s"), PlayerInFollowRange ? TEXT("true") : TEXT("false")));

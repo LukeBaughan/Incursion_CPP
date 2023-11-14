@@ -1,6 +1,11 @@
 
 #include "A_Tower.h"
 
+#include "I_Character.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "C_Enemy.h"
+
 AA_Tower::AA_Tower() :
 	TowerSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Tower"))),
 	BaseSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Base"))),
@@ -32,12 +37,23 @@ AA_Tower::AA_Tower() :
 	EnemyCollider(CreateDefaultSubobject<UBoxComponent>(TEXT("Enemy Collider"))),
 	AttackCollider(CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collider"))),
 
+	CurrentMuzzle(nullptr),
+	CurrentMuzzleStartLocation(FVector::ZeroVector),
+	CurrentShootLocation(nullptr),
+	ShootSound(nullptr),
+	ShootFX(nullptr),
+	ShootWorldLocation(FVector::ZeroVector),
+	TargetWorldLocation(FVector::ZeroVector),
+
 	Damage(1.0f),
 	RateOfFire(1.0f),
 	Range(500.0f),
 	Cost(100),
 
-	PreviewMode(true)
+	PreviewMode(true),
+
+	TimelineLookAtEnemy(CreateDefaultSubobject<UTimelineComponent>(TEXT("Look At Enemy Timeline"))),
+	fCurveLookAtEnemy(nullptr)
 {
 	TowerSceneComponent->SetupAttachment(RootComponent);
 	BaseSceneComponent->SetupAttachment(TowerSceneComponent);
@@ -105,6 +121,30 @@ AA_Tower::AA_Tower() :
 		EnemyCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 		Wall->SetVisibility(false);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> fCurveLookAtEnemyOF(TEXT("/Game/Luke/Tower/Curve_LookAtEnemy"));
+	if (fCurveLookAtEnemyOF.Succeeded())
+	{
+		fCurveLookAtEnemy = fCurveLookAtEnemyOF.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("A_Tower: Unable to set fCurveLookAtEnemy"));
+	}
+}
+
+void AA_Tower::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AttackCollider->OnComponentBeginOverlap.AddDynamic(this, &AA_Tower::AttackColliderOnOverlapBegin);
+
+	LookAtEnemyTrack.BindDynamic(this, &AA_Tower::LookAtEnemyTimelineFunction);
+
+	if (fCurveLookAtEnemy)
+	{
+		TimelineLookAtEnemy->AddInterpFloat(fCurveLookAtEnemy, LookAtEnemyTrack);
+	}
 }
 
 void AA_Tower::OnPlaced()
@@ -152,7 +192,7 @@ void AA_Tower::ShowWalls(FVector PlacedTowerPosition)
 	{
 		if ((PlacedTowerPosition.X - ThisTowerPosition.X) > 0.0f)
 		{
-			if((PlacedTowerPosition.Y - ThisTowerPosition.Y) == 0.0f)
+			if ((PlacedTowerPosition.Y - ThisTowerPosition.Y) == 0.0f)
 			{
 				ShowWall(WallFront);
 			}
@@ -208,4 +248,98 @@ void AA_Tower::ShowWall(UStaticMeshComponent* Wall)
 	Wall->SetVisibility(true);
 	// ECC_GameTraceChannel3 = Player Collision Channel
 	Wall->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECollisionResponse::ECR_Block);
+}
+
+void AA_Tower::AttackColliderOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// The actor is added to an array of targets if it is an enemy and is not dead
+	II_Character* CharacterInterface = Cast<II_Character>(OtherActor);
+
+	if (CharacterInterface)
+	{
+		II_Enemy* EnemyInterface = Cast<II_Enemy>(OtherActor);
+
+		if (!CharacterInterface->GetIsDead() && EnemyInterface)
+		{
+			TargetsArray.Add(OtherActor);
+
+			if (!PreviewMode)
+			{
+				// Shoots at the first target in the array
+				LookAtEnemy();
+				GetWorldTimerManager().SetTimer(TH_ShootTarget, this, &AA_Tower::ShootTarget, RateOfFire, true);
+			}
+		}
+	}
+}
+
+void AA_Tower::LookAtEnemy()
+{
+	TimelineLookAtEnemy->PlayFromStart();
+}
+
+void AA_Tower::LookAtEnemyTimelineFunction(float Alpha)
+{
+	if (TargetsArray[0])
+	{
+		FVector TargetLocation = TargetsArray[0]->GetRootComponent()->GetComponentLocation();
+
+		// Rotates Body
+		BodySceneComponent->SetWorldRotation(FRotator(0.0f, FMath::Lerp(BodySceneComponent->GetComponentRotation().Yaw,
+			UKismetMathLibrary::FindLookAtRotation(BodySceneComponent->GetComponentLocation(), TargetLocation).Yaw, Alpha), 0.0f));
+
+		// Rotates Turret
+		FRotator TurretWorldRotation = TurretSceneComponent->GetComponentRotation();
+
+		TurretSceneComponent->SetWorldRotation(FRotator(FMath::Lerp(TurretWorldRotation.Pitch,
+			UKismetMathLibrary::FindLookAtRotation(TurretSceneComponent->GetComponentLocation(), TargetLocation).Pitch, Alpha), 
+			TurretWorldRotation.Yaw, TurretWorldRotation.Roll));
+	}
+} 
+
+// If the target is dead or invalid, remove them from the targets array, otherwise, look at and shoot the target
+void AA_Tower::ShootTarget()
+{
+	if (TargetsArray[0])
+	{
+		II_Character* CharacterInterface = Cast<II_Character>(TargetsArray[0]);
+
+		if (CharacterInterface)
+		{
+			if (CharacterInterface->GetIsDead())
+			{
+				// Remove First Enemy From Targets
+			}
+			else
+			{
+				if (!PreviewMode)
+				{
+					LookAtEnemy();
+					GetMuzzleToShoot();
+
+					GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AA_Tower:: SHOOT")));
+					TargetWorldLocation = TargetsArray[0]->GetActorLocation();
+					ShootWorldLocation = CurrentShootLocation->GetComponentLocation();
+					// Plays sound and performs line trace
+					BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
+					// Spawns a muzzle flash FX
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootFX, ShootWorldLocation, 
+						UKismetMathLibrary::FindLookAtRotation(ShootWorldLocation, TargetWorldLocation));
+					// Moves the barrel back (recoil)
+				}
+			}
+		}
+	}
+	else
+	{
+		// Remove First Enemy From Targets
+	}
+}
+
+void AA_Tower::GetMuzzleToShoot()
+{
+	CurrentMuzzle = MuzzlesSceneComponent;
+	CurrentMuzzleStartLocation = AllMuzzleStartLocations[0];
+	CurrentShootLocation = ShootLocationSceneComponent;
 }

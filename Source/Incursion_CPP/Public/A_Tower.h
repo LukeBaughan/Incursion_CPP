@@ -3,9 +3,11 @@
 
 #include "CoreMinimal.h"
 
+#include "BFL_Incursion.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
 #include "I_Tower.h"
 
@@ -87,6 +89,12 @@ public:
 		USceneComponent* ShootLocationSceneComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		USoundBase* ShootSound;	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		UParticleSystem* ShootFX;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		UBoxComponent* EnemyCollider;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
@@ -104,8 +112,28 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		int Cost;
 
+	USceneComponent* CurrentMuzzle;
+	FVector CurrentMuzzleStartLocation;
+	USceneComponent* CurrentShootLocation;
+
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	virtual void GetAllMuzzles();
+	virtual void GetMuzzleToShoot();
+
+	void LookAtEnemy();
+	void ShootTarget();
+
+	UFUNCTION()
+		void LookAtEnemyTimelineFunction(float Alpha);
+
+	UFUNCTION()
+		void AttackColliderOnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UBFL_Incursion* BFL_Incursion;
 
 	bool PreviewMode;
 
@@ -115,4 +143,13 @@ private:
 	TArray<FVector> AllMuzzleStartLocations;
 
 	TArray<USceneComponent*> AllShootLocations;
+
+	TArray<AActor*> TargetsArray;
+	FTimerHandle TH_ShootTarget;
+	FVector TargetWorldLocation;
+	FVector ShootWorldLocation;
+
+	UTimelineComponent* TimelineLookAtEnemy;
+	UCurveFloat* fCurveLookAtEnemy;
+	FOnTimelineFloat LookAtEnemyTrack;
 };

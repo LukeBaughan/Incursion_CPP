@@ -63,7 +63,7 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 
 	if(ShootSound)
 	{
-		UGameplayStatics::PlaySoundAtLocation(WorldObject, ShootSound, StartLocation, 1.0f, 1.0f, 0.0f, AttWeaponShot);
+		UGameplayStatics::PlaySoundAtLocation(WorldObject, ShootSound, StartLocation, 1.0f, 1.0f, 0.0f);
 	}
 
 	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);

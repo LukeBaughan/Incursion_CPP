@@ -27,6 +27,7 @@ public:
 	void TakeDamageCharacter(float DamageAmount) override;
 	void DestroySelf();
 
+	virtual bool GetIsDead() override;
 	virtual bool GetPlayerInFollowRange() override;
 	virtual bool GetPlayerInAttackRange() override;
 	virtual bool GetAttackReady() override;

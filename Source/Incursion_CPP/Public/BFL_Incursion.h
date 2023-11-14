@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 
-#include "AttenuationWeaponShot.h"
 #include "Components/Button.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
@@ -30,10 +29,6 @@ public:
 	FVector LineTraceShootEnemy(UWorld* WorldObject, FVector StartLocation, FVector EndLocation, float Damage, USoundBase* ShootSound = nullptr);
 
 	float GetAveragePelletOffset(float MaxOffset);
-
-private:
-
-	UAttenuationWeaponShot* AttWeaponShot;
 };
 
 UENUM(BlueprintType)

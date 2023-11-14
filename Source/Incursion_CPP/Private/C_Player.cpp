@@ -73,7 +73,9 @@ AC_Player::AC_Player() :
 		UE_LOG(LogTemp, Warning, TEXT("Static mesh successfully set for C_Player: GunPositionMesh"));
 	}
 	else
+	{
 		UE_LOG(LogTemp, Error, TEXT("Unable to set static mesh for C_Player: GunPositionMesh"));
+	}
 }
 
 // Called to bind functionality to input
