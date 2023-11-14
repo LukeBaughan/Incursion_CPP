@@ -30,10 +30,11 @@ AA_Tower::AA_Tower() :
 	ShootLocationSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Shoot Location"))),
 
 	EnemyCollider(CreateDefaultSubobject<UBoxComponent>(TEXT("Enemy Collider"))),
+	AttackCollider(CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collider"))),
 
 	Damage(1.0f),
 	RateOfFire(1.0f),
-	Range(10.0f),
+	Range(500.0f),
 	Cost(100),
 
 	PreviewMode(true)
@@ -68,14 +69,25 @@ AA_Tower::AA_Tower() :
 
 	EnemyCollider->SetupAttachment(TowerSceneComponent);
 	EnemyCollider->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
-
 	EnemyCollider->bDynamicObstacle = true;
-	// ECC_GameTraceChannel4 = Turret Collision Channel
+
 	EnemyCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// ECC_GameTraceChannel4 = Turret Collision Channel
 	EnemyCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel4);
 	EnemyCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	// ECC_GameTraceChannel2 = Enemy Collision Channel
 	EnemyCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Block);
+
+
+	AttackCollider->SetupAttachment(TowerSceneComponent);
+	AttackCollider->SetSphereRadius(Range);
+	AttackCollider->bHiddenInGame = false;
+
+	AttackCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	AttackCollider->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	AttackCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	// ECC_GameTraceChannel2 = Enemy Collision Channel
+	AttackCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Overlap);
 
 	AllWalls.Add(WallFront);
 	AllWalls.Add(WallBack);
@@ -132,7 +144,68 @@ void AA_Tower::GetAllMuzzles()
 	AllShootLocations.Add(ShootLocationSceneComponent);
 }
 
+// Shows a wall based on which side the placed tower is
 void AA_Tower::ShowWalls(FVector PlacedTowerPosition)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AA_Tower::ShowWalls")));
+	FVector ThisTowerPosition = TowerSceneComponent->GetComponentLocation();
+	if (PlacedTowerPosition != ThisTowerPosition)
+	{
+		if ((PlacedTowerPosition.X - ThisTowerPosition.X) > 0.0f)
+		{
+			if((PlacedTowerPosition.Y - ThisTowerPosition.Y) == 0.0f)
+			{
+				ShowWall(WallFront);
+			}
+			else
+			{
+				if ((PlacedTowerPosition.Y - ThisTowerPosition.Y) < 0.0f)
+				{
+					ShowWall(WallFrontLeft);
+				}
+				else
+				{
+					ShowWall(WallFrontRight);
+				}
+			}
+		}
+		else
+		{
+			if ((PlacedTowerPosition.X - ThisTowerPosition.X) == 0.0f)
+			{
+				if ((PlacedTowerPosition.Y - ThisTowerPosition.Y) > 0.0f)
+				{
+					ShowWall(WallRight);
+				}
+				else
+				{
+					ShowWall(WallLeft);
+				}
+			}
+			else
+			{
+				if ((PlacedTowerPosition.Y - ThisTowerPosition.Y) == 0.0f)
+				{
+					ShowWall(WallBack);
+				}
+				else
+				{
+					if ((PlacedTowerPosition.Y - ThisTowerPosition.Y) < 0.0f)
+					{
+						ShowWall(WallBackLeft);
+					}
+					else
+					{
+						ShowWall(WallBackRight);
+					}
+				}
+			}
+		}
+	}
+}
+
+void AA_Tower::ShowWall(UStaticMeshComponent* Wall)
+{
+	Wall->SetVisibility(true);
+	// ECC_GameTraceChannel3 = Player Collision Channel
+	Wall->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECollisionResponse::ECR_Block);
 }

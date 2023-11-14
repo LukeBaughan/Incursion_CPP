@@ -5,6 +5,7 @@
 
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "I_Tower.h"
 
@@ -20,6 +21,7 @@ public:
 
 	void OnPlaced();
 	virtual void ShowWalls(FVector PlacedTowerPosition) override;
+	void ShowWall(UStaticMeshComponent* Wall);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USceneComponent* TowerSceneComponent;
@@ -86,6 +88,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		UBoxComponent* EnemyCollider;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		USphereComponent* AttackCollider;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float Damage;
