@@ -100,6 +100,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USphereComponent* AttackCollider;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
+		float MuzzleRecoilDisplacement;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		float Damage;
 
@@ -125,6 +128,10 @@ private:
 
 	void LookAtEnemy();
 	void ShootTarget();
+	void RemoveFirstEnemyFromTargets();
+	
+	UFUNCTION()
+		void ApplyBarrelRecoilTimelineFunction(float Alpha);
 
 	UFUNCTION()
 		void LookAtEnemyTimelineFunction(float Alpha);
@@ -132,6 +139,10 @@ private:
 	UFUNCTION()
 		void AttackColliderOnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void AttackColliderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UBFL_Incursion* BFL_Incursion;
 
@@ -152,4 +163,8 @@ private:
 	UTimelineComponent* TimelineLookAtEnemy;
 	UCurveFloat* fCurveLookAtEnemy;
 	FOnTimelineFloat LookAtEnemyTrack;
+
+	UTimelineComponent* TimelineBarrelRecoil;
+	UCurveFloat* fCurveBarrelRecoil;
+	FOnTimelineFloat BarrelRecoilTrack;
 };
