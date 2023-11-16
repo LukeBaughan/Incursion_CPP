@@ -147,16 +147,6 @@ AA_Tower::AA_Tower() :
 	{
 		UE_LOG(LogTemp, Error, TEXT("A_Tower: Unable to set fCurveBarrelRecoil"));
 	}
-
-	static ConstructorHelpers::FClassFinder<AA_Tower> SellTowerClassCF(TEXT("/Game/Luke/Tower/A_Tower_BP"));
-	if (SellTowerClassCF.Succeeded())
-	{
-		SellTowerClass = SellTowerClassCF.Class;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("A_Tower: Unable to set SellTowerClass"));
-	}
 }
 
 void AA_Tower::BeginPlay()
@@ -201,14 +191,11 @@ void AA_Tower::OnPlaced_Implementation()
 		GetOverlappingActors(OverlappingTowers, AA_Tower::StaticClass());
 		for (AActor* Tower : OverlappingTowers)
 		{
-			if(Tower->GetClass() != SellTowerClass)
-			{
-				TowerInterface = Cast<II_Tower>(Tower);
+			TowerInterface = Cast<II_Tower>(Tower);
 
-				if (TowerInterface)
-				{
-					TowerInterface->Execute_ShowWalls(Tower, TowerSceneComponent->GetComponentLocation());
-				}
+			if (TowerInterface)
+			{
+				TowerInterface->Execute_ShowWalls(Tower, TowerSceneComponent->GetComponentLocation());
 			}
 		}
 	}
@@ -423,7 +410,7 @@ void AA_Tower::ApplyBarrelRecoilTimelineFunction(float Alpha)
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), (CurrentMuzzleLocation.X - MuzzleRecoilDisplacement)));
 
 	CurrentMuzzle->SetRelativeLocation(FMath::Lerp(CurrentMuzzleStartLocation,
-		FVector(FMath::Clamp(CurrentMuzzleLocation.X - MuzzleRecoilDisplacement, CurrentMuzzleStartLocation.X - 
+		FVector(FMath::Clamp(CurrentMuzzleLocation.X - MuzzleRecoilDisplacement, CurrentMuzzleStartLocation.X -
 			MuzzleRecoilDisplacement, CurrentMuzzleStartLocation.X), CurrentMuzzleLocation.Y, CurrentMuzzleLocation.Z), Alpha));
 }
 
