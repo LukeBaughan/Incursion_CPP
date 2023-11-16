@@ -14,11 +14,11 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Player HUD
 -	Level
 -	Grid System
+-	Tower Base Class
 
 **In Progress**
 -	Main Menu
 -	Wave Spawning
--	Tower Base Class
 -	Store
 
 **ToDo**
