@@ -20,9 +20,9 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Main Menu
 -	Wave Spawning
 -	Store
+- Tower Types
 
 **ToDo**
-- Tower Types
 -	Player Stat Tracking
 
 <br/>
