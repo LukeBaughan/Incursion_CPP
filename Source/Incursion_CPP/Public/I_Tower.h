@@ -16,5 +16,8 @@ class INCURSION_CPP_API II_Tower
 	GENERATED_BODY()
 
 public:
-	virtual void ShowWalls(FVector PlacedTowerPosition);
+	UFUNCTION(BlueprintNativeEvent)
+		void ShowWalls(FVector PlacedTowerPosition);
+
+	virtual void ShowWalls_Implementation(FVector PlacedTowerPosition);
 };

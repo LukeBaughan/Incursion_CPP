@@ -77,8 +77,18 @@ void AA_StoreManager::CheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerCla
 // the enemies(if the player tries to build on a blockade tower, replace it with the new tower)
 void AA_StoreManager::CheckCanPlaceTower()
 {
-	PlaceTower();
 	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AA_StoreManager::CheckCanPlaceTower")));
+
+	PlaceTower();
+
+	//if (CheckIfPlacedOnNode())
+	//{
+	//	PlaceTower();
+	//}
+	//else
+	//{
+	//	UI_Manager->DisplayCantBuildWidget();
+	//}
 }
 
 AActor* AA_StoreManager::GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview)
@@ -93,7 +103,37 @@ AActor* AA_StoreManager::GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview)
 	bool LineTrace = GetWorld()->LineTraceSingleByObjectType(HitResult, TowerPreviewLocation,
 		(TowerPreviewLocation + FVector(0.0f, 0.0f, -100.0f)), CollisionParameters);
 
+	// HIT ACTOR ALWAYS NULL
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AA_StoreManager: %s"), *HitResult.GetActor()->GetFName().ToString()));
+
 	return HitResult.GetActor();
+}
+
+// Returns true if the tower preview collider is above a grid node
+bool AA_StoreManager::CheckIfPlacedOnNode()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("AA_StoreManager: %s"),
+		(GetGridNodeBelowTowerPreview(PreviewTower) ? TEXT("true") : TEXT("false"))));
+	return IsValid(GetGridNodeBelowTowerPreview(PreviewTower));
+}
+
+bool AA_StoreManager::CheckIfNodeOccupied()
+{
+	II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview(PreviewTower));
+
+	if (GridNodeInterface)
+	{
+		return GridNodeInterface->GetOccupied();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool AA_StoreManager::CheckIfTowerBlocksPath()
+{
+	return false;
 }
 
 // Detaches the tower from the player and snaps it to the nearest grid node

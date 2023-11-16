@@ -28,6 +28,7 @@ public:
 
 	void Initialise(APC_PlayerController* PlayerControllerRef);
 	void ToggleMenu(UW_Widget* Widget);
+	void DisplayCantBuildWidget();
 
 	UPROPERTY()
 		UW_HUD* WidgetHUD;
@@ -44,6 +45,7 @@ private:
 
 	template <typename WidgetStaticClass>
 	UW_Widget* SetUpMenu(UW_Widget* Widget, TSubclassOf<class UW_Widget> WidgetClass);
+	void HideCantBuildWidget();
 
 	UFUNCTION()
 		void OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen);
@@ -71,4 +73,6 @@ private:
 	TSubclassOf<class UW_Store> WidgetStoreMenuClass;
 
 	FInputModeGameAndUI InputGameAndUI_Parameters;
+
+	FTimerHandle TH_WidgetCantBuild;
 };

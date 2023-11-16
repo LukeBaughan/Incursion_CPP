@@ -57,7 +57,9 @@ AA_Tower::AA_Tower() :
 
 	TimelineBarrelRecoil(CreateDefaultSubobject<UTimelineComponent>(TEXT("Apply Barrel Recoil Timeline"))),
 	fCurveBarrelRecoil(nullptr),
-	MuzzleRecoilDisplacement(30.0f)
+	MuzzleRecoilDisplacement(30.0f),
+
+	SellTowerClass(nullptr)
 {
 	TowerSceneComponent->SetupAttachment(RootComponent);
 	BaseSceneComponent->SetupAttachment(TowerSceneComponent);
@@ -145,6 +147,16 @@ AA_Tower::AA_Tower() :
 	{
 		UE_LOG(LogTemp, Error, TEXT("A_Tower: Unable to set fCurveBarrelRecoil"));
 	}
+
+	static ConstructorHelpers::FClassFinder<AA_Tower> SellTowerClassCF(TEXT("/Game/Luke/Tower/A_Tower_BP"));
+	if (SellTowerClassCF.Succeeded())
+	{
+		SellTowerClass = SellTowerClassCF.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("A_Tower: Unable to set SellTowerClass"));
+	}
 }
 
 void AA_Tower::BeginPlay()
@@ -169,7 +181,7 @@ void AA_Tower::BeginPlay()
 	}
 }
 
-void AA_Tower::OnPlaced()
+void AA_Tower::OnPlaced_Implementation()
 {
 	GetAllMuzzles();
 
@@ -189,14 +201,35 @@ void AA_Tower::OnPlaced()
 		GetOverlappingActors(OverlappingTowers, AA_Tower::StaticClass());
 		for (AActor* Tower : OverlappingTowers)
 		{
-			TowerInterface = Cast<II_Tower>(Tower);
-
-			if (TowerInterface)
+			if(Tower->GetClass() != SellTowerClass)
 			{
-				TowerInterface->ShowWalls(TowerSceneComponent->GetComponentLocation());
+				TowerInterface = Cast<II_Tower>(Tower);
+
+				if (TowerInterface)
+				{
+					TowerInterface->Execute_ShowWalls(Tower, TowerSceneComponent->GetComponentLocation());
+				}
 			}
 		}
 	}
+}
+
+// Hides all walls connected to the previous tower(before sold)
+void AA_Tower::OnPlacedSellOverride()
+{
+	TArray<UPrimitiveComponent*> OverlappingComponents;
+	BaseMesh->GetOverlappingComponents(OverlappingComponents);
+
+	for (UPrimitiveComponent* Component : OverlappingComponents)
+	{
+		if (UKismetMathLibrary::ClassIsChildOf(Component->GetOwner()->GetClass(), AA_Tower::StaticClass()))
+		{
+			Component->SetVisibility(false);
+			Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+	}
+
+	Destroy();
 }
 
 // Towers with more than one muzzle should override this
@@ -207,7 +240,7 @@ void AA_Tower::GetAllMuzzles()
 }
 
 // Shows a wall based on which side the placed tower is
-void AA_Tower::ShowWalls(FVector PlacedTowerPosition)
+void AA_Tower::ShowWalls_Implementation(FVector PlacedTowerPosition)
 {
 	FVector ThisTowerPosition = TowerSceneComponent->GetComponentLocation();
 	if (PlacedTowerPosition != ThisTowerPosition)

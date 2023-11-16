@@ -21,8 +21,13 @@ class INCURSION_CPP_API AA_Tower : public AActor, public II_Tower
 public:	
 	AA_Tower();
 
-	void OnPlaced();
-	virtual void ShowWalls(FVector PlacedTowerPosition) override;
+	UFUNCTION(BlueprintNativeEvent)
+		void OnPlaced();
+	virtual void OnPlaced_Implementation();
+	UFUNCTION(BlueprintCallable)
+		void OnPlacedSellOverride();
+
+	virtual void ShowWalls_Implementation(FVector PlacedTowerPosition) override;
 	void ShowWall(UStaticMeshComponent* Wall);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
@@ -167,4 +172,6 @@ private:
 	UTimelineComponent* TimelineBarrelRecoil;
 	UCurveFloat* fCurveBarrelRecoil;
 	FOnTimelineFloat BarrelRecoilTrack;
+
+	TSubclassOf<AA_Tower> SellTowerClass;
 };

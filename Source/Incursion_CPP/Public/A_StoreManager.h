@@ -41,7 +41,11 @@ public:
 	USceneComponent* TowerPreviewLocationComponent;
 
 private:
+
 	AActor* GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview);
+	bool CheckIfPlacedOnNode();
+	bool CheckIfNodeOccupied();
+	bool CheckIfTowerBlocksPath();
 	void PlaceTower();
 
 	AA_UI_Manager* UI_Manager;

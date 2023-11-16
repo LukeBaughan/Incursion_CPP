@@ -6,6 +6,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "W_HUD_Ammo.h"
+#include "W_HUD_CantBuild.h"
 #include "W_HUD_Crosshair.h"
 #include "W_HUD_HealthBar.h"
 #include "W_HUD_Lives.h"
@@ -75,4 +76,10 @@ public:
 		TSubclassOf<class UW_HUD_Points> WidgetPointsClass;
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Points* WidgetPoints;
+
+	// Cant Build Tower Text
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_HUD_CantBuild> WidgetCantBuildClass;
+	UPROPERTY(BlueprintReadWrite)
+		class UW_HUD_CantBuild* WidgetCantBuild;
 };

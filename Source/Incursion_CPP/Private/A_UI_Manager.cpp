@@ -110,6 +110,20 @@ void AA_UI_Manager::ToggleMenu(UW_Widget* Widget)
 	}
 }
 
+// Called when the player tries placing the tower in an invalid place
+void AA_UI_Manager::DisplayCantBuildWidget()
+{
+	WidgetHUD->WidgetCantBuild->SetVisibility(ESlateVisibility::Visible);
+
+	GetWorldTimerManager().SetTimer(TH_WidgetCantBuild, this, &AA_UI_Manager::HideCantBuildWidget, 1.0f, false);
+}
+
+void AA_UI_Manager::HideCantBuildWidget()
+{
+	WidgetHUD->WidgetCantBuild->SetVisibility(ESlateVisibility::Collapsed);
+	GetWorldTimerManager().ClearTimer(TH_WidgetCantBuild);
+}
+
 // Closes the passed menu and opens the selected menu
 void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 {
