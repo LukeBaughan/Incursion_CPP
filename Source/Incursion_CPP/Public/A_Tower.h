@@ -20,6 +20,7 @@ class INCURSION_CPP_API AA_Tower : public AActor, public II_Tower
 	
 public:	
 	AA_Tower();
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintNativeEvent)
 		void OnPlaced();
@@ -100,7 +101,7 @@ public:
 		UParticleSystem* ShootFX;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
-		UBoxComponent* EnemyCollider;
+		UStaticMeshComponent* EnemyColliderMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Assets")
 		USphereComponent* AttackCollider;
@@ -123,6 +124,7 @@ public:
 	USceneComponent* CurrentMuzzle;
 	FVector CurrentMuzzleStartLocation;
 	USceneComponent* CurrentShootLocation;
+	USceneComponent* PlayerTowerPreviewLocationComponent;
 
 protected:
 	virtual void BeginPlay() override;
@@ -152,6 +154,7 @@ private:
 	UBFL_Incursion* BFL_Incursion;
 
 	bool PreviewMode;
+	FVector PlayerTowerPreviewLocation;
 
 	TArray<UStaticMeshComponent*> AllWalls;
 

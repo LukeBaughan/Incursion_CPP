@@ -34,7 +34,7 @@ AA_Tower::AA_Tower() :
 
 	ShootLocationSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Shoot Location"))),
 
-	EnemyCollider(CreateDefaultSubobject<UBoxComponent>(TEXT("Enemy Collider"))),
+	EnemyColliderMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Enemy Collider Mesh"))),
 	AttackCollider(CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collider"))),
 
 	CurrentMuzzle(nullptr),
@@ -51,6 +51,8 @@ AA_Tower::AA_Tower() :
 	Cost(100),
 
 	PreviewMode(true),
+	PlayerTowerPreviewLocationComponent(nullptr),
+	PlayerTowerPreviewLocation(FVector::ZeroVector),
 
 	TimelineLookAtEnemy(CreateDefaultSubobject<UTimelineComponent>(TEXT("Look At Enemy Timeline"))),
 	fCurveLookAtEnemy(nullptr),
@@ -61,6 +63,8 @@ AA_Tower::AA_Tower() :
 
 	SellTowerClass(nullptr)
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	TowerSceneComponent->SetupAttachment(RootComponent);
 	BaseSceneComponent->SetupAttachment(TowerSceneComponent);
 	BaseMesh->SetupAttachment(BaseSceneComponent);
@@ -89,16 +93,14 @@ AA_Tower::AA_Tower() :
 	MuzzleMesh->SetupAttachment(MuzzlesSceneComponent);
 	ShootLocationSceneComponent->SetupAttachment(MuzzleMesh);
 
-	EnemyCollider->SetupAttachment(TowerSceneComponent);
-	EnemyCollider->SetBoxExtent(FVector(100.0f, 100.0f, 100.0f));
-	EnemyCollider->bDynamicObstacle = true;
+	EnemyColliderMesh->SetupAttachment(TowerSceneComponent);
 
-	EnemyCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	EnemyColliderMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	// ECC_GameTraceChannel4 = Turret Collision Channel
-	EnemyCollider->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel4);
-	EnemyCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	EnemyColliderMesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel4);
+	EnemyColliderMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	// ECC_GameTraceChannel2 = Enemy Collision Channel
-	EnemyCollider->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Block);
+	EnemyColliderMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Block);
 
 
 	AttackCollider->SetupAttachment(TowerSceneComponent);
@@ -122,9 +124,9 @@ AA_Tower::AA_Tower() :
 
 	for (UStaticMeshComponent* Wall : AllWalls)
 	{
-		EnemyCollider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		EnemyCollider->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
-		EnemyCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+		EnemyColliderMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		EnemyColliderMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+		EnemyColliderMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 		Wall->SetVisibility(false);
 	}
 
@@ -168,6 +170,19 @@ void AA_Tower::BeginPlay()
 	if (fCurveBarrelRecoil)
 	{
 		TimelineBarrelRecoil->AddInterpFloat(fCurveBarrelRecoil, BarrelRecoilTrack);
+	}
+}
+void AA_Tower::Tick(float DeltaTime)
+{
+	if(PreviewMode)
+	{
+		if(IsValid(PlayerTowerPreviewLocationComponent))
+		{
+			PlayerTowerPreviewLocation = PlayerTowerPreviewLocationComponent->GetComponentLocation();
+			this->SetActorLocation(FVector(FMath::GridSnap(PlayerTowerPreviewLocation.X, 200.0f), 
+				FMath::GridSnap(PlayerTowerPreviewLocation.Y, 200.0f), PlayerTowerPreviewLocation.Z));
+			this->SetActorRotation(FRotator::ZeroRotator);
+		}
 	}
 }
 
@@ -289,7 +304,7 @@ void AA_Tower::ShowWall(UStaticMeshComponent* Wall)
 {
 	Wall->SetVisibility(true);
 	// ECC_GameTraceChannel3 = Player Collision Channel
-	Wall->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel3, ECollisionResponse::ECR_Block);
+	Wall->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 }
 
 void AA_Tower::AttackColliderOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -407,7 +422,6 @@ void AA_Tower::GetMuzzleToShoot()
 void AA_Tower::ApplyBarrelRecoilTimelineFunction(float Alpha)
 {
 	FVector CurrentMuzzleLocation = CurrentMuzzle->GetRelativeLocation();
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%f"), (CurrentMuzzleLocation.X - MuzzleRecoilDisplacement)));
 
 	CurrentMuzzle->SetRelativeLocation(FMath::Lerp(CurrentMuzzleStartLocation,
 		FVector(FMath::Clamp(CurrentMuzzleLocation.X - MuzzleRecoilDisplacement, CurrentMuzzleStartLocation.X -

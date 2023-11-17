@@ -5,6 +5,7 @@
 #include "A_EndGoal.h"
 #include "I_GridNode.h"
 #include "Kismet/GameplayStatics.h"
+#include "NavigationPath.h"
 #include "NavigationSystem.h"
 
 AA_StoreManager::AA_StoreManager() :
@@ -68,6 +69,7 @@ void AA_StoreManager::CheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerCla
 		{
 			PreviewTower->SetActorLocation(TowerPreviewLocationComponent->GetComponentLocation());
 			PreviewTower->AttachToComponent(TowerPreviewLocationComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			PreviewTower->PlayerTowerPreviewLocationComponent = TowerPreviewLocationComponent;
 			UI_Manager->ToggleMenu(UI_Manager->WidgetStoreMenu);
 
 			PlayerHoldingTower = true;
@@ -140,23 +142,21 @@ bool AA_StoreManager::CheckIfNodeOccupied()
 }
 
 // Returns true if the tower doesnt block the enemies path to the goal if placed
-// POTENTIAL REASON FOR ISSUE: Always returns false because there needs to be a temp tower placed to block the path
-// altough even when the path is fully blocked, the next tower can still be placed
 bool AA_StoreManager::CheckIfTowerBlocksPath()
 {
 	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
-	ANavigationData* NavigationData = NavigationSystem->GetAbstractNavData();
+	UNavigationPath* NavigationPath = NavigationSystem->FindPathToLocationSynchronously(GetWorld(), EnemySpawnLocation, EndGoalLocation);
 
-	FPathFindingQuery PathFindingQuery(this, *NavigationData, EnemySpawnLocation, EndGoalLocation);
-	PathFindingQuery.SetAllowPartialPaths(false);
-	PathFindingQuery.NavAgentProperties.AgentRadius = 15000.0f;
-	PathFindingQuery.NavAgentProperties.AgentStepHeight = 0.0f;
-	int32 NumberOfVisitedNodes = 0;
-	bool x = NavigationSystem->TestPathSync(PathFindingQuery, EPathFindingMode::Regular, &NumberOfVisitedNodes);
-
-	DrawDebugLine(GetWorld(), EnemySpawnLocation, EndGoalLocation, FColor::Red, true, 1, 5.f);
-
-	return NavigationSystem->TestPathSync(PathFindingQuery, EPathFindingMode::Regular, &NumberOfVisitedNodes);
+	// If the path lengh is smaller than the distance between the two points, then the path must be blocked
+	// When trying to block the path with towers diagonally, there is still a partial path so it must also be checked
+	if (NavigationPath->GetPathLength() < FVector::Dist(EnemySpawnLocation, EndGoalLocation) || NavigationPath->IsPartial())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 // Detaches the tower from the player and snaps it to the nearest grid node
