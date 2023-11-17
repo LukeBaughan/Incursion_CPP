@@ -15,7 +15,8 @@ AA_StoreManager::AA_StoreManager() :
 	TowerPreviewLocationComponent(nullptr),
 	PreviewTower(nullptr),
 	PreviewTowerClass(NULL),
-	PlayerHoldingTower(false)
+	PlayerHoldingTower(false),
+	TowerOccupyingGridNodeBelow(nullptr)
 {
 
 }
@@ -90,15 +91,35 @@ void AA_StoreManager::CheckCanPlaceTower()
 
 	if (CheckIfPlacedOnNode() && !CheckIfNodeOccupied() && !CheckIfTowerBlocksPath())
 	{
-		// If a sell tower is being placed, make the node unoccupied
-		bool OccupyGridNode = !PreviewTower->GetName().Contains("Sell");
-		II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview(PreviewTower));
+		ExecutePlaceTowerSequence();
+	}
+	else if (CheckIfPlacedOnNode() && !CheckIfTowerBlocksPath())
+	{
+		II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview());
 
 		if (GridNodeInterface)
 		{
-			GridNodeInterface->SetOccupied(OccupyGridNode, PreviewTower);
+			TowerOccupyingGridNodeBelow = GridNodeInterface->GetOccupyingTower();
+
+			if (CheckCanReplaceOccupyingTower())
+			{
+				if (IsValid(TowerOccupyingGridNodeBelow))
+				{
+					// Towers are sold for half of their original price
+					AddPoints(TowerOccupyingGridNodeBelow->Cost / 2);
+					TowerOccupyingGridNodeBelow->Destroy();
+					ExecutePlaceTowerSequence();
+				}
+			}
+			else
+			{
+				UI_Manager->DisplayCantBuildWidget();
+			}
 		}
-		PlaceTower();
+		else
+		{
+			UI_Manager->DisplayCantBuildWidget();
+		}
 	}
 	else
 	{
@@ -106,9 +127,9 @@ void AA_StoreManager::CheckCanPlaceTower()
 	}
 }
 
-AActor* AA_StoreManager::GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview)
+AActor* AA_StoreManager::GetGridNodeBelowTowerPreview()
 {
-	FVector TowerPreviewLocation = TowerPreview->BaseSceneComponent->GetComponentLocation();
+	FVector TowerPreviewLocation = PreviewTower->BaseSceneComponent->GetComponentLocation();
 	FHitResult HitResult;
 	FCollisionObjectQueryParams CollisionParameters;
 
@@ -124,12 +145,12 @@ AActor* AA_StoreManager::GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview)
 // Returns true if the tower preview collider is above a grid node
 bool AA_StoreManager::CheckIfPlacedOnNode()
 {
-	return IsValid(GetGridNodeBelowTowerPreview(PreviewTower));
+	return IsValid(GetGridNodeBelowTowerPreview());
 }
 
 bool AA_StoreManager::CheckIfNodeOccupied()
 {
-	II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview(PreviewTower));
+	II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview());
 
 	if (GridNodeInterface)
 	{
@@ -157,6 +178,28 @@ bool AA_StoreManager::CheckIfTowerBlocksPath()
 	{
 		return false;
 	}
+}
+
+// Checks if the player is trying to build a non-blockade tower on a blockade tower or if the tower is a sell tower
+bool AA_StoreManager::CheckCanReplaceOccupyingTower()
+{
+	FString PreviewTowerName = PreviewTower->GetName();
+
+	return (TowerOccupyingGridNodeBelow->GetName().Contains("Blockade") && !PreviewTowerName.Contains("Blockade")
+		|| PreviewTowerName.Contains("Sell"));
+}
+
+void AA_StoreManager::ExecutePlaceTowerSequence()
+{
+	// If a sell tower is being placed, make the node unoccupied
+	bool OccupyGridNode = !PreviewTower->GetName().Contains("Sell");
+	II_GridNode* GridNodeInterface = Cast<II_GridNode>(GetGridNodeBelowTowerPreview());
+
+	if (GridNodeInterface)
+	{
+		GridNodeInterface->SetOccupied(OccupyGridNode, PreviewTower);
+	}
+	PlaceTower();
 }
 
 // Detaches the tower from the player and snaps it to the nearest grid node

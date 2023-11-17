@@ -224,10 +224,11 @@ void AA_Tower::OnPlacedSellOverride()
 
 	for (UPrimitiveComponent* Component : OverlappingComponents)
 	{
-		if (UKismetMathLibrary::ClassIsChildOf(Component->GetOwner()->GetClass(), AA_Tower::StaticClass()))
+		if (UKismetMathLibrary::ClassIsChildOf(Component->GetOwner()->GetClass(), AA_Tower::StaticClass()) && Component->GetName().Contains("Wall"))
 		{
 			Component->SetVisibility(false);
-			Component->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			Component->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+			Component->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECollisionResponse::ECR_Overlap);
 		}
 	}
 

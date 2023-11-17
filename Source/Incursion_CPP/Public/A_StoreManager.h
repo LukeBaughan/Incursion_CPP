@@ -42,16 +42,19 @@ public:
 
 private:
 
-	AActor* GetGridNodeBelowTowerPreview(AA_Tower* TowerPreview);
+	AActor* GetGridNodeBelowTowerPreview();
 	bool CheckIfPlacedOnNode();
 	bool CheckIfNodeOccupied();
 	bool CheckIfTowerBlocksPath();
+	bool CheckCanReplaceOccupyingTower();
+	void ExecutePlaceTowerSequence();
 	void PlaceTower();
 
 	AA_UI_Manager* UI_Manager;
 
 	AA_Tower* PreviewTower;
 	TSubclassOf<class AA_Tower> PreviewTowerClass;
+	AA_Tower* TowerOccupyingGridNodeBelow;
 
 	FVector EnemySpawnLocation;
 	FVector EndGoalLocation;
