@@ -53,6 +53,9 @@ private:
 	AA_Tower* PreviewTower;
 	TSubclassOf<class AA_Tower> PreviewTowerClass;
 
+	FVector EnemySpawnLocation;
+	FVector EndGoalLocation;
+
 	int Points;
 	int NewWavePointsAwarded;
 	bool PlayerHoldingTower;
