@@ -10,6 +10,7 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Gun Types
 -	Enemy Base Class
 -	Enemy Types
+-	Wave Spawning
 -	Player
 -	Player HUD
 -	Level
@@ -20,7 +21,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 
 **In Progress**
 -	Main Menu
--	Wave Spawning
 
 **ToDo**
 -	Player Stat Tracking
