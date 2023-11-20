@@ -37,6 +37,8 @@ AA_Tower::AA_Tower() :
 	EnemyColliderMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Enemy Collider Mesh"))),
 	AttackCollider(CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collider"))),
 
+	CurrentMuzzleIndex(0),
+	NumberOfMuzzles(1),
 	CurrentMuzzle(nullptr),
 	CurrentMuzzleStartLocation(FVector::ZeroVector),
 	CurrentShootLocation(nullptr),
@@ -61,7 +63,10 @@ AA_Tower::AA_Tower() :
 	fCurveBarrelRecoil(nullptr),
 	MuzzleRecoilDisplacement(30.0f),
 
-	SellTowerClass(nullptr)
+	SellTowerClass(nullptr),
+
+	PelletAmount(0),
+	PelletMaxOffset(0.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -174,12 +179,12 @@ void AA_Tower::BeginPlay()
 }
 void AA_Tower::Tick(float DeltaTime)
 {
-	if(PreviewMode)
+	if (PreviewMode)
 	{
-		if(IsValid(PlayerTowerPreviewLocationComponent))
+		if (IsValid(PlayerTowerPreviewLocationComponent))
 		{
 			PlayerTowerPreviewLocation = PlayerTowerPreviewLocationComponent->GetComponentLocation();
-			this->SetActorLocation(FVector(FMath::GridSnap(PlayerTowerPreviewLocation.X, 200.0f), 
+			this->SetActorLocation(FVector(FMath::GridSnap(PlayerTowerPreviewLocation.X, 200.0f),
 				FMath::GridSnap(PlayerTowerPreviewLocation.Y, 200.0f), PlayerTowerPreviewLocation.Z));
 			this->SetActorRotation(FRotator::ZeroRotator);
 		}
@@ -236,7 +241,7 @@ void AA_Tower::OnPlacedSellOverride()
 }
 
 // Towers with more than one muzzle should override this
-void AA_Tower::GetAllMuzzles()
+void AA_Tower::GetAllMuzzles_Implementation()
 {
 	AllMuzzles.Add(MuzzlesSceneComponent);
 	AllShootLocations.Add(ShootLocationSceneComponent);
@@ -383,8 +388,7 @@ void AA_Tower::ShootTarget()
 
 						TargetWorldLocation = TargetsArray[0]->GetActorLocation();
 						ShootWorldLocation = CurrentShootLocation->GetComponentLocation();
-						// Plays sound and performs line trace
-						BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
+						ExecuteLineTraceShoot();
 						// Spawns a muzzle flash FX
 						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootFX, ShootWorldLocation,
 							UKismetMathLibrary::FindLookAtRotation(ShootWorldLocation, TargetWorldLocation));
@@ -402,6 +406,36 @@ void AA_Tower::ShootTarget()
 
 }
 
+// OVERRIDE IF YOU WANT TO CHANGE THE WAY THE TOWER SHOOTS (I.E SHOTGUN PELLET SPREAD)
+void AA_Tower::ExecuteLineTraceShoot_Implementation()
+{
+	// Plays sound and performs line trace
+	BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
+}
+
+// Shoots multiple line traces in random directions (using filtered randomness)
+void AA_Tower::ExecuteLineTraceShootShotgun()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("AA_Tower::ExecuteLineTraceShootShotgun")));
+
+	for (int PelletIndex = 0; PelletIndex < PelletAmount; ++PelletIndex)
+	{
+		TargetWorldLocation = FVector(TargetWorldLocation.X + BFL_Incursion->GetAveragePelletOffset(PelletMaxOffset),
+			TargetWorldLocation.Y + BFL_Incursion->GetAveragePelletOffset(PelletMaxOffset),
+			TargetWorldLocation.Z + BFL_Incursion->GetAveragePelletOffset(PelletMaxOffset));
+
+		// Only plays a sound effect for one pellet firing
+		if (PelletIndex != 0)
+		{
+			BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
+		}
+		else 
+		{
+			BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
+		}
+	}
+}
+
 void AA_Tower::RemoveFirstEnemyFromTargets()
 {
 	TargetsArray.RemoveAt(0);
@@ -413,11 +447,21 @@ void AA_Tower::RemoveFirstEnemyFromTargets()
 	}
 }
 
+// Cylces through which muzzle to shoot from (if theres more than one muzzle)
 void AA_Tower::GetMuzzleToShoot()
 {
-	CurrentMuzzle = MuzzlesSceneComponent;
-	CurrentMuzzleStartLocation = AllMuzzleStartLocations[0];
-	CurrentShootLocation = ShootLocationSceneComponent;
+	CurrentMuzzle = AllMuzzles[CurrentMuzzleIndex];
+	CurrentMuzzleStartLocation = AllMuzzleStartLocations[CurrentMuzzleIndex];
+	CurrentShootLocation = AllShootLocations[CurrentMuzzleIndex];
+
+	if (CurrentMuzzleIndex < NumberOfMuzzles - 1)
+	{
+		++CurrentMuzzleIndex;
+	}
+	else
+	{
+		CurrentMuzzleIndex = 0;
+	}
 }
 
 void AA_Tower::ApplyBarrelRecoilTimelineFunction(float Alpha)

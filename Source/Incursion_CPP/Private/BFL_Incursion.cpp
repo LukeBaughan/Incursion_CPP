@@ -68,7 +68,10 @@ FVector UBFL_Incursion::LineTraceShootEnemy(UWorld* WorldObject, FVector StartLo
 
 	bool LineTrace = WorldObject->LineTraceSingleByObjectType(HitResult, StartLocation, EndLocation, CollisionParameters);
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("HIT: %s"), *HitResult.GetActor()->GetName()));
+	if(LineTrace)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, FString::Printf(TEXT("HIT: %s"), *HitResult.GetActor()->GetName()));
+	}
 
 	// Casting for an interface is less expensive than casting for a actor
 	II_Character* CharacterInterfaceActor = Cast<II_Character>(HitResult.GetActor());

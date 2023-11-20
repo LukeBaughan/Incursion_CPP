@@ -28,6 +28,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnPlacedSellOverride();
 
+	UFUNCTION(BlueprintNativeEvent)
+		void GetAllMuzzles();	
+	void GetAllMuzzles_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent)
+		void ExecuteLineTraceShoot();
+	void ExecuteLineTraceShoot_Implementation();
+
+	UFUNCTION(BlueprintCallable)
+		void ExecuteLineTraceShootShotgun();
+
 	virtual void ShowWalls_Implementation(FVector PlacedTowerPosition) override;
 	void ShowWall(UStaticMeshComponent* Wall);
 
@@ -121,6 +132,24 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Stats")
 		int Cost;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Muzzle")
+		TArray<USceneComponent*> AllMuzzles;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Muzzle")
+		TArray<FVector> AllMuzzleStartLocations;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Muzzle")
+		TArray<USceneComponent*> AllShootLocations;	
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Muzzle")
+		uint8 NumberOfMuzzles;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Shotgun Fire Type")
+		uint8 PelletAmount;	
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Shotgun Fire Type")
+		float PelletMaxOffset;
+
 	USceneComponent* CurrentMuzzle;
 	FVector CurrentMuzzleStartLocation;
 	USceneComponent* CurrentShootLocation;
@@ -130,7 +159,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	virtual void GetAllMuzzles();
 	virtual void GetMuzzleToShoot();
 
 	void LookAtEnemy();
@@ -158,15 +186,12 @@ private:
 
 	TArray<UStaticMeshComponent*> AllWalls;
 
-	TArray<USceneComponent*> AllMuzzles;
-	TArray<FVector> AllMuzzleStartLocations;
-
-	TArray<USceneComponent*> AllShootLocations;
-
 	TArray<AActor*> TargetsArray;
 	FTimerHandle TH_ShootTarget;
 	FVector TargetWorldLocation;
 	FVector ShootWorldLocation;
+
+	uint8 CurrentMuzzleIndex;
 
 	UTimelineComponent* TimelineLookAtEnemy;
 	UCurveFloat* fCurveLookAtEnemy;
