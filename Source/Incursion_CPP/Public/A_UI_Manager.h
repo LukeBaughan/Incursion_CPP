@@ -9,6 +9,7 @@
 #include "PC_PlayerController.h"
 #include "W_Controls.h"
 #include "W_HUD.h"
+#include "W_LoseScreen.h"
 #include "W_Options.h"
 #include "W_PauseMenu.h"
 #include "W_Store.h"
@@ -16,6 +17,7 @@
 #include "A_UI_Manager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUIManager_RequestTogglePauseGame, bool, PauseGame);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUIManager_RequestRestartGame);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUIManager_RequestMainMenu);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUIManager_RequestCheckCanPurchaseTower, TSubclassOf<class AA_Tower>, TowerClass);
 
@@ -30,11 +32,13 @@ public:
 	void Initialise(APC_PlayerController* PlayerControllerRef);
 	void ToggleMenu(UW_Widget* Widget);
 	void DisplayCantBuildWidget();
+	void ShowLoseScreen();
 
 	UPROPERTY()
 		UW_HUD* WidgetHUD;
 
 	FUIManager_RequestTogglePauseGame RequestTogglePauseGame;
+	FUIManager_RequestRestartGame RequestRestartGame;
 	FUIManager_RequestMainMenu RequestMainMenu;
 	FUIManager_RequestCheckCanPurchaseTower RequestCheckCanPurchaseTower;
 
@@ -55,7 +59,10 @@ private:
 		void BroadcastRequestTogglePauseGame(bool Pause);
 
 	UFUNCTION()
-		void BroadcastRequestMainMenu();
+		void BroadcastRequestMainMenu();	
+	
+	UFUNCTION()
+		void BroadcastRequestRestartGame();
 
 	UFUNCTION()
 		void BroadcastRequestCheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerClass);
@@ -74,9 +81,14 @@ private:
 	UW_Controls* WidgetControlsMenu;
 	TSubclassOf<class UW_Controls> WidgetControlsMenuClass;
 
+	UW_LoseScreen* WidgetLoseMenu;
+	TSubclassOf<class UW_LoseScreen> WidgetLoseMenuClass;
+
 	TSubclassOf<class UW_Store> WidgetStoreMenuClass;
 
 	FInputModeGameAndUI InputGameAndUI_Parameters;
 
 	FTimerHandle TH_WidgetCantBuild;
+
+	USoundBase* LoseScreenMusic;
 };

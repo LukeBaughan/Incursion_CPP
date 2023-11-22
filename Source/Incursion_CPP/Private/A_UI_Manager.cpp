@@ -17,14 +17,26 @@ AA_UI_Manager::AA_UI_Manager() :
 	WidgetControlsMenuClass(NULL),
 
 	WidgetStoreMenu(nullptr),
-	WidgetStoreMenuClass(NULL)
+	WidgetStoreMenuClass(NULL),
+
+	WidgetLoseMenu(nullptr),
+	WidgetLoseMenuClass(NULL),
+
+	LoseScreenMusic(nullptr)
 {
 	WidgetHUD_Class = GetWidgetBP_Class(TEXT("HUD/W_HUD_BP"));
 	WidgetPauseMenuClass = GetWidgetBP_Class(TEXT("W_PauseMenu_BP"));
 	WidgetOptionsMenuClass = GetWidgetBP_Class(TEXT("W_Options_BP"));
 	WidgetControlsMenuClass = GetWidgetBP_Class(TEXT("MainMenu/W_ControlsBP"));
 	WidgetStoreMenuClass = GetWidgetBP_Class(TEXT("W_Store_BP"));
+	WidgetLoseMenuClass = GetWidgetBP_Class(TEXT("W_LoseScreen_BP"));
 	
+	ConstructorHelpers::FObjectFinder<USoundBase> LoseScreenMusicOF(TEXT("/Game/Aggressive_EDM_Music_Pack/Cues/08__Walkaround_Cue"));
+
+	if (LoseScreenMusicOF.Succeeded())
+	{
+		LoseScreenMusic = LoseScreenMusicOF.Object;
+	}
 
 	InputGameAndUI_Parameters.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
 	InputGameAndUI_Parameters.SetHideCursorDuringCapture(true);
@@ -62,6 +74,10 @@ void AA_UI_Manager::Initialise(APC_PlayerController* PlayerControllerRef)
 	
 	WidgetControlsMenu = Cast<UW_Controls>(SetUpMenu<UW_Controls>(WidgetControlsMenu, WidgetControlsMenuClass));
 	WidgetControlsMenu->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
+
+	WidgetLoseMenu = Cast<UW_LoseScreen>(SetUpMenu<UW_LoseScreen>(WidgetLoseMenu, WidgetLoseMenuClass));
+	WidgetLoseMenu->RequestRestartGame.AddDynamic(this, &AA_UI_Manager::BroadcastRequestRestartGame);
+	WidgetLoseMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);
 
 	WidgetStoreMenu = Cast<UW_Store>(SetUpMenu<UW_Store>(WidgetStoreMenu, WidgetStoreMenuClass));
 	WidgetStoreMenu->OnRequestTower.AddDynamic(this, &AA_UI_Manager::BroadcastRequestCheckCanPurchaseTower);
@@ -131,6 +147,16 @@ void AA_UI_Manager::HideCantBuildWidget()
 	GetWorldTimerManager().ClearTimer(TH_WidgetCantBuild);
 }
 
+void AA_UI_Manager::ShowLoseScreen()
+{
+	WidgetHUD->SetVisibility(ESlateVisibility::Collapsed);
+	ToggleMenu(WidgetLoseMenu);
+	if(LoseScreenMusic)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), LoseScreenMusic);
+	}
+}
+
 // Closes the passed menu and opens the selected menu
 void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 {
@@ -148,6 +174,7 @@ void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 	case Win:
 		break;
 	case Lose:
+		BFL_Incursion->OpenMenu(CurrentMenu, WidgetLoseMenu);
 		break;
 	}
 }
@@ -160,6 +187,11 @@ void AA_UI_Manager::BroadcastRequestTogglePauseGame(bool Pause)
 void AA_UI_Manager::BroadcastRequestMainMenu()
 {
 	RequestMainMenu.Broadcast();
+}
+
+void AA_UI_Manager::BroadcastRequestRestartGame()
+{
+	RequestRestartGame.Broadcast();
 }
 
 void AA_UI_Manager::BroadcastRequestCheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerClass)

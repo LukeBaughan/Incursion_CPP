@@ -43,6 +43,9 @@ private:
 		void TogglePauseGame(bool Pause);
 
 	UFUNCTION()
+		void RestartGame();	
+	
+	UFUNCTION()
 		void OpenMainMenu();
 
 	UFUNCTION()
