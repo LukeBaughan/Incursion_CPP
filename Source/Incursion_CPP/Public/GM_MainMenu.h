@@ -10,6 +10,7 @@
 #include "W_Controls.h"
 #include "W_Credits.h"
 #include "W_MainMenu.h"
+#include "W_Options.h"
 #include "W_WeaponSelect.h"
 #include "W_Widget.h"
 
@@ -29,7 +30,7 @@ private:
 	template <typename WidgetStaticClass>
 	UW_Widget* SetUpMenu(UW_Widget* Widget, TSubclassOf<class UW_Widget> WidgetClass);
 
-	TSubclassOf<class UUserWidget> GetWidgetBP_Class(FString WidgetBP_FileName);
+	TSubclassOf<class UUserWidget> GetWidgetBP_Class(FString WidgetBP_FileName, FString WidgetBP_FileNameBase = "/Game/Luke/UI/MainMenu/");
 
 	UFUNCTION()
 		void StartGame(TSubclassOf<class AA_Gun> SpawnWeaponClass);
@@ -70,6 +71,13 @@ private:
 	// Widget Instance
 	UPROPERTY()
 		class UW_Credits* WidgetCredits;
+
+	// Options Menu
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_Options> WidgetOptionsClass;
+	// Widget Instance
+	UPROPERTY()
+		class UW_Options* WidgetOptions;
 
 	UPROPERTY(EditAnywhere)
 		TArray<UUserWidget*> WidgetMenus;

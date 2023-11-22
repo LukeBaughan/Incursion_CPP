@@ -12,7 +12,8 @@ AGM_MainMenu::AGM_MainMenu() :
 	WidgetMainMenu(nullptr),
 	WidgetWeaponSelect(nullptr),
 	WidgetControls(nullptr),
-	WidgetCredits(nullptr)
+	WidgetCredits(nullptr),
+	WidgetOptions(nullptr)
 {
 	DefaultPawnClass = NULL;
 
@@ -21,11 +22,12 @@ AGM_MainMenu::AGM_MainMenu() :
 	WidgetWeaponSelectClass = GetWidgetBP_Class(TEXT("W_WeaponSelectBP"));
 	WidgetControlsClass = GetWidgetBP_Class(TEXT("W_ControlsBP"));
 	WidgetCreditsClass = GetWidgetBP_Class(TEXT("W_CreditsBP"));
+	WidgetOptionsClass = GetWidgetBP_Class(TEXT("W_Options_BP"), TEXT("/Game/Luke/UI/"));
 }
 
-TSubclassOf<class UUserWidget> AGM_MainMenu::GetWidgetBP_Class(FString WidgetBP_FileName)
+TSubclassOf<class UUserWidget> AGM_MainMenu::GetWidgetBP_Class(FString WidgetBP_FileName, FString WidgetBP_FileNameBase)
 {
-	FString WidgetFilePath = TEXT("/Game/Luke/UI/MainMenu/") + WidgetBP_FileName;
+	FString WidgetFilePath = WidgetBP_FileNameBase + WidgetBP_FileName;
 
 	ConstructorHelpers::FClassFinder<class UUserWidget> WidgetCF(*WidgetFilePath);
 	if (WidgetCF.Succeeded())
@@ -69,6 +71,9 @@ void AGM_MainMenu::BeginPlay()
 
 	WidgetCredits = Cast<UW_Credits>(SetUpMenu<UW_Credits>(WidgetCredits, WidgetCreditsClass));
 	WidgetCredits->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
+
+	WidgetOptions = Cast<UW_Options>(SetUpMenu<UW_Options>(WidgetOptions, WidgetOptionsClass));
+	WidgetOptions->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 }
 
 template <typename WidgetStaticClass> 
@@ -110,6 +115,7 @@ void AGM_MainMenu::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 		MenuToOpenRef = WidgetCredits;
 		break;
 	case Options:
+		MenuToOpenRef = WidgetOptions;
 		break;
 	case WeaponSelect:
 		MenuToOpenRef = WidgetWeaponSelect;

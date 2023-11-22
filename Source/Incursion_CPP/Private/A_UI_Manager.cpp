@@ -10,6 +10,9 @@ AA_UI_Manager::AA_UI_Manager() :
 	WidgetPauseMenu(nullptr),
 	WidgetPauseMenuClass(NULL),
 
+	WidgetOptionsMenu(nullptr),
+	WidgetOptionsMenuClass(NULL),
+
 	WidgetControlsMenu(nullptr),
 	WidgetControlsMenuClass(NULL),
 
@@ -18,6 +21,7 @@ AA_UI_Manager::AA_UI_Manager() :
 {
 	WidgetHUD_Class = GetWidgetBP_Class(TEXT("HUD/W_HUD_BP"));
 	WidgetPauseMenuClass = GetWidgetBP_Class(TEXT("W_PauseMenu_BP"));
+	WidgetOptionsMenuClass = GetWidgetBP_Class(TEXT("W_Options_BP"));
 	WidgetControlsMenuClass = GetWidgetBP_Class(TEXT("MainMenu/W_ControlsBP"));
 	WidgetStoreMenuClass = GetWidgetBP_Class(TEXT("W_Store_BP"));
 	
@@ -53,6 +57,9 @@ void AA_UI_Manager::Initialise(APC_PlayerController* PlayerControllerRef)
 	WidgetPauseMenu->RequestTogglePause.AddDynamic(this, &AA_UI_Manager::BroadcastRequestTogglePauseGame);
 	WidgetPauseMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);
 
+	WidgetOptionsMenu = Cast<UW_Options>(SetUpMenu<UW_Options>(WidgetOptionsMenu, WidgetOptionsMenuClass));
+	WidgetOptionsMenu->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
+	
 	WidgetControlsMenu = Cast<UW_Controls>(SetUpMenu<UW_Controls>(WidgetControlsMenu, WidgetControlsMenuClass));
 	WidgetControlsMenu->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AA_UI_Manager::OpenMenu);
 
@@ -133,6 +140,7 @@ void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 		BFL_Incursion->OpenMenu(CurrentMenu, WidgetPauseMenu);
 		break;
 	case Options:
+		BFL_Incursion->OpenMenu(CurrentMenu, WidgetOptionsMenu);
 		break;
 	case Controls:
 		BFL_Incursion->OpenMenu(CurrentMenu, WidgetControlsMenu);

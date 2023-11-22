@@ -9,6 +9,7 @@
 #include "PC_PlayerController.h"
 #include "W_Controls.h"
 #include "W_HUD.h"
+#include "W_Options.h"
 #include "W_PauseMenu.h"
 #include "W_Store.h"
 
@@ -67,6 +68,9 @@ private:
 
 	TSubclassOf<class UW_PauseMenu> WidgetPauseMenuClass;
 
+	UW_Options* WidgetOptionsMenu;
+	TSubclassOf<class UW_Options> WidgetOptionsMenuClass;
+	
 	UW_Controls* WidgetControlsMenu;
 	TSubclassOf<class UW_Controls> WidgetControlsMenuClass;
 
