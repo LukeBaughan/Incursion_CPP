@@ -2,10 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "W_BackButton.h"
 #include "W_Widget.h"
-
 #include "W_LoseScreen.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLoseScreen_RequestRestartGame);

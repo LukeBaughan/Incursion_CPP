@@ -16,7 +16,8 @@ AA_WaveManager::AA_WaveManager() :
 	EnemySpawnIndex(0),
 	TotalNumberOfEnemiesThisWave(0),
 	EnemiesDefeatedOrReachedGoalThisWave(0),
-	EnemySpawnRate(1.0f)
+	EnemySpawnRate(1.0f),
+	MaxWaves(10)
 {
 	EnemySpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
@@ -71,6 +72,13 @@ void AA_WaveManager::GetEnemySpawnLocation()
 void AA_WaveManager::BeginWaveCountdown()
 {
 	OnWaveEnded.Broadcast();
+
+	// Requests to end the game if the final wave has been reached
+	if (CurrentWave == MaxWaves)
+	{
+		OnGameWon.Broadcast();
+	}
+
 	WidgetHUD_Timer->SetVisibility(ESlateVisibility::Visible);
 	WidgetHUD_SkipCountdown->SetVisibility(ESlateVisibility::Visible);
 
@@ -96,11 +104,16 @@ void AA_WaveManager::Countdown()
 
 		for (AC_Enemy* Enemy : DeadEnemies)
 		{
-			if (Enemy && !Enemy->IsPendingKillPending())
+			if (IsValid(Enemy))
 			{
-				Enemy->DestroySelf();
+				if(!Enemy->IsPendingKillPending())
+				{
+					Enemy->DestroySelf();
+				}
 			}
 		}
+
+		DeadEnemies.Empty();
 
 		BeginWave();
 	}

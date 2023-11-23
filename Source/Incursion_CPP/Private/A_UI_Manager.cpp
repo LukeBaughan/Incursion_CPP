@@ -22,7 +22,11 @@ AA_UI_Manager::AA_UI_Manager() :
 	WidgetLoseMenu(nullptr),
 	WidgetLoseMenuClass(NULL),
 
-	LoseScreenMusic(nullptr)
+	WidgetWinMenu(nullptr),
+	WidgetWinMenuClass(NULL),
+
+	LoseScreenMusic(nullptr),
+	WinScreenMusic(nullptr)
 {
 	WidgetHUD_Class = GetWidgetBP_Class(TEXT("HUD/W_HUD_BP"));
 	WidgetPauseMenuClass = GetWidgetBP_Class(TEXT("W_PauseMenu_BP"));
@@ -30,12 +34,20 @@ AA_UI_Manager::AA_UI_Manager() :
 	WidgetControlsMenuClass = GetWidgetBP_Class(TEXT("MainMenu/W_ControlsBP"));
 	WidgetStoreMenuClass = GetWidgetBP_Class(TEXT("W_Store_BP"));
 	WidgetLoseMenuClass = GetWidgetBP_Class(TEXT("W_LoseScreen_BP"));
+	WidgetWinMenuClass = GetWidgetBP_Class(TEXT("W_WinScreen_BP"));
 	
 	ConstructorHelpers::FObjectFinder<USoundBase> LoseScreenMusicOF(TEXT("/Game/Aggressive_EDM_Music_Pack/Cues/08__Walkaround_Cue"));
 
 	if (LoseScreenMusicOF.Succeeded())
 	{
 		LoseScreenMusic = LoseScreenMusicOF.Object;
+	}	
+	
+	ConstructorHelpers::FObjectFinder<USoundBase> WinScreenMusicOF(TEXT("/Game/Aggressive_EDM_Music_Pack/Cues/02__Stretched_Reality_Cue"));
+
+	if (WinScreenMusicOF.Succeeded())
+	{
+		WinScreenMusic = WinScreenMusicOF.Object;
 	}
 
 	InputGameAndUI_Parameters.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
@@ -77,7 +89,11 @@ void AA_UI_Manager::Initialise(APC_PlayerController* PlayerControllerRef)
 
 	WidgetLoseMenu = Cast<UW_LoseScreen>(SetUpMenu<UW_LoseScreen>(WidgetLoseMenu, WidgetLoseMenuClass));
 	WidgetLoseMenu->RequestRestartGame.AddDynamic(this, &AA_UI_Manager::BroadcastRequestRestartGame);
-	WidgetLoseMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);
+	WidgetLoseMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);	
+	
+	WidgetWinMenu = Cast<UW_WinScreen>(SetUpMenu<UW_WinScreen>(WidgetWinMenu, WidgetWinMenuClass));
+	WidgetWinMenu->RequestRestartGame.AddDynamic(this, &AA_UI_Manager::BroadcastRequestRestartGame);
+	WidgetWinMenu->RequestMainMenu.AddDynamic(this, &AA_UI_Manager::BroadcastRequestMainMenu);
 
 	WidgetStoreMenu = Cast<UW_Store>(SetUpMenu<UW_Store>(WidgetStoreMenu, WidgetStoreMenuClass));
 	WidgetStoreMenu->OnRequestTower.AddDynamic(this, &AA_UI_Manager::BroadcastRequestCheckCanPurchaseTower);
@@ -157,6 +173,16 @@ void AA_UI_Manager::ShowLoseScreen()
 	}
 }
 
+void AA_UI_Manager::ShowWinScreen()
+{
+	WidgetHUD->SetVisibility(ESlateVisibility::Collapsed);
+	ToggleMenu(WidgetWinMenu);
+	if (WinScreenMusic)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), WinScreenMusic, 1.0f, 1.0f, 43.2f);
+	}
+}
+
 // Closes the passed menu and opens the selected menu
 void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 {
@@ -172,6 +198,7 @@ void AA_UI_Manager::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 		BFL_Incursion->OpenMenu(CurrentMenu, WidgetControlsMenu);
 		break;
 	case Win:
+		BFL_Incursion->OpenMenu(CurrentMenu, WidgetWinMenu);
 		break;
 	case Lose:
 		BFL_Incursion->OpenMenu(CurrentMenu, WidgetLoseMenu);

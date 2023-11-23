@@ -49,6 +49,9 @@ private:
 		void OpenMainMenu();
 
 	UFUNCTION()
+		void OnGameWon();
+
+	UFUNCTION()
 		void LoseLives(uint8 Amount);
 
 	UGI_Incursion* GameInstance;

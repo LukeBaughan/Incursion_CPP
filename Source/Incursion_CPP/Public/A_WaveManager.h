@@ -14,6 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestLoseLives, uin
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestPoints, int, Amount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWaveManager_OnWaveBegin, uint8, CurrentWave, uint8, MaxWave);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnWaveEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnGameWon);
 
 // DEPRECIATED: IMPORTANT: Increase the size of EnemyClasses when adding to E_EnemyClass 
 UENUM(BlueprintType)
@@ -44,6 +45,7 @@ public:
 	FWaveManager_OnRequestPoints OnRequestPoints;
 	FWaveManager_OnWaveBegin OnWaveBegin;
 	FWaveManager_OnWaveEnded OnWaveEnded;
+	FWaveManager_OnGameWon OnGameWon;
 
 private:
 	void GetEnemyClassReference(E_EnemyClass EnemyClass, FString EnemyBP_FileName);
@@ -79,5 +81,7 @@ private:
 	TArray<AC_Enemy*> DeadEnemies;
 	FTimerHandle TH_SpawningEnemies;
 	float EnemySpawnRate;
+
+	uint8 MaxWaves;
 };
 

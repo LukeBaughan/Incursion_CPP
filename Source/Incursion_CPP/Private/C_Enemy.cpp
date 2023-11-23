@@ -158,8 +158,14 @@ void AC_Enemy::UpdateHealthBar()
 
 void AC_Enemy::DestroySelf()
 {
-	GetController()->Destroy();
-	this->Destroy();
+	if(IsValid(this))
+	{
+		if(!IsPendingKill())
+		{
+			GetController()->Destroy();
+			this->Destroy();
+		}
+	}
 }
 
 void AC_Enemy::CapsuleColliderOnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

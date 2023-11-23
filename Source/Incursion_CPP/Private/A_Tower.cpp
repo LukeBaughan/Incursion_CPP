@@ -348,18 +348,21 @@ void AA_Tower::LookAtEnemyTimelineFunction(float Alpha)
 	{
 		if (IsValid(TargetsArray[0]))
 		{
-			FVector TargetLocation = TargetsArray[0]->GetRootComponent()->GetComponentLocation();
+			if(!TargetsArray[0]->IsPendingKill())
+			{
+				FVector TargetLocation = TargetsArray[0]->GetRootComponent()->GetComponentLocation();
 
-			// Rotates Body
-			BodySceneComponent->SetWorldRotation(FRotator(0.0f, FMath::Lerp(BodySceneComponent->GetComponentRotation().Yaw,
-				UKismetMathLibrary::FindLookAtRotation(BodySceneComponent->GetComponentLocation(), TargetLocation).Yaw, Alpha), 0.0f));
+				// Rotates Body
+				BodySceneComponent->SetWorldRotation(FRotator(0.0f, FMath::Lerp(BodySceneComponent->GetComponentRotation().Yaw,
+					UKismetMathLibrary::FindLookAtRotation(BodySceneComponent->GetComponentLocation(), TargetLocation).Yaw, Alpha), 0.0f));
 
-			// Rotates Turret
-			FRotator TurretWorldRotation = TurretSceneComponent->GetComponentRotation();
+				// Rotates Turret
+				FRotator TurretWorldRotation = TurretSceneComponent->GetComponentRotation();
 
-			TurretSceneComponent->SetWorldRotation(FRotator(FMath::Lerp(TurretWorldRotation.Pitch,
-				UKismetMathLibrary::FindLookAtRotation(TurretSceneComponent->GetComponentLocation(), TargetLocation).Pitch, Alpha),
-				TurretWorldRotation.Yaw, TurretWorldRotation.Roll));
+				TurretSceneComponent->SetWorldRotation(FRotator(FMath::Lerp(TurretWorldRotation.Pitch,
+					UKismetMathLibrary::FindLookAtRotation(TurretSceneComponent->GetComponentLocation(), TargetLocation).Pitch, Alpha),
+					TurretWorldRotation.Yaw, TurretWorldRotation.Roll));
+			}
 		}
 	}
 }
@@ -416,8 +419,6 @@ void AA_Tower::ExecuteLineTraceShoot_Implementation()
 // Shoots multiple line traces in random directions (using filtered randomness)
 void AA_Tower::ExecuteLineTraceShootShotgun()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("AA_Tower::ExecuteLineTraceShootShotgun")));
-
 	for (int PelletIndex = 0; PelletIndex < PelletAmount; ++PelletIndex)
 	{
 		TargetWorldLocation = FVector(TargetWorldLocation.X + BFL_Incursion->GetAveragePelletOffset(PelletMaxOffset),

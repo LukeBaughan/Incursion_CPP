@@ -91,6 +91,7 @@ void AGM_Incursion::SetUpWaveManager()
 	WaveManager->OnWaveBegin.AddDynamic(UI_Manager->WidgetHUD->WidgetWave, &UW_HUD_Wave::SetWave);
 	WaveManager->OnWaveEnded.AddDynamic(PlayerManager, &AA_PlayerManager::ReplenishPlayerHealth);
 	WaveManager->OnWaveEnded.AddDynamic(StoreManager, &AA_StoreManager::AddNewWavePoints);
+	WaveManager->OnGameWon.AddDynamic(this, &AGM_Incursion::OnGameWon);
 }
 
 void AGM_Incursion::SetUpStoreManager()
@@ -118,6 +119,16 @@ void AGM_Incursion::RestartGame()
 void AGM_Incursion::OpenMainMenu()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), FName("Level_Dev"), true);
+}
+
+// Shows the win screen if the player finishes all waves
+void AGM_Incursion::OnGameWon()
+{
+	if (Lives > 0)
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		UI_Manager->ShowWinScreen();
+	}
 }
 
 void AGM_Incursion::LoseLives(uint8 Amount)

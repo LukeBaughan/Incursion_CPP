@@ -13,6 +13,7 @@
 #include "W_Options.h"
 #include "W_PauseMenu.h"
 #include "W_Store.h"
+#include "W_WinScreen.h"
 
 #include "A_UI_Manager.generated.h"
 
@@ -33,6 +34,7 @@ public:
 	void ToggleMenu(UW_Widget* Widget);
 	void DisplayCantBuildWidget();
 	void ShowLoseScreen();
+	void ShowWinScreen();
 
 	UPROPERTY()
 		UW_HUD* WidgetHUD;
@@ -82,7 +84,10 @@ private:
 	TSubclassOf<class UW_Controls> WidgetControlsMenuClass;
 
 	UW_LoseScreen* WidgetLoseMenu;
-	TSubclassOf<class UW_LoseScreen> WidgetLoseMenuClass;
+	TSubclassOf<class UW_LoseScreen> WidgetLoseMenuClass;	
+	
+	UW_WinScreen* WidgetWinMenu;
+	TSubclassOf<class UW_WinScreen> WidgetWinMenuClass;
 
 	TSubclassOf<class UW_Store> WidgetStoreMenuClass;
 
@@ -91,4 +96,5 @@ private:
 	FTimerHandle TH_WidgetCantBuild;
 
 	USoundBase* LoseScreenMusic;
+	USoundBase* WinScreenMusic;
 };
