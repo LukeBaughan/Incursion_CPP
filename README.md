@@ -18,6 +18,7 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Store
 -	Tower Base Class
 -	Tower Types
+-	Win / Lose States
 
 **In Progress**
 -	Main Menu
@@ -25,7 +26,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 **ToDo**
 - Non-Buildable Areas
 -	Player Stat Tracking
-- Win / Lose States
 
 <br/>
 
