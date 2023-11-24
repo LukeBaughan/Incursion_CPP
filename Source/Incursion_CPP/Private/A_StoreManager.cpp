@@ -101,14 +101,19 @@ void AA_StoreManager::CheckCanPlaceTower()
 		{
 			TowerOccupyingGridNodeBelow = GridNodeInterface->GetOccupyingTower();
 
-			if (CheckCanReplaceOccupyingTower())
+			if (IsValid(TowerOccupyingGridNodeBelow))
 			{
-				if (IsValid(TowerOccupyingGridNodeBelow))
+				if (CheckCanReplaceOccupyingTower())
 				{
+
 					// Towers are sold for half of their original price
 					AddPoints(TowerOccupyingGridNodeBelow->Cost / 2);
 					TowerOccupyingGridNodeBelow->Destroy();
 					ExecutePlaceTowerSequence();
+				}
+				else
+				{
+					UI_Manager->DisplayCantBuildWidget();
 				}
 			}
 			else

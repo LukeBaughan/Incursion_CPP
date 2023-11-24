@@ -1,27 +1,36 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "A_NoBuildZone.h"
 
-// Sets default values
-AA_NoBuildZone::AA_NoBuildZone()
+#include "A_GridNode.h"
+#include "I_GridNode.h"
+
+AA_NoBuildZone::AA_NoBuildZone() :
+	BoxCollider(CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collider")))
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	BoxCollider->SetupAttachment(GetRootComponent());
+	BoxCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxCollider->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+	BoxCollider->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }
-
-// Called when the game starts or when spawned
 void AA_NoBuildZone::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	TArray<AActor*> OverlappingGridNodes;
+
+	BoxCollider->GetOverlappingActors(OverlappingGridNodes, AA_GridNode::StaticClass());
+
+	II_GridNode* GridNodeInterface;
+
+	for (AActor* GridNode : OverlappingGridNodes)
+	{
+		FString GridNodeName = GridNode->GetName();
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%s"), *GridNodeName));
+		GridNodeInterface = Cast<II_GridNode>(GridNode);
+
+		if (GridNodeInterface)
+		{
+			GridNodeInterface->SetOccupied(true, nullptr);
+		}
+	}
 }
-
-// Called every frame
-void AA_NoBuildZone::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
