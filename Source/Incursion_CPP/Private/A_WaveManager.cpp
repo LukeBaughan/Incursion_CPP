@@ -187,4 +187,5 @@ void AA_WaveManager::OnEnemyDefeated(AC_Enemy* Enemy, int PointsRewarded)
 	DeadEnemies.Add(Enemy);
 	IncrementEnemiesDefeatedOrReachedGoal();
 	OnRequestPoints.Broadcast(PointsRewarded);
+	OnEnemyDefeatedDelegate.Broadcast();
 }

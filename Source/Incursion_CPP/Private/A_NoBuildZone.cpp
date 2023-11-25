@@ -24,8 +24,6 @@ void AA_NoBuildZone::BeginPlay()
 
 	for (AActor* GridNode : OverlappingGridNodes)
 	{
-		FString GridNodeName = GridNode->GetName();
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("%s"), *GridNodeName));
 		GridNodeInterface = Cast<II_GridNode>(GridNode);
 
 		if (GridNodeInterface)

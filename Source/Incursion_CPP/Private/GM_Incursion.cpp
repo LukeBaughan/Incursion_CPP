@@ -5,6 +5,7 @@
 
 AGM_Incursion::AGM_Incursion() :
 	GameInstance(nullptr),
+	StatsManager(nullptr),
 	StoreManager(nullptr),
 	PlayerManager(nullptr),
 	UI_Manager(nullptr),
@@ -25,25 +26,32 @@ void AGM_Incursion::ExecutePreGameFunctions()
 {
 	GameInstance = Cast<UGI_Incursion>(GetGameInstance());
 
+	SetUpStatsManager();
 	SpawnStoreManager();
 	SpawnPlayerManager();
 
 	SetUpPlayerManager();
 	SetUpUI_Manager();
 	SetUpWaveManager();
-	PlayerManager->SetUpEventDispatchers(StoreManager, WaveManager);
+	PlayerManager->SetUpEventDispatchers(StatsManager, StoreManager, WaveManager);
 	SetUpStoreManager();
 }
 
 
+void AGM_Incursion::SetUpStatsManager()
+{
+	StatsManager = GetWorld()->SpawnActor<AA_StatsManager>();
+	StatsManager->Initialise();
+}
+
 void AGM_Incursion::SpawnStoreManager()
 {
-	StoreManager = GetWorld()->SpawnActor<AA_StoreManager>(FVector::ZeroVector, FRotator::ZeroRotator);
+	StoreManager = GetWorld()->SpawnActor<AA_StoreManager>();
 }
 
 void AGM_Incursion::SpawnPlayerManager()
 {
-	PlayerManager = GetWorld()->SpawnActor<AA_PlayerManager>(FVector::ZeroVector, FRotator::ZeroRotator);
+	PlayerManager = GetWorld()->SpawnActor<AA_PlayerManager>();
 }
 
 void AGM_Incursion::SetUpPlayerManager()
@@ -62,7 +70,7 @@ void AGM_Incursion::SetUpPlayerManager()
 // Spawns and sets up the UI manager 
 void AGM_Incursion::SetUpUI_Manager()
 {
-	UI_Manager = GetWorld()->SpawnActor<AA_UI_Manager>(FVector::ZeroVector, FRotator::ZeroRotator);
+	UI_Manager = GetWorld()->SpawnActor<AA_UI_Manager>();
 
 	if (UI_Manager)
 	{
@@ -84,10 +92,11 @@ void AGM_Incursion::SetUpUI_Manager()
 
 void AGM_Incursion::SetUpWaveManager()
 {
-	WaveManager = GetWorld()->SpawnActor<AA_WaveManager>(FVector::ZeroVector, FRotator::ZeroRotator);
+	WaveManager = GetWorld()->SpawnActor<AA_WaveManager>();
 	WaveManager->Initialise(UI_Manager->WidgetHUD->WidgetTimer, UI_Manager->WidgetHUD->WidgetSkipCountdown);
 	WaveManager->OnRequestLoseLives.AddDynamic(this, &AGM_Incursion::LoseLives);
 	WaveManager->OnRequestPoints.AddDynamic(StoreManager, &AA_StoreManager::AddPoints);
+	WaveManager->OnEnemyDefeatedDelegate.AddDynamic(StatsManager, &AA_StatsManager::IncrementEnemiesKilled);
 	WaveManager->OnWaveBegin.AddDynamic(UI_Manager->WidgetHUD->WidgetWave, &UW_HUD_Wave::SetWave);
 	WaveManager->OnWaveEnded.AddDynamic(PlayerManager, &AA_PlayerManager::ReplenishPlayerHealth);
 	WaveManager->OnWaveEnded.AddDynamic(StoreManager, &AA_StoreManager::AddNewWavePoints);
@@ -98,6 +107,7 @@ void AGM_Incursion::SetUpStoreManager()
 {
 	StoreManager->Initialise(UI_Manager, PlayerManager->PlayerCharacter->TowerPreviewLocation);
 	StoreManager->OnRequestSetPlayerHoldingTower.AddDynamic(PlayerManager->PlayerCharacter, &AC_Player::SetCurrentlyHoldingTower);
+	StoreManager->OnPointsAdded.AddDynamic(StatsManager, &AA_StatsManager::IncreaseTotalPoints);
 }
 
 void AGM_Incursion::ExecuteInGameFunctions()
@@ -126,8 +136,9 @@ void AGM_Incursion::OnGameWon()
 {
 	if (Lives > 0)
 	{
+		StatsManager->IncrementGamesWon();
+		UI_Manager->ShowWinScreen();	
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
-		UI_Manager->ShowWinScreen();
 	}
 }
 
@@ -138,6 +149,7 @@ void AGM_Incursion::LoseLives(uint8 Amount)
 	if (Lives <= 0)
 	{
 		// Displays the lose screen when the player is out of lives
+		StatsManager->IncrementGamesPlayed();
 		UI_Manager->ShowLoseScreen();
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	} 

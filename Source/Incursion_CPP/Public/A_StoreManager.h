@@ -10,6 +10,7 @@
 #include "A_StoreManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStoreManager_OnRequestSetPlayerHoldingTower, bool, HoldingTower);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStoreManager_OnPointsAdded, int, Amount);
 
 UCLASS()
 class INCURSION_CPP_API AA_StoreManager : public AActor
@@ -39,6 +40,7 @@ public:
 	FStoreManager_OnRequestSetPlayerHoldingTower OnRequestSetPlayerHoldingTower;
 
 	USceneComponent* TowerPreviewLocationComponent;
+	FStoreManager_OnPointsAdded OnPointsAdded;
 
 private:
 

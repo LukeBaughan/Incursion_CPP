@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "A_SpectatorCamera.h"
+#include "A_StatsManager.h"
 #include "A_StoreManager.h"
 #include "A_WaveManager.h"
 #include "C_Player.h"
@@ -28,7 +29,7 @@ public:
 	AA_PlayerManager();
 
 	void Initialise(TSubclassOf<class AA_Gun> SpawnWeapon);
-	void SetUpEventDispatchers(AA_StoreManager* StoreManager, AA_WaveManager* WaveManager);
+	void SetUpEventDispatchers(AA_StatsManager* StatsManager, AA_StoreManager* StoreManager, AA_WaveManager* WaveManager);
 
 	UFUNCTION()
 		void ReplenishPlayerHealth();

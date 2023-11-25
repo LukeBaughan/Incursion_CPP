@@ -81,7 +81,7 @@ void AA_PlayerManager::SetUpPlayer()
 	}
 }
 
-void AA_PlayerManager::SetUpEventDispatchers(AA_StoreManager* StoreManager, AA_WaveManager* WaveManager)
+void AA_PlayerManager::SetUpEventDispatchers(AA_StatsManager* StatsManager, AA_StoreManager* StoreManager, AA_WaveManager* WaveManager)
 {
 	// Displays the store UI when called
 	PlayerCharacter->RequestToggleStore.AddDynamic(StoreManager, &AA_StoreManager::ToggleStoreUI);
@@ -93,6 +93,7 @@ void AA_PlayerManager::SetUpEventDispatchers(AA_StoreManager* StoreManager, AA_W
 
 	//Switches cameras when the player dies
 	PlayerCharacter->OnDead.AddDynamic(this, &AA_PlayerManager::EnterDeadPhase);
+	PlayerCharacter->OnDead.AddDynamic(StatsManager, &AA_StatsManager::IncrementPlayerDeaths);
 
 	PlayerCharacter->RequestPauseGame.AddDynamic(this, &AA_PlayerManager::RequestTogglePauseGameFunction);
 	PlayerCharacter->RequestSkipCountdown.AddDynamic(WaveManager, &AA_WaveManager::SkipCountdown);

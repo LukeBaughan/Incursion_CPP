@@ -1,0 +1,1 @@
+- Sell and rebuy tower - walls do not appear between towers

@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 
+#include "A_StatsManager.h"
 #include "BFL_Incursion.h"
 #include "GameFramework/GameModeBase.h"
 #include "GI_Incursion.h"
@@ -11,6 +12,7 @@
 #include "W_Credits.h"
 #include "W_MainMenu.h"
 #include "W_Options.h"
+#include "W_Stats.h"
 #include "W_WeaponSelect.h"
 #include "W_Widget.h"
 
@@ -41,9 +43,10 @@ private:
 	UFUNCTION()
 		void QuitGame();
 
-	APlayerController* PlayerController;
-
 	UGI_Incursion* GameInstance;
+	AA_StatsManager* StatsManager;
+
+	APlayerController* PlayerController;
 
 	// Main Menu
 	UPROPERTY(EditAnywhere)
@@ -78,6 +81,13 @@ private:
 	// Widget Instance
 	UPROPERTY()
 		class UW_Options* WidgetOptions;
+
+	// Stats Menu
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UW_Stats> WidgetStatsClass;
+	// Widget Instance
+	UPROPERTY()
+		class UW_Stats* WidgetStats;
 
 	UPROPERTY(EditAnywhere)
 		TArray<UUserWidget*> WidgetMenus;

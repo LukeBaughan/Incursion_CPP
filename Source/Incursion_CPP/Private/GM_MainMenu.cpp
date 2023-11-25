@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 
 #include "GM_MainMenu.h"
 
@@ -8,12 +5,14 @@
 #include "Kismet/GameplayStatics.h"
 
 AGM_MainMenu::AGM_MainMenu() :
+	StatsManager(nullptr),
 	GameInstance(nullptr),
 	WidgetMainMenu(nullptr),
 	WidgetWeaponSelect(nullptr),
 	WidgetControls(nullptr),
 	WidgetCredits(nullptr),
-	WidgetOptions(nullptr)
+	WidgetOptions(nullptr),
+	WidgetStats(nullptr)
 {
 	DefaultPawnClass = NULL;
 
@@ -23,6 +22,7 @@ AGM_MainMenu::AGM_MainMenu() :
 	WidgetControlsClass = GetWidgetBP_Class(TEXT("W_ControlsBP"));
 	WidgetCreditsClass = GetWidgetBP_Class(TEXT("W_CreditsBP"));
 	WidgetOptionsClass = GetWidgetBP_Class(TEXT("W_Options_BP"), TEXT("/Game/Luke/UI/"));
+	WidgetStatsClass = GetWidgetBP_Class(TEXT("W_Stats_BP"));
 }
 
 TSubclassOf<class UUserWidget> AGM_MainMenu::GetWidgetBP_Class(FString WidgetBP_FileName, FString WidgetBP_FileNameBase)
@@ -44,6 +44,9 @@ TSubclassOf<class UUserWidget> AGM_MainMenu::GetWidgetBP_Class(FString WidgetBP_
 void AGM_MainMenu::BeginPlay()
 {
 	Super::BeginPlay();
+
+	StatsManager = GetWorld()->SpawnActor<AA_StatsManager>(AA_StatsManager::StaticClass());
+	StatsManager->Initialise();
 
 	GameInstance = Cast<UGI_Incursion>(GetGameInstance());
 
@@ -73,7 +76,15 @@ void AGM_MainMenu::BeginPlay()
 	WidgetCredits->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
 
 	WidgetOptions = Cast<UW_Options>(SetUpMenu<UW_Options>(WidgetOptions, WidgetOptionsClass));
-	WidgetOptions->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);
+	WidgetOptions->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);	
+	
+	WidgetStats = Cast<UW_Stats>(SetUpMenu<UW_Stats>(WidgetStats, WidgetStatsClass));
+	WidgetStats->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);	
+	WidgetStats->SetDeaths(StatsManager->SaveGameInstance->PlayerDeaths);
+	WidgetStats->SetEnemiesKilled(StatsManager->SaveGameInstance->EnemiesKilled);
+	WidgetStats->SetGamesPlayed(StatsManager->SaveGameInstance->GamesPlayed);
+	WidgetStats->SetGamesWon(StatsManager->SaveGameInstance->GamesWon);
+	WidgetStats->SetTotalPoints(StatsManager->SaveGameInstance->TotalPoints);
 }
 
 template <typename WidgetStaticClass> 
@@ -121,6 +132,7 @@ void AGM_MainMenu::OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen)
 		MenuToOpenRef = WidgetWeaponSelect;
 		break;
 	case Statistics:
+		MenuToOpenRef = WidgetStats;
 		break;
 	case Controls:
 		MenuToOpenRef = WidgetControls;

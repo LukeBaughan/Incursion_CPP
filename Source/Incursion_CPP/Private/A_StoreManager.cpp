@@ -36,6 +36,11 @@ void AA_StoreManager::AddPoints(int Amount)
 {
 	Points += Amount;
 	UI_Manager->WidgetHUD->WidgetPoints->SetPoints(Points);
+
+	if (Amount > 0)
+	{
+		OnPointsAdded.Broadcast(Amount);
+	}
 }
 
 void AA_StoreManager::AddNewWavePoints()

@@ -13,6 +13,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestLoseLives, uint8, Amount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaveManager_OnRequestPoints, int, Amount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWaveManager_OnWaveBegin, uint8, CurrentWave, uint8, MaxWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnEnemyDefeatedDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnWaveEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWaveManager_OnGameWon);
 
@@ -44,6 +45,7 @@ public:
 	FWaveManager_OnRequestLoseLives OnRequestLoseLives;
 	FWaveManager_OnRequestPoints OnRequestPoints;
 	FWaveManager_OnWaveBegin OnWaveBegin;
+	FWaveManager_OnEnemyDefeatedDelegate OnEnemyDefeatedDelegate;
 	FWaveManager_OnWaveEnded OnWaveEnded;
 	FWaveManager_OnGameWon OnGameWon;
 
