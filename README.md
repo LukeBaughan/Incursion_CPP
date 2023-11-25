@@ -12,6 +12,7 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Enemy Types
 -	Wave Spawning
 -	Player
+-	Main Menu
 -	Player HUD
 -	Level
 -	Grid System
@@ -20,12 +21,13 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Tower Base Class
 -	Tower Types
 -	Win / Lose States
-
+-	Player Stat Tracking
+  
 **In Progress**
--	Main Menu
+- Game Options
 
 **ToDo**
--	Player Stat Tracking
+- Fix Known Bugs
 
 <br/>
 
