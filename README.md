@@ -15,6 +15,7 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Player HUD
 -	Level
 -	Grid System
+-	Non-Buildable Areas
 -	Store
 -	Tower Base Class
 -	Tower Types
@@ -24,7 +25,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Main Menu
 
 **ToDo**
-- Non-Buildable Areas
 -	Player Stat Tracking
 
 <br/>
