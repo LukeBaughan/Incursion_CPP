@@ -141,7 +141,7 @@ void AA_UI_Manager::ToggleMenu(UW_Widget* Widget)
 		PlayerController->SetShowMouseCursor(true);
 		WidgetHUD->SetVisibility(ESlateVisibility::Collapsed);
 		// Hides the store menu if the pause menu is opened
-		if (Widget == WidgetPauseMenu)
+		if (Widget == WidgetPauseMenu || Widget == WidgetLoseMenu || Widget == WidgetWinMenu)
 		{
 			WidgetStoreMenu->SetVisibility(ESlateVisibility::Collapsed);
 		}

@@ -15,7 +15,8 @@ AA_PlayerManager::AA_PlayerManager() :
 
 	SpawnPoint(Cast<ASpawnPoint>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawnPoint::StaticClass()))),
 	PlayerSpawnLocation(FVector::Zero()),
-	PlayerSpawnWeaponClass(nullptr)
+	PlayerSpawnWeaponClass(nullptr),
+	IsGameOver(false)
 {
 	static ConstructorHelpers::FClassFinder<AC_Player> PlayerBP_ClassFinder(TEXT("/Game/Luke/Player/C_PlayerBP"));
 	if (PlayerBP_ClassFinder.Succeeded())
@@ -54,7 +55,7 @@ void AA_PlayerManager::SetUpPlayer()
 		// Spawns and inits the player character at the spawn location
 		PlayerSpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerBP_Class, PlayerSpawnLocation, FRotator::ZeroRotator, PlayerSpawnParameters);
+		PlayerCharacter = GetWorld()->SpawnActor<AC_Player>(PlayerBP_Class, PlayerSpawnLocation, SpawnPoint->GetActorRotation(), PlayerSpawnParameters);
 
 		if (PlayerCharacter)
 		{
@@ -111,6 +112,7 @@ void AA_PlayerManager::RequestTogglePauseGameFunction(bool Pause)
 // Switches the view to the spectator camera while the player is respawning
 void AA_PlayerManager::EnterDeadPhase()
 {
+
 	SwitchToSpectatorCamera();
 
 	GetWorldTimerManager().SetTimer(TH_PlayerDead, this, &AA_PlayerManager::RespawnPlayer, PlayerRespawnTime, false);
@@ -129,6 +131,7 @@ void AA_PlayerManager::SwitchToSpectatorCamera()
 void AA_PlayerManager::RespawnPlayer()
 {
 	PlayerCharacter->CapsuleCollider->SetWorldLocationAndRotation(PlayerSpawnLocation, FRotator::ZeroRotator);
+	PlayerController->SetControlRotation(SpawnPoint->GetActorRotation());
 	PlayerController->SetViewTargetWithBlend(PlayerCharacter, CameraSwitchBlendTime, EViewTargetBlendFunction::VTBlend_Cubic);
 	ReplenishPlayerHealth();
 
@@ -138,9 +141,12 @@ void AA_PlayerManager::RespawnPlayer()
 // Shows HUD + player mesh, Disables Movement 
 void AA_PlayerManager::EnablePlayer()
 {
-	WidgetHUD->SetVisibility(ESlateVisibility::Visible);
-	PlayerCharacter->IsDead = false;
-	PlayerCharacter->CapsuleCollider->SetVisibility(true, true);
+	if (!IsGameOver)
+	{
+		WidgetHUD->SetVisibility(ESlateVisibility::Visible);
+		PlayerCharacter->IsDead = false;
+		PlayerCharacter->CapsuleCollider->SetVisibility(true, true);
+	}
 
 	GetWorldTimerManager().ClearTimer(TH_PlayerRespawning);
 	GetWorldTimerManager().ClearTimer(TH_PlayerDead);

@@ -68,4 +68,5 @@ private:
 	AA_WaveManager* WaveManager;
 
 	int Lives;
+	bool IsGameOver;
 };

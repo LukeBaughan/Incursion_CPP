@@ -233,7 +233,7 @@ void AA_Tower::OnPlacedSellOverride()
 		{
 			Component->SetVisibility(false);
 			Component->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-			Component->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECollisionResponse::ECR_Overlap);
+			Component->SetCollisionResponseToChannel(ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 		}
 	}
 
@@ -348,7 +348,7 @@ void AA_Tower::LookAtEnemyTimelineFunction(float Alpha)
 	{
 		if (IsValid(TargetsArray[0]))
 		{
-			if(!TargetsArray[0]->IsPendingKill())
+			if (IsValid(TargetsArray[0]->GetRootComponent()))
 			{
 				FVector TargetLocation = TargetsArray[0]->GetRootComponent()->GetComponentLocation();
 
@@ -363,6 +363,14 @@ void AA_Tower::LookAtEnemyTimelineFunction(float Alpha)
 					UKismetMathLibrary::FindLookAtRotation(TurretSceneComponent->GetComponentLocation(), TargetLocation).Pitch, Alpha),
 					TurretWorldRotation.Yaw, TurretWorldRotation.Roll));
 			}
+			else
+			{
+				RemoveFirstEnemyFromTargets();
+			}
+		}
+		else
+		{
+			RemoveFirstEnemyFromTargets();
 		}
 	}
 }
@@ -430,7 +438,7 @@ void AA_Tower::ExecuteLineTraceShootShotgun()
 		{
 			BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
 		}
-		else 
+		else
 		{
 			BFL_Incursion->LineTraceShootEnemy(GetWorld(), ShootWorldLocation, TargetWorldLocation, Damage, ShootSound);
 		}

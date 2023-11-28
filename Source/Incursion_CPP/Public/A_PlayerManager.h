@@ -7,6 +7,7 @@
 #include "A_SpectatorCamera.h"
 #include "A_StatsManager.h"
 #include "A_StoreManager.h"
+#include "A_UI_Manager.h"
 #include "A_WaveManager.h"
 #include "C_Player.h"
 #include "GameFramework/Actor.h"
@@ -39,6 +40,8 @@ public:
 	AC_Player* PlayerCharacter;
 	APC_PlayerController* PlayerController;
 	UW_HUD* WidgetHUD;
+
+	bool IsGameOver;
 
 private:	
 	void SetUpPlayerController();

@@ -10,7 +10,7 @@
 
 AA_StoreManager::AA_StoreManager() :
 	UI_Manager(nullptr),
-	Points(4000),
+	Points(400),
 	NewWavePointsAwarded(100),
 	TowerPreviewLocationComponent(nullptr),
 	PreviewTower(nullptr),

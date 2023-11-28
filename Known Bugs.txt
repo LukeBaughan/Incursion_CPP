@@ -1,1 +1,1 @@
-- Sell and rebuy tower - walls do not appear between towers
+- Tower.cpp: sometimes Line 353: 0xFFFFFFFFFFFFFFFF error

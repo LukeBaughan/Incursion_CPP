@@ -11,7 +11,8 @@ AGM_Incursion::AGM_Incursion() :
 	PlayerManager(nullptr),
 	UI_Manager(nullptr),
 	WaveManager(nullptr),
-	Lives(2)
+	Lives(20),
+	IsGameOver(false)
 {
 	DefaultPawnClass = nullptr;
 	PlayerControllerClass = APC_PlayerController::StaticClass();
@@ -126,8 +127,11 @@ void AGM_Incursion::ExecuteInGameFunctions()
 
 void AGM_Incursion::TogglePauseGame(bool Pause)
 {
-	UGameplayStatics::SetGamePaused(GetWorld(), Pause);
-	UI_Manager->ToggleMenu(UI_Manager->WidgetPauseMenu);
+	if (!IsGameOver)
+	{
+		UGameplayStatics::SetGamePaused(GetWorld(), Pause);
+		UI_Manager->ToggleMenu(UI_Manager->WidgetPauseMenu);
+	}
 }
 
 void AGM_Incursion::RestartGame()
@@ -145,6 +149,8 @@ void AGM_Incursion::OnGameWon()
 {
 	if (Lives > 0)
 	{
+		IsGameOver = true;
+		PlayerManager->IsGameOver = IsGameOver;
 		StatsManager->IncrementGamesWon();
 		UI_Manager->ShowWinScreen();	
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
@@ -158,6 +164,8 @@ void AGM_Incursion::LoseLives(uint8 Amount)
 	if (Lives <= 0)
 	{
 		// Displays the lose screen when the player is out of lives
+		IsGameOver = true;
+		PlayerManager->IsGameOver =IsGameOver;
 		StatsManager->IncrementGamesPlayed();
 		UI_Manager->ShowLoseScreen();
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
