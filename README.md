@@ -22,11 +22,9 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Tower Types
 -	Win / Lose States
 -	Player Stat Tracking
-  
-**In Progress**
-- Game Options
+-	Game Options
 
-**ToDo**
+**In Progress**
 - Fix Known Bugs
 
 <br/>
