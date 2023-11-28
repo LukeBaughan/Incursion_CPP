@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 
+#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h" 
 #include "I_Character.h"
 #include "I_Enemy.h"
 #include "W_HealthBar.h"

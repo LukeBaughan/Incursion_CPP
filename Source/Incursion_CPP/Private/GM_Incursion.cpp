@@ -4,6 +4,7 @@
 #include "Kismet/Gameplaystatics.h"
 
 AGM_Incursion::AGM_Incursion() :
+	SettingsManager(nullptr),
 	GameInstance(nullptr),
 	StatsManager(nullptr),
 	StoreManager(nullptr),
@@ -28,10 +29,12 @@ void AGM_Incursion::ExecutePreGameFunctions()
 
 	SetUpStatsManager();
 	SpawnStoreManager();
-	SpawnPlayerManager();
 
+	SpawnPlayerManager();
 	SetUpPlayerManager();
 	SetUpUI_Manager();
+	SetUpSettingsManager();
+
 	SetUpWaveManager();
 	PlayerManager->SetUpEventDispatchers(StatsManager, StoreManager, WaveManager);
 	SetUpStoreManager();
@@ -88,6 +91,12 @@ void AGM_Incursion::SetUpUI_Manager()
 	PlayerManager->WidgetHUD = UI_Manager->WidgetHUD;
 
 	UI_Manager->WidgetHUD->WidgetLives->SetLives(Lives);
+}
+
+void AGM_Incursion::SetUpSettingsManager()
+{
+	SettingsManager = GetWorld()->SpawnActor<AA_SettingsManager>(AA_SettingsManager::StaticClass());
+	SettingsManager->Initialise(UI_Manager->WidgetOptionsMenu);
 }
 
 void AGM_Incursion::SetUpWaveManager()

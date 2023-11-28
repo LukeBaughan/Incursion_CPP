@@ -44,6 +44,7 @@ public:
 	FUIManager_RequestMainMenu RequestMainMenu;
 	FUIManager_RequestCheckCanPurchaseTower RequestCheckCanPurchaseTower;
 
+	UW_Options* WidgetOptionsMenu;
 	UW_PauseMenu* WidgetPauseMenu;
 	UW_Store* WidgetStoreMenu;
 
@@ -77,7 +78,6 @@ private:
 
 	TSubclassOf<class UW_PauseMenu> WidgetPauseMenuClass;
 
-	UW_Options* WidgetOptionsMenu;
 	TSubclassOf<class UW_Options> WidgetOptionsMenuClass;
 	
 	UW_Controls* WidgetControlsMenu;

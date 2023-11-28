@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 
+#include "A_SettingsManager.h"
 #include "A_StatsManager.h"
 #include "BFL_Incursion.h"
 #include "GameFramework/GameModeBase.h"
@@ -44,6 +45,7 @@ private:
 		void QuitGame();
 
 	UGI_Incursion* GameInstance;
+	AA_SettingsManager* SettingsManager;
 	AA_StatsManager* StatsManager;
 
 	APlayerController* PlayerController;

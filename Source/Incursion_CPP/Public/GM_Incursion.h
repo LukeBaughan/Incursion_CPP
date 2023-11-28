@@ -6,6 +6,7 @@
 
 #include "A_Gun.h"
 #include "A_PlayerManager.h"
+#include "A_SettingsManager.h"
 #include "A_StatsManager.h"
 #include "A_StoreManager.h"
 #include "A_UI_Manager.h"
@@ -36,6 +37,7 @@ private:
 	void SpawnPlayerManager();
 	void SetUpPlayerManager();
 	void SetUpUI_Manager();
+	void SetUpSettingsManager();
 	void SetUpWaveManager();
 	void SetUpStoreManager();
 
@@ -58,6 +60,7 @@ private:
 
 	UGI_Incursion* GameInstance;
 
+	AA_SettingsManager* SettingsManager;
 	AA_StatsManager* StatsManager;
 	AA_StoreManager* StoreManager;
 	AA_PlayerManager* PlayerManager;

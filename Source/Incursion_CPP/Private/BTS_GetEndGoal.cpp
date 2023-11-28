@@ -2,6 +2,7 @@
 
 #include "BTS_GetEndGoal.h"
 
+#include "AIController.h"
 #include "A_EndGoal.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"

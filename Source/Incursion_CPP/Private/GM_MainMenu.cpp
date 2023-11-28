@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 
 AGM_MainMenu::AGM_MainMenu() :
+	SettingsManager(nullptr),
 	StatsManager(nullptr),
 	GameInstance(nullptr),
 	WidgetMainMenu(nullptr),
@@ -77,6 +78,9 @@ void AGM_MainMenu::BeginPlay()
 
 	WidgetOptions = Cast<UW_Options>(SetUpMenu<UW_Options>(WidgetOptions, WidgetOptionsClass));
 	WidgetOptions->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);	
+
+	SettingsManager = GetWorld()->SpawnActor<AA_SettingsManager>(AA_SettingsManager::StaticClass());
+	SettingsManager->Initialise(WidgetOptions);
 	
 	WidgetStats = Cast<UW_Stats>(SetUpMenu<UW_Stats>(WidgetStats, WidgetStatsClass));
 	WidgetStats->BackButton->ButtonOnRequestOpenMenu.AddDynamic(this, &AGM_MainMenu::OpenMenu);	
