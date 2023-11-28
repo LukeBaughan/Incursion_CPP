@@ -1,0 +1,15 @@
+- Carry 2 weapons
+- More Weapons
+- Purchase/upgrade weapons in store
+- Player upgrades in store
+- Tower upgrades
+- More Towers
+- Weapon/Tower Crit DMG/Rate
+- Damage numbers UI
+- UI animations
+- Change goal visuals as lives decrease (e.g green->orange->red)
+- Spend points to clear obstacles
+- "Not enough points" when trying to purchase turrets that you cant afford
+- Countdown timer ticking sounds
+- Player reload/hit/death animations
+- Speed up enemy movement when chasing player

@@ -1,6 +1,6 @@
 # Incursion C++
 
-A recreation of Incursion (My final year university project made in Unreal Engine 5) made almost entirely with  C++ instead of blueprints. (IN DEVELOPMENT)
+A recreation of Incursion (My final year university project made in Unreal Engine 5) made almost entirely with  C++ instead of blueprints.
 
 [Latest Gameplay Update Video](https://www.youtube.com/watch?v=sv4A0-y4Fsc)
 
@@ -23,9 +23,6 @@ A recreation of Incursion (My final year university project made in Unreal Engin
 -	Win / Lose States
 -	Player Stat Tracking
 -	Game Options
-
-**In Progress**
-- Fix Known Bugs
 
 <br/>
 
