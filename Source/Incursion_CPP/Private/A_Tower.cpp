@@ -348,9 +348,11 @@ void AA_Tower::LookAtEnemyTimelineFunction(float Alpha)
 	{
 		if (IsValid(TargetsArray[0]))
 		{
-			if (IsValid(TargetsArray[0]->GetRootComponent()))
+			AActor* CurrentTarget = TargetsArray[0];
+
+			if (IsValid(CurrentTarget->GetRootComponent()))
 			{
-				FVector TargetLocation = TargetsArray[0]->GetRootComponent()->GetComponentLocation();
+				FVector TargetLocation = CurrentTarget->GetRootComponent()->GetComponentLocation();
 
 				// Rotates Body
 				BodySceneComponent->SetWorldRotation(FRotator(0.0f, FMath::Lerp(BodySceneComponent->GetComponentRotation().Yaw,
