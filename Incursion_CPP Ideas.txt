@@ -1,3 +1,5 @@
+- Lower Shotgun Volume
+- Blockade towers look at enemies
 - Carry 2 weapons
 - More Weapons
 - Purchase/upgrade weapons in store
@@ -13,3 +15,5 @@
 - Countdown timer ticking sounds
 - Player reload/hit/death animations
 - Speed up enemy movement when chasing player
+- UI for goal and enemy spawn for first round
+- Tutorial menu
