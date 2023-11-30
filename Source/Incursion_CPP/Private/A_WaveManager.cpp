@@ -12,6 +12,7 @@ AA_WaveManager::AA_WaveManager() :
 	MaxCountdownTime(30),
 	CurrentCountdownTime(0),
 	EnemySpawnLocation(FVector::ZeroVector),
+	EnemySpawnRotation(FRotator::ZeroRotator),
 	CurrentWave(0),
 	EnemySpawnIndex(0),
 	TotalNumberOfEnemiesThisWave(0),
@@ -51,7 +52,7 @@ void AA_WaveManager::Initialise(UW_HUD_Timer* WidgetHUD_TimerRef, UW_HUD_SkipCou
 	WidgetHUD_Timer = WidgetHUD_TimerRef;
 	WidgetHUD_SkipCountdown = WidgetSkipCountdownRef;
 	GetWaveData();
-	GetEnemySpawnLocation();
+	GetEnemySpawnTransform();
 }
 
 void AA_WaveManager::GetWaveData()
@@ -64,9 +65,12 @@ void AA_WaveManager::GetWaveData()
 	}
 }
 
-void AA_WaveManager::GetEnemySpawnLocation()
+void AA_WaveManager::GetEnemySpawnTransform()
 {
-	EnemySpawnLocation = UGameplayStatics::GetActorOfClass(GetWorld(), AA_EnemySpawn::StaticClass())->GetRootComponent()->GetComponentLocation();
+	AActor* EnemySpawn = UGameplayStatics::GetActorOfClass(GetWorld(), AA_EnemySpawn::StaticClass());
+	
+	EnemySpawnLocation = EnemySpawn->GetActorLocation();
+	EnemySpawnRotation = EnemySpawn->GetActorRotation();
 }
 
 void AA_WaveManager::BeginWaveCountdown()
@@ -158,7 +162,7 @@ void AA_WaveManager::DecideSpawnEnemyClass()
 
 void AA_WaveManager::SpawnEnemy(TSubclassOf<class AC_Enemy> EnemyClass)
 {
-	AC_Enemy* Enemy = GetWorld()->SpawnActor<AC_Enemy>(EnemyClass, EnemySpawnLocation, FRotator::ZeroRotator, EnemySpawnParameters);
+	AC_Enemy* Enemy = GetWorld()->SpawnActor<AC_Enemy>(EnemyClass, EnemySpawnLocation, EnemySpawnRotation, EnemySpawnParameters);
 	Enemy->SpawnDefaultController();
 	Enemy->Initialise();
 	Enemy->OnGoalReached.AddDynamic(this, &AA_WaveManager::OnEnemyGoalReached);

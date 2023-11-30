@@ -52,7 +52,7 @@ public:
 private:
 	void GetEnemyClassReference(E_EnemyClass EnemyClass, FString EnemyBP_FileName);
 	void GetWaveData();
-	void GetEnemySpawnLocation();
+	void GetEnemySpawnTransform();
 	void Countdown();
 	void BeginWave();
 	void DecideSpawnEnemyClass();
@@ -75,6 +75,7 @@ private:
 	TArray<TSubclassOf<class AC_Enemy>> CurrentWaveEnemies;
 	TSubclassOf<class AC_Enemy> EnemyClasses[5];
 	FVector EnemySpawnLocation;
+	FRotator EnemySpawnRotation;
 	FActorSpawnParameters EnemySpawnParameters;
 	int8 CurrentWave;
 	int8 EnemySpawnIndex;
