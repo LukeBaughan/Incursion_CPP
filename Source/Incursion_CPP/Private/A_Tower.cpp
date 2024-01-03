@@ -313,7 +313,7 @@ void AA_Tower::ShowWall(UStaticMeshComponent* Wall)
 	Wall->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 }
 
-void AA_Tower::AttackColliderOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+void AA_Tower::AttackColliderOnOverlapBegin_Implementation(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// The actor is added to an array of targets if it is an enemy and is not dead
@@ -485,7 +485,7 @@ void AA_Tower::ApplyBarrelRecoilTimelineFunction(float Alpha)
 }
 
 // Removes enemies when they leave the radius
-void AA_Tower::AttackColliderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+void AA_Tower::AttackColliderOnOverlapEnd_Implementation(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("AA_Tower::AttackColliderOnOverlapEnd")));

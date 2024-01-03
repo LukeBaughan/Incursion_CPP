@@ -1,6 +1,12 @@
 High Priority
+- Preview towers affect enemy pathing
+- Settings Volume Slider
+	- Master
+	- Music
+	- Sound Effects
 - Lower Shotgun Volume
-- Blockade towers look at enemies
+- Reduce Assault Rifle Muzzle Flash
+- Lock Z position value of preview towers
 - Tutorial menu
 - UI for goal and enemy spawn for first round
 - Speed up enemy movement when chasing player

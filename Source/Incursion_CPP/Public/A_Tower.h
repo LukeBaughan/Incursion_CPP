@@ -28,6 +28,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnPlacedSellOverride();
 
+
+
+	UFUNCTION(BlueprintNativeEvent)
+		void AttackColliderOnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintNativeEvent)
+		void AttackColliderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+
+
 	UFUNCTION(BlueprintNativeEvent)
 		void GetAllMuzzles();	
 	void GetAllMuzzles_Implementation();
@@ -41,6 +53,9 @@ public:
 
 	virtual void ShowWalls_Implementation(FVector PlacedTowerPosition) override;
 	void ShowWall(UStaticMeshComponent* Wall);
+
+
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USceneComponent* TowerSceneComponent;
@@ -172,11 +187,11 @@ private:
 		void LookAtEnemyTimelineFunction(float Alpha);
 
 	UFUNCTION()
-		void AttackColliderOnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+		void AttackColliderOnOverlapBegin_Implementation(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void AttackColliderOnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+		void AttackColliderOnOverlapEnd_Implementation(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
 			class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UBFL_Incursion* BFL_Incursion;
