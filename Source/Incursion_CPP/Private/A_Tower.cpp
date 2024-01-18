@@ -53,6 +53,7 @@ AA_Tower::AA_Tower() :
 	Cost(100),
 
 	PreviewMode(true),
+	PreviewZ_Position(30.0f),
 	PlayerTowerPreviewLocationComponent(nullptr),
 	PlayerTowerPreviewLocation(FVector::ZeroVector),
 
@@ -185,7 +186,7 @@ void AA_Tower::Tick(float DeltaTime)
 		{
 			PlayerTowerPreviewLocation = PlayerTowerPreviewLocationComponent->GetComponentLocation();
 			this->SetActorLocation(FVector(FMath::GridSnap(PlayerTowerPreviewLocation.X, 200.0f),
-				FMath::GridSnap(PlayerTowerPreviewLocation.Y, 200.0f), PlayerTowerPreviewLocation.Z));
+				FMath::GridSnap(PlayerTowerPreviewLocation.Y, 200.0f), PreviewZ_Position));
 			this->SetActorRotation(FRotator::ZeroRotator);
 		}
 	}

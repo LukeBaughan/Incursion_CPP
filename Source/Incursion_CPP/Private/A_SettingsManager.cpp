@@ -1,7 +1,11 @@
 
 #include "A_SettingsManager.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AA_SettingsManager::AA_SettingsManager() :
+	SaveGameIncursion(nullptr),
+	SaveFileName("Incursion Save File"),
 	WidgetOptions(nullptr),
 	GameSettings(nullptr)
 {
@@ -10,6 +14,19 @@ AA_SettingsManager::AA_SettingsManager() :
 
 void AA_SettingsManager::Initialise(UW_Options* WidgetOptionsRef)
 {
+	// Loads the save game file
+	USaveGame* LoadedSaveGame = UGameplayStatics::LoadGameFromSlot(SaveFileName, 0);
+
+	if (IsValid(LoadedSaveGame))
+	{
+		SaveGameIncursion = Cast<USG_Incursion>(LoadedSaveGame);
+	}
+	// If there is no save game, create it
+	else
+	{
+		SaveGameIncursion = Cast<USG_Incursion>(UGameplayStatics::CreateSaveGameObject(USG_Incursion::StaticClass()));
+	}
+
 	WidgetOptions = WidgetOptionsRef;
 	GameSettings = UGameUserSettings::GetGameUserSettings();
 
@@ -88,7 +105,29 @@ void AA_SettingsManager::Initialise(UW_Options* WidgetOptionsRef)
 	{
 		UE_LOG(LogTemp, Error, (TEXT("AA_SettingsManager: Unable to get WidgetOptions->SpinBoxFrameRateLimit")));
 	}
+
+
+	// Audio
+
+
+	IncursionSoundClassMix = WidgetOptions->IncursionSoundClassMix;
+	IncursionSoundClasses = WidgetOptions->SoundClasses;
+
+	WidgetOptions->RequestSetVolume.AddDynamic(this, &AA_SettingsManager::SetVolume);
+
+	uint8 SoundClassIndex = 0;
+
+	for (USoundClass* SoundClass : IncursionSoundClasses)
+	{
+		UGameplayStatics::SetSoundMixClassOverride(GetWorld(), IncursionSoundClassMix, SoundClass, SaveGameIncursion->SoundClassVolumes[SoundClassIndex]);
+		WidgetOptions->VolumeSliders[SoundClassIndex]->SetValue(SaveGameIncursion->SoundClassVolumes[SoundClassIndex] * 100);
+
+		SoundClassIndex++;
+	}
 }
+
+
+// Video Settings
 
 
 void AA_SettingsManager::SetWindowMode(FString WindowMode)
@@ -145,4 +184,18 @@ void AA_SettingsManager::SetFrameRateLimit(float FrameRateLimit)
 {
 	GameSettings->SetFrameRateLimit(FrameRateLimit);
 	GameSettings->ApplySettings(true);
+}
+
+
+// Audio Settings
+
+void AA_SettingsManager::SetVolume(EAudioClassType AudioClass, float VolumeAmount)
+{
+	VolumeAmount *= 0.01;
+	// In UE5 Enums dont always equal ints, so we have to set it as an int before using it
+	uint8 AudioClassTypeInt = (uint8)AudioClass;
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), IncursionSoundClassMix, IncursionSoundClasses[AudioClassTypeInt], VolumeAmount);
+
+	SaveGameIncursion->SoundClassVolumes[AudioClassTypeInt] = VolumeAmount;
+	UGameplayStatics::AsyncSaveGameToSlot(SaveGameIncursion, SaveFileName, 0);
 }

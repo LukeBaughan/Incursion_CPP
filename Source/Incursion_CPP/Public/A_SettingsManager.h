@@ -5,6 +5,7 @@
 
 #include "GameFramework/Actor.h"
 #include "GameFramework/GameUserSettings.h"
+#include "SG_Incursion.h"
 #include "W_Options.h"
 
 #include "A_SettingsManager.generated.h"
@@ -18,6 +19,8 @@ public:
 	AA_SettingsManager();
 	void Initialise(UW_Options* WidgetOptionsRef);
 
+	// Video
+
 	UFUNCTION()
 		void SetWindowMode(FString WindowMode);
 
@@ -30,8 +33,18 @@ public:
 	UFUNCTION()
 		void SetFrameRateLimit(float FrameRateLimit);
 
+	// Audio
+
+	UFUNCTION()
+		void SetVolume(EAudioClassType AudioClass, float VolumeAmount);
+
+	USG_Incursion* SaveGameIncursion;
+	FString SaveFileName;
 	UW_Options* WidgetOptions;
 
 private:
 	UGameUserSettings* GameSettings;
+
+	USoundMix* IncursionSoundClassMix;
+	TArray<USoundClass*> IncursionSoundClasses;
 };

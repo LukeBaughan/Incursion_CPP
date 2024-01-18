@@ -13,6 +13,8 @@ class INCURSION_CPP_API USG_Incursion : public USaveGame
 public:
 	USG_Incursion();
 
+	// Stats
+
 	UPROPERTY(VisibleAnywhere)
 		int EnemiesKilled;
 	
@@ -27,4 +29,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		int GamesWon;
+
+
+	// Audio
+
+	UPROPERTY(VisibleAnywhere)
+		int SoundClassVolumesSize;	
+	
+	UPROPERTY(VisibleAnywhere)
+		TArray<float> SoundClassVolumes;
+
 };

@@ -6,6 +6,11 @@ USG_Incursion::USG_Incursion() :
 	TotalPoints(0),
 	PlayerDeaths(0),
 	GamesPlayed(0),
-	GamesWon(0)
+	GamesWon(0),
+	SoundClassVolumesSize(3)
 {
+	for (int SoundClassVolumesIndex = 0; SoundClassVolumesIndex < SoundClassVolumesSize; SoundClassVolumesIndex++)
+	{
+		SoundClassVolumes.Add(1.0f);
+	}
 }

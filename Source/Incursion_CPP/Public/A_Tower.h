@@ -197,6 +197,7 @@ private:
 	UBFL_Incursion* BFL_Incursion;
 
 	bool PreviewMode;
+	float PreviewZ_Position;
 	FVector PlayerTowerPreviewLocation;
 
 	TArray<UStaticMeshComponent*> AllWalls;
