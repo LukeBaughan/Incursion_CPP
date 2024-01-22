@@ -56,6 +56,8 @@ public:
 
 
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Preview")
+		USoundBase* OnPlacedSoundEffect;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "BP Mesh")
 		USceneComponent* TowerSceneComponent;

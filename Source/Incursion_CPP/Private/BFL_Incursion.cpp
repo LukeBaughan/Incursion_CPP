@@ -8,7 +8,7 @@
 #include "Math/Color.h"
 #include "Styling/SlateBrush.h"
 
-void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
+void UBFL_Incursion::SetUpButtonStyles(TArray<UButton*> Buttons, FSlateSound ButtonClickSound, FSlateSound ButtonHoverSound)
 {
 	FSlateColor NewButtonColour = FSlateColor(FLinearColor(0.023529f, 0.023529f, 0.027451f));
 	FSlateColor NewButtonHoverColour = FSlateColor(FLinearColor(0.109804f, 0.109804f, 0.129412f));
@@ -31,6 +31,10 @@ void UBFL_Incursion::SetUpButtonColours(TArray<UButton*> Buttons)
 
 		NewButtonStyle.Hovered.TintColor = NewButtonHoverColour;
 		NewButtonStyle.Hovered.DrawAs = ESlateBrushDrawType::Box;
+
+		// Button Sound Effects
+		NewButtonStyle.SetPressedSound(ButtonClickSound);
+		NewButtonStyle.SetHoveredSound(ButtonHoverSound);
 
 		// Sets the button's style to be the new style
 		Button->SetStyle(NewButtonStyle);

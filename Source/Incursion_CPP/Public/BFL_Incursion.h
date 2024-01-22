@@ -19,7 +19,7 @@ class INCURSION_CPP_API UBFL_Incursion : public UBlueprintFunctionLibrary
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	static void SetUpButtonColours(TArray<UButton*> Buttons);
+	static void SetUpButtonStyles(TArray<UButton*> Buttons, FSlateSound ButtonClickSound, FSlateSound ButtonHoverSound);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	static void OpenMenu(UW_Widget* CurrentMenu, UW_Widget* MenuToOpen);

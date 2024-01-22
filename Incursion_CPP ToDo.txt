@@ -15,6 +15,7 @@ Medium Priority
 - Tower upgrades
 - Look into aim down sight 
 - Improve visuals for enemy spawning
+- Enemy Path visual between waves
 
 Low Priority
 - More game music

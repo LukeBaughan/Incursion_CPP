@@ -7,6 +7,8 @@
 #include "C_Enemy.h"
 
 AA_Tower::AA_Tower() :
+	OnPlacedSoundEffect(nullptr),
+
 	TowerSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Tower"))),
 	BaseSceneComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Base"))),
 	BaseMesh(CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Mesh"))),
@@ -194,6 +196,15 @@ void AA_Tower::Tick(float DeltaTime)
 
 void AA_Tower::OnPlaced_Implementation()
 {
+	if(OnPlacedSoundEffect)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnPlacedSoundEffect, GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("A_Tower::OnPlaced_Implementation: Unable to get OnPlacedSoundEffect"));
+	}
+
 	GetAllMuzzles();
 
 	for (USceneComponent* Muzzle : AllMuzzles)
@@ -225,6 +236,15 @@ void AA_Tower::OnPlaced_Implementation()
 // Hides all walls connected to the previous tower(before sold)
 void AA_Tower::OnPlacedSellOverride()
 {
+	if (OnPlacedSoundEffect)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnPlacedSoundEffect, GetActorLocation());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("A_Tower::OnPlacedSellOverride: Unable to get OnPlacedSoundEffect"));
+	}
+
 	TArray<UPrimitiveComponent*> OverlappingComponents;
 	BaseMesh->GetOverlappingComponents(OverlappingComponents);
 
