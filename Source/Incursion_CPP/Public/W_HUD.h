@@ -77,9 +77,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 		class UW_HUD_Points* WidgetPoints;
 
-	// Cant Build Tower Text
+	// Text Notification Widget
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UW_HUD_CantBuild> WidgetCantBuildClass;
+		TSubclassOf<class UW_HUD_CantBuild> WidgetTextNotificationClass;
 	UPROPERTY(BlueprintReadWrite)
-		class UW_HUD_CantBuild* WidgetCantBuild;
+		class UW_HUD_CantBuild* WidgetTextNotification;
 };

@@ -32,7 +32,7 @@ public:
 
 	void Initialise(APC_PlayerController* PlayerControllerRef);
 	void ToggleMenu(UW_Widget* Widget);
-	void DisplayCantBuildWidget();
+	void DisplayTextNotificationWidget(ENotificationTextType TextTypeToDisplay);
 	void ShowLoseScreen();
 	void ShowWinScreen();
 
@@ -53,7 +53,7 @@ private:
 
 	template <typename WidgetStaticClass>
 	UW_Widget* SetUpMenu(UW_Widget* Widget, TSubclassOf<class UW_Widget> WidgetClass);
-	void HideCantBuildWidget();
+	void HideTextNotificationWidget();
 
 	UFUNCTION()
 		void OpenMenu(UW_Widget* CurrentMenu, MenuType MenuToOpen);
@@ -93,7 +93,7 @@ private:
 
 	FInputModeGameAndUI InputGameAndUI_Parameters;
 
-	FTimerHandle TH_WidgetCantBuild;
+	FTimerHandle TH_WidgetTextNotification;
 
 	USoundBase* LoseScreenMusic;
 	USoundBase* WinScreenMusic;

@@ -11,7 +11,7 @@ AGM_Incursion::AGM_Incursion() :
 	PlayerManager(nullptr),
 	UI_Manager(nullptr),
 	WaveManager(nullptr),
-	Lives(20),
+	Lives(10),
 	IsGameOver(false)
 {
 	DefaultPawnClass = nullptr;

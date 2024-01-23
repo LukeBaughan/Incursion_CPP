@@ -150,17 +150,17 @@ void AA_UI_Manager::ToggleMenu(UW_Widget* Widget)
 }
 
 // Called when the player tries placing the tower in an invalid place
-void AA_UI_Manager::DisplayCantBuildWidget()
+void AA_UI_Manager::DisplayTextNotificationWidget(ENotificationTextType TextTypeToDisplay)
 {
-	WidgetHUD->WidgetCantBuild->SetVisibility(ESlateVisibility::Visible);
+	WidgetHUD->WidgetTextNotification->SetVisibility(ESlateVisibility::Visible);
 
-	GetWorldTimerManager().SetTimer(TH_WidgetCantBuild, this, &AA_UI_Manager::HideCantBuildWidget, 1.0f, false);
+	GetWorldTimerManager().SetTimer(TH_WidgetTextNotification, this, &AA_UI_Manager::HideTextNotificationWidget, 1.0f, false);
 }
 
-void AA_UI_Manager::HideCantBuildWidget()
+void AA_UI_Manager::HideTextNotificationWidget()
 {
-	WidgetHUD->WidgetCantBuild->SetVisibility(ESlateVisibility::Collapsed);
-	GetWorldTimerManager().ClearTimer(TH_WidgetCantBuild);
+	WidgetHUD->WidgetTextNotification->SetVisibility(ESlateVisibility::Collapsed);
+	GetWorldTimerManager().ClearTimer(TH_WidgetTextNotification);
 }
 
 void AA_UI_Manager::ShowLoseScreen()

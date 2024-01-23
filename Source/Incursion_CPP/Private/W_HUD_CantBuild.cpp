@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
+/// CAN BE USED FOR ANY UI NOTIFICATION, NOT JUST CANT BUILD ////
 
 #include "W_HUD_CantBuild.h"
 

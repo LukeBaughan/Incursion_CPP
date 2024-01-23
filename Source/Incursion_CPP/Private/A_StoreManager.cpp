@@ -36,6 +36,7 @@ void AA_StoreManager::AddPoints(int Amount)
 {
 	Points += Amount;
 	UI_Manager->WidgetHUD->WidgetPoints->SetPoints(Points);
+	UI_Manager->WidgetStoreMenu->SetTextPlayerPoints(Points);
 
 	if (Amount > 0)
 	{
@@ -83,6 +84,7 @@ void AA_StoreManager::CheckCanPurchaseTower(TSubclassOf<class AA_Tower> TowerCla
 		}
 		else
 		{
+			UI_Manager->WidgetStoreMenu->PlayButtonDenySound();
 			PreviewTower->Destroy();
 		}
 	}
@@ -118,22 +120,22 @@ void AA_StoreManager::CheckCanPlaceTower()
 				}
 				else
 				{
-					UI_Manager->DisplayCantBuildWidget();
+					UI_Manager->DisplayTextNotificationWidget(ENotificationTextType::CantPlace);
 				}
 			}
 			else
 			{
-				UI_Manager->DisplayCantBuildWidget();
+				UI_Manager->DisplayTextNotificationWidget(ENotificationTextType::CantPlace);
 			}
 		}
 		else
 		{
-			UI_Manager->DisplayCantBuildWidget();
+			UI_Manager->DisplayTextNotificationWidget(ENotificationTextType::CantPlace);
 		}
 	}
 	else
 	{
-		UI_Manager->DisplayCantBuildWidget();
+		UI_Manager->DisplayTextNotificationWidget(ENotificationTextType::CantPlace);
 	}
 }
 
